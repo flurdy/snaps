@@ -1,0 +1,43 @@
+<html>
+    <head>
+        <title>Wicket Quickstart Archetype Homepage</title>
+    </head>
+    <body>
+
+	<wicket:extend>
+		<br/>
+
+
+		<div>
+			<h3>Looking for your holiday group?</h3>
+			<p>Enter group id or name:</p>
+			<form action="#" wicket:id="findGroupForm">
+				<input type="text" wicket:id="groupName"/>
+				<button type="submit">find group</button>
+			</form>
+			<!--
+			<p>Or find group by search:</p>
+			<form action="#" awicket:id="searchGroupForm">
+				<input type="text" awicket:id="searchText"/>
+				<button type="submit">search</button>
+			</form>
+			-->
+		</div>
+
+		<br/>
+		<br/>
+		<br/>
+		<hr/>
+		<br/>
+
+		<form action="newGroupForm">
+			<div>
+				<h3>Create new holiday group?</h3>
+				<button type="submit">create group</button>
+			</div>
+		</form>
+
+	</wicket:extend>
+</body>
+</html>
+

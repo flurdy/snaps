@@ -1,4 +1,4 @@
-package com.flurdy.grid.fotogator;
+package com.flurdy.grid.fotogator.wicket;
 
 import org.apache.wicket.protocol.http.WebApplication;
 

@@ -9,7 +9,7 @@
 
 root {  }
 html { height: 100%; }
-body { width: 99%; height: 98%; padding: 0; margin: 0; }
+body { width: 98%; height: 98%; padding: 0; margin: 0; }
 #ocean { display: table; width: 100%; height: 100%; margin: 0 auto; }
 #fleet { display: table-cell; vertical-align: middle; }
 #regatta { display: table; margin: auto; }
@@ -22,17 +22,19 @@ body { width: 99%; height: 98%; padding: 0; margin: 0; }
 #ballast { }
 
 
+#figurehead { }
 #prow { }
 #bow { }
 #lookout { }
 #port { display: table-cell; }
 #starboard { display: table-cell; }
 #jib { }
+#foremast { }
 #hatch { display: table-cell; }
 #deck { display: table-cell; }
 #cockpit { }
 #aft { }
-#stersn { }
+#stern { }
 #anchor { }
 
 #cargo { }

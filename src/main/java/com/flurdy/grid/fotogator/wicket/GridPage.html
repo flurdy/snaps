@@ -3,7 +3,7 @@
 <html xmlns:wicket="http://wicket.apache.org">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-        <title>FotoGator by flurdy</title>
+		<title><wicket:enclosure wicket:id="title.head">title</wicket:enclosure></title>
 		<meta name="keywords" content="upto,flurdy,events,organise,social,discover,friends" />
 		<meta name="description" content="UpTo, social event discovery and organising" />
 		<wicket:link>
@@ -13,7 +13,7 @@
 		</wicket:link>
 		<script type="text/javascript">
 			function loader(){
-			//	window.setTimeout("window.location.reload()", 5000);
+				//	window.setTimeout("window.location.reload()", 5000);
 			}
 		</script>
     </head>
@@ -31,39 +31,41 @@
 						</div>
 					</div>
 					<div id="ship" class="structure">
-						<div id="prow" class="compartment"></div>
+						<div id="figurehead" class="compartment"></div>
 						<div id="hull" class="structure">
 							<div id="vaka" class="structure">
-								<div id="bow" class="compartment">&nbsp;</div>
-								<div id="lookout" class="compartment"><h1>FotoGator</h1></div>
+								<div id="prow" class="compartment"></div>
+								<div id="bow" class="compartment"><h1><wicket:message key="title.bow">bow title</wicket:message></h1></div>
+								<div id="lookout" class="compartment" wicket:id="lookout"><!-- super menu --></div>
 								<div id="keel" class="structure">
-									<div id="port" class="compartment">&nbsp;</div>
+									<div id="port" class="compartment"><!-- site menu --></div>
 									<div id="innerhull" class="structure">
-										<div id="jib" class="compartment">&nbsp;</div>
+										<div id="jib" class="compartment"><!-- page title --></div>
+										<div id="foremast" class="compartment"><!-- breadcrumb --></div>
 										<div id="bulkhead" class="structure">
-											<div id="hatch" class="compartment">&nbsp;</div>
+											<div id="hatch" class="compartment"><!-- item menu --></div>
 											<div id="ballast" class="structure compartment">
 												<div id="cargo" class="compartment">
 													<wicket:child></wicket:child>
 												</div>
 											</div>
-											<div id="deck" class="compartment">&nbsp;</div>
+											<div id="deck" class="compartment"><!-- item info --></div>
 										</div>
-										<div id="cockpit" class="compartment">
-											<ul class="horizontal">
-												<li><a href="http://flurdy.com/contact/">contact</a></li>
-												<li><a href="http://code.flurdy.com">about</a></li>
-											</ul>
+										<div id="bridge" class="compartment" wicket:id="feedback">
 										</div>
 									</div>
-									<div id="starboard" class="compartment">&nbsp;</div>
+									<div id="starboard" class="compartment"><!-- site info --></div>
 								</div>
-								<div id="aft" class="compartment">&nbsp;</div>
+								<div id="aft" class="compartment">
+									<ul class="horizontal">
+										<li><a href="http://flurdy.com/contact/">contact</a></li>
+										<li><a wicket:id="aboutLink" href="#">about</a></li>
+										<li><a wicket:id="helpLink" href="#">help</a></li>
+									</ul>
+								</div>
 								<div id="stern" class="compartment">
 									<p>v.0.1&alpha;</p>
-									<wicket:link>
-										<a href="http://code.flurdy.com"><img alt="flurdy" src="images/flurdy-small-crop.png"  /></a>
-									</wicket:link>
+									<a href="http://flurdy.com/index.html"><img alt="flurdy" src="/images/flurdy-small-crop.png"  /></a>
 								</div>
 							</div>
 						</div>
@@ -82,9 +84,10 @@
 				</div>
 			</div>
 			<div id="buoy" class="structure">
-				<div class="compartment">&nbsp;</div>
+				<div class="compartment"></div>
 			</div>
 		</div>
 
+		<wicket:container wicket:id="dragons" class="structure"></wicket:container>
     </body>
 </html>

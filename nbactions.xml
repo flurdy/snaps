@@ -10,4 +10,10 @@
                 <maven.test.skip>true</maven.test.skip>
             </properties>
         </action>
+        <action>
+            <actionName>build</actionName>
+            <goals>
+                <goal>compile</goal>
+            </goals>
+        </action>
     </actions>

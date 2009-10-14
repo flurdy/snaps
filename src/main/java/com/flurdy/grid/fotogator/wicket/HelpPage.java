@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package com.flurdy.grid.fotogator;
+package com.flurdy.grid.fotogator.wicket;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.WebPage;
 
@@ -11,13 +11,13 @@ import org.apache.wicket.markup.html.WebPage;
  *
  * @author ivar
  */
-public class GridPage extends WebPage {
-    public GridPage() {
+public final class HelpPage extends GridPage {
+    public HelpPage() {
         super ();
     }
 
-    public GridPage(PageParameters params) {
-        //TODO:  process page parameters
+    public HelpPage(PageParameters params) {
+        super(params);
     }
 }
 
