@@ -43,10 +43,12 @@ ul.horizontal li {
 #aft ul.horizontal li a:active { text-decoration: underline; color: blue; }
 
 
- ul.feedbackPanel { text-align: center; border-top: 1px solid #990000; padding: 1em 0.2em 0.2em 0.2em; }
- ul.feedbackPanel li { list-style: none; }
- ul.feedbackPanel li.feedbackPanelINFO { color: #00aa00; }
- ul.feedbackPanel li.feedbackPanelERROR { color: #aa0000; }
+ul.feedbackPanel { text-align: center; border-top: 1px solid #990000; padding: 1em 0.2em 0.2em 0.2em; }
+ul.feedbackPanel li { list-style: none; }
+ul.feedbackPanel li.feedbackPanelINFO { color: #00aa00; }
+ul.feedbackPanel li.feedbackPanelERROR { color: #aa0000; }
 
 
+#jib { text-align: center; }
+#jib h2 { font-size:1.4em; margin:0.05em 0.2em; }
  

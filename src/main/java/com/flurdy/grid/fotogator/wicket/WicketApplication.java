@@ -7,21 +7,20 @@ import org.apache.wicket.protocol.http.WebApplication;
  * 
  * @see wicket.myproject.Start#main(String[])
  */
-public class WicketApplication extends WebApplication
-{    
-    /**
-     * Constructor
-     */
-	public WicketApplication()
-	{
+public class WicketApplication extends WebApplication {
+
+	/**
+	 * Constructor
+	 */
+	public WicketApplication() {
+			mountBookmarkablePage("index.html", HomePage.class);
+
 	}
-	
+
 	/**
 	 * @see wicket.Application#getHomePage()
 	 */
-	public Class getHomePage()
-	{
+	public Class getHomePage() {
 		return HomePage.class;
 	}
-
 }

@@ -6,12 +6,11 @@ package com.flurdy.grid.fotogator.wicket;
 
 import com.flurdy.grid.fotogator.wicket.panel.LookoutPanel;
 import com.flurdy.grid.fotogator.wicket.panel.DragonsPanel;
+import com.flurdy.grid.fotogator.wicket.panel.JibPanel;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
-import org.apache.wicket.markup.html.link.Link;
-import org.apache.wicket.markup.html.panel.ComponentFeedbackPanel;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.ResourceModel;
@@ -40,6 +39,10 @@ public class GridPage extends WebPage {
 		titleLabel.setRenderBodyOnly(true);
 		add(titleLabel);
 
+
+		JibPanel jib =  new JibPanel();
+		add( jib );
+
 		add( new BookmarkablePageLink<Void>("aboutLink", AboutPage.class ));
 
 		add( new BookmarkablePageLink<Void>("helpLink", HelpPage.class ));
@@ -66,6 +69,11 @@ public class GridPage extends WebPage {
 		} else {
 			return false;
 		}
+	}
+
+	protected void addJibTitle(String jibTitle){
+		remove( JibPanel.ID);
+		add( new JibPanel(jibTitle));
 	}
 }
 
