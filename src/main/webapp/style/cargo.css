@@ -55,7 +55,8 @@ ul.vertical li a { }
 ul.feedbackPanel { text-align: center; border-top: 1px solid #990000; padding: 0.5em 0.2em; margin: 0; }
 ul.feedbackPanel li { list-style: none; font-size: 0.75em; }
 ul.feedbackPanel li.feedbackPanelINFO { color: #00aa00; }
-ul.feedbackPanel li.feedbackPanelERROR { color: #aa0000; }
+ul.feedbackPanel li.feedbackPanelWARNING { color: #cc6600; font-weight: bold; }
+ul.feedbackPanel li.feedbackPanelERROR { color: #aa0000; font-weight: bold; }
 
 
 #jib { text-align: center; }

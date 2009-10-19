@@ -20,30 +20,39 @@ public class HomePage extends GridPage {
 	private static final String NEW_GROUP_FORM_ID = "newGroupForm";
 	private static final String FIND_GROUP_FORM_GROUP_ID = "groupName";
 
-    public HomePage() {
+	public HomePage() {
 		super();
 		addLayout();
-    }
-    public HomePage(final PageParameters parameters) {
+	}
+
+	public HomePage(final PageParameters parameters) {
 		super(parameters);
 		addLayout();
-    }
+	}
 
 	private void addLayout() {
 
 		IModel<HolidayGroup> groupModel = new CompoundPropertyModel<HolidayGroup>(new HolidayGroup());
-		
-		Form<HolidayGroup> findGroupForm = new StatelessForm<HolidayGroup>(FIND_GROUP_FORM_ID,groupModel){
+
+		Form<HolidayGroup> findGroupForm = new StatelessForm<HolidayGroup>(FIND_GROUP_FORM_ID, groupModel) {
+
 			@Override
 			protected void onSubmit() {
 				HolidayGroup holidayGroup = getModelObject();
-				info( "Find Group id is " + holidayGroup);
-			}		
+//				info( "Find Group id is " + holidayGroup);
+				HolidayGroup existingHolidayGroup = searchForHolidayGroup(holidayGroup.getGroupName());
+				if( existingHolidayGroup != null ){
+					setResponsePage(new HolidayGroupPage(existingHolidayGroup));
+				} else {
+					warn("Holiday group could not be found");
+				}
+			}
 		};
 		add(findGroupForm);
 		findGroupForm.add(new RequiredTextField<String>(FIND_GROUP_FORM_GROUP_ID));
 
-		Form<Void> newGroupForm = new StatelessForm<Void>(NEW_GROUP_FORM_ID){
+		Form<Void> newGroupForm = new StatelessForm<Void>(NEW_GROUP_FORM_ID) {
+
 			@Override
 			protected void onSubmit() {
 				setResponsePage(new HolidayGroupPage());
@@ -51,5 +60,9 @@ public class HomePage extends GridPage {
 		};
 		add(newGroupForm);
 
+	}
+
+	private HolidayGroup searchForHolidayGroup(String groupName) {
+		return new HolidayGroup(groupName);
 	}
 }

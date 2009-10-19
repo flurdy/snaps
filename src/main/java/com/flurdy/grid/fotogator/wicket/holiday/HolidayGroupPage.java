@@ -24,6 +24,7 @@ public class HolidayGroupPage extends GridPage {
 	private static final String GROUP_NAME_ID = "groupName";
 	private static final String FRAGMENT_PLACEHOLDER_ID = "groupFragment";
 
+
 	public class CreateHolidayGroupFragment extends Fragment {
 		private static final String FRAGMENT_ID = "createGroupFragment";
 		public CreateHolidayGroupFragment() {
@@ -102,16 +103,23 @@ public class HolidayGroupPage extends GridPage {
 		addLayoutForCreateHoliday();
 	}
 
+	public HolidayGroupPage(HolidayGroup existingHolidayGroup) {
+		super();
+		addLayoutForViewHoliday(existingHolidayGroup);
+	}
+
 	private void addLayoutForCreateHoliday() {
 		addJibTitle("Create Holiday Group");
 
 		Fragment groupFragment = new CreateHolidayGroupFragment();
 		addOrReplace( groupFragment );
+
+		addEmptyHatch();
 	}
 
 	private void addLayoutForEditHoliday(final HolidayGroup holidayGroup) {
 		log.info("Editing " + holidayGroup);
-		info("Editing " + holidayGroup);
+//		info("Editing " + holidayGroup);
 		addJibTitle("Edit Holiday Group");
 
 //		remove(FRAGMENT_PLACEHOLDER_ID);
@@ -143,7 +151,7 @@ public class HolidayGroupPage extends GridPage {
 
 	private void addLayoutForRemoveHoliday(final HolidayGroup holidayGroup) {
 		log.info("Removing " + holidayGroup);
-		info("Removing " + holidayGroup);
+//		info("Removing " + holidayGroup);
 		addJibTitle("Remove Holiday Group?");
 
 //		remove(FRAGMENT_PLACEHOLDER_ID);
@@ -166,11 +174,11 @@ public class HolidayGroupPage extends GridPage {
 
 	private void addLayoutForViewHoliday(final HolidayGroup holidayGroup) {
 		log.info("Viewing " + holidayGroup);
-		info("Viewing " + holidayGroup);
+//		info("Viewing " + holidayGroup);
 		addJibTitle("Holiday Group");
 //		remove(FRAGMENT_PLACEHOLDER_ID);
 		Fragment groupFragment = new ViewHolidayGroupFragment(holidayGroup);
-		replace( groupFragment );
+		addOrReplace( groupFragment );
 
 
 		List<MenuLink> hatchLinks = new ArrayList<MenuLink>();
@@ -188,7 +196,7 @@ public class HolidayGroupPage extends GridPage {
 
 	private void addLayoutForDeletedHoliday() {
 		log.info("Viewing no group" );
-		info("Viewing no group");
+//		info("Viewing no group");
 		addJibTitle("Holiday Group deleted");
 //		remove(FRAGMENT_PLACEHOLDER_ID);
 		Fragment groupFragment = new DeletedHolidayGroupFragment();

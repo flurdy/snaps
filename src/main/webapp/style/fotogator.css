@@ -20,9 +20,9 @@
 #net > .compartment > iframe, #net > .compartment img ,
 #ama > .compartment > iframe, #ama > .compartment img ,
 #hull {
-	border-radius: 10px;
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
+	border-radius: 30px;
+	-webkit-border-radius: 30px;
+	-moz-border-radius: 30px;
 	-moz-box-shadow: 10px 10px 15px -5px #333333;
 }
 

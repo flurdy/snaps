@@ -47,11 +47,10 @@ public class GridPage extends WebPage {
 		titleLabel.setRenderBodyOnly(true);
 		add(titleLabel);
 
-		add( new LookoutPanel() );
-
-		add( new JibPanel() );
-
-		add( new HatchPanel() );
+		addEmptyLookout();
+		addEmptyJib();
+//		addEmptyPort();
+		addEmptyHatch();
 
 		add( new BookmarkablePageLink<Void>("aboutLink", AboutPage.class ));
 
@@ -79,14 +78,28 @@ public class GridPage extends WebPage {
 		}
 	}
 
+	protected void addEmptyJib(){
+		addOrReplace( new JibPanel() );
+	}
+	protected void addEmptyLookout(){
+		addOrReplace(new LookoutPanel());
+	}
+//	protected void addEmptyPort(){
+//
+//	}
+	protected void addEmptyHatch(){
+		addOrReplace(new HatchPanel());
+	}
+
+
 	protected void addJibTitle(String jibTitle){
-		remove( JibPanel.ID);
-		add( new JibPanel(jibTitle));
+//		remove( JibPanel.ID);
+		replace( new JibPanel(jibTitle));
 	}
 
 	protected void addHatchMenu(List<MenuLink> menuLinks){
-		remove( NauticalGrid.HATCH.getWicketId() );
-		add( new HatchPanel( menuLinks ) );
+//		remove( NauticalGrid.HATCH.getWicketId() );
+		replace( new HatchPanel( menuLinks ) );
 	}
 }
 
