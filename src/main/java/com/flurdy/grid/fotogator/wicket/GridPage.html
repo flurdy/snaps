@@ -6,11 +6,9 @@
 		<title><wicket:enclosure wicket:id="title.head">title</wicket:enclosure></title>
 		<meta name="keywords" content="upto,flurdy,events,organise,social,discover,friends" />
 		<meta name="description" content="UpTo, social event discovery and organising" />
-		<wicket:link>
-			<link rel="stylesheet" type="text/css" href="/style/grid.css"/>
-			<link rel="stylesheet" type="text/css" href="/style/fotogator.css"/>
-			<link rel="stylesheet" type="text/css" href="/style/cargo.css"/>
-		</wicket:link>
+			<link rel="stylesheet" type="text/css" href="style/grid.css"/>
+			<link rel="stylesheet" type="text/css" href="style/fotogator.css"/>
+			<link rel="stylesheet" type="text/css" href="style/cargo.css"/>
 		<script type="text/javascript">
 			function loader(){
 				//	window.setTimeout("window.location.reload()", 5000);
@@ -27,7 +25,7 @@
 				<div id="regatta" class="structure">
 					<div id="tug" class="structure">
 						<div class="compartment">
-							<wicket:link><img src="/images/leaderboard.gif" alt=""/></wicket:link>
+							<wicket:link><img src="images/leaderboard.gif" alt=""/></wicket:link>
 						</div>
 					</div>
 					<div id="ship" class="structure">
@@ -43,7 +41,7 @@
 										<div id="jib" class="compartment" wicket:id="jib"><!-- page title --></div>
 										<div id="foremast" class="compartment"><!-- breadcrumb --></div>
 										<div id="bulkhead" class="structure">
-											<div id="hatch" class="compartment"><!-- item menu --></div>
+											<div id="hatch" class="compartment" wicket:id="hatch"><!-- item menu --></div>
 											<div id="ballast" class="structure compartment">
 												<div id="cargo" class="compartment">
 													<wicket:child></wicket:child>
@@ -65,7 +63,7 @@
 								</div>
 								<div id="stern" class="compartment">
 									<p>v.0.1&alpha;</p>
-									<a href="http://flurdy.com/index.html"><img alt="flurdy" src="/images/flurdy-small-crop.png"  /></a>
+									<a href="http://flurdy.com/index.html"><img alt="flurdy" src="images/flurdy-small-crop.png"  /></a>
 								</div>
 							</div>
 						</div>
@@ -73,12 +71,12 @@
 					</div>
 					<div id="ama" class="structure">
 						<div class="compartment">
-							<wicket:link><img src="/images/wideskyscraper.gif" alt=""/></wicket:link>
+							<wicket:link><img src="images/wideskyscraper.gif" alt=""/></wicket:link>
 						</div>
 					</div>
 					<div id="net" class="structure">
 						<div class="compartment">
-							<wicket:link><img src="/images/leaderboard_img.jpg" alt=""/></wicket:link>
+							<wicket:link><img src="images/leaderboard_img.jpg" alt=""/></wicket:link>
 						</div>
 					</div>
 				</div>

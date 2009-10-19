@@ -4,9 +4,13 @@
  */
 package com.flurdy.grid.fotogator.wicket;
 
+import com.flurdy.grid.fotogator.wicket.html.MenuLink;
 import com.flurdy.grid.fotogator.wicket.panel.LookoutPanel;
 import com.flurdy.grid.fotogator.wicket.panel.DragonsPanel;
+import com.flurdy.grid.fotogator.wicket.panel.HatchPanel;
 import com.flurdy.grid.fotogator.wicket.panel.JibPanel;
+import com.flurdy.grid.nautical.NauticalGrid;
+import java.util.List;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
@@ -15,12 +19,16 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.protocol.http.WebRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author ivar
  */
 public class GridPage extends WebPage {
+
+	protected transient Logger log = LoggerFactory.getLogger(this.getClass());
 
 	private static final String FEEDBACK_ID ="feedback";
 
@@ -39,9 +47,11 @@ public class GridPage extends WebPage {
 		titleLabel.setRenderBodyOnly(true);
 		add(titleLabel);
 
+		add( new LookoutPanel() );
 
-		JibPanel jib =  new JibPanel();
-		add( jib );
+		add( new JibPanel() );
+
+		add( new HatchPanel() );
 
 		add( new BookmarkablePageLink<Void>("aboutLink", AboutPage.class ));
 
@@ -49,8 +59,6 @@ public class GridPage extends WebPage {
 
 		add( new FeedbackPanel(FEEDBACK_ID));
 
-		Panel lookoutPanel = new LookoutPanel();
-		add(lookoutPanel);
 
 		Panel dragonsPanel = new DragonsPanel(isFrontPage(), isTestSite());
 		add(dragonsPanel);
@@ -74,6 +82,11 @@ public class GridPage extends WebPage {
 	protected void addJibTitle(String jibTitle){
 		remove( JibPanel.ID);
 		add( new JibPanel(jibTitle));
+	}
+
+	protected void addHatchMenu(List<MenuLink> menuLinks){
+		remove( NauticalGrid.HATCH.getWicketId() );
+		add( new HatchPanel( menuLinks ) );
 	}
 }
 

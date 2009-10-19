@@ -5,7 +5,9 @@
 
 package com.flurdy.grid.fotogator.domain;
 
-public class HolidayGroup {
+import java.io.Serializable;
+
+public class HolidayGroup implements Serializable{
 
 	private Long groupId;
 

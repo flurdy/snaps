@@ -11,7 +11,12 @@ import org.apache.wicket.markup.html.panel.Panel;
  * @author ivar
  */
 public final class PortPanel extends Panel {
-    public PortPanel(String id) {
-        super (id);
+
+	private static final String ID = "port";
+
+    public PortPanel() {
+        super (ID);
+		setVisible(false);
     }
+	
 }

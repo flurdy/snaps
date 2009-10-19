@@ -11,18 +11,66 @@ and open the template in the editor.
 	<body>
 	<wicket:extend>
 
+		<wicket:enclosure wicket:id="groupFragment"></wicket:enclosure>
 
-		<form action="#" wicket:id="createGroupForm">
+		<wicket:fragment wicket:id="createGroupFragment">
+			<form action="#" wicket:id="createGroupForm">
+				<table>
+					<tr>
+						<th colspan="2">Enter the desidered Group name</th>
+					</tr>
+					<tr>
+						<td><input type="text" wicket:id="groupName" /></td>
+						<td colspan="1"><button type="submit">create</button></td>
+					</tr>
+				</table>
+			</form>
+		</wicket:fragment>
+
+
+		<wicket:fragment wicket:id="editGroupFragment">
+			<form action="#" wicket:id="editGroupForm">
+				<table>
+					<tr>
+						<th colspan="2">Group name</th>
+					</tr>
+					<tr>
+						<td><input type="text" wicket:id="groupName" /></td>
+						<td colspan="1"><button type="submit">update</button></td>
+					</tr>
+				</table>
+			</form>
+		</wicket:fragment>
+
+
+		<wicket:fragment wicket:id="removeGroupFragment">
+			<form action="#" wicket:id="removeGroupForm">
+				<table>
+					<tr>
+						<th colspan="2">Confirm holiday group "<span wicket:id="groupName">group name</span>"'s deltion</th>
+					</tr>
+					<tr>
+						<td colspan="1"><button type="submit">delete</button></td>
+					</tr>
+				</table>
+			</form>
+		</wicket:fragment>
+
+
+		<wicket:fragment wicket:id="deletedGroupFragment">
+			<p>Holiday group deleted</p>
+		</wicket:fragment>
+
+
+		<wicket:fragment wicket:id="viewGroupFragment">
+
 			<table>
 				<tr>
-					<th colspan="2">Enter the desidered Group name</th>
-				</tr>
-				<tr>
-					<td><input type="text" wicket:id="groupName" /></td>
-					<td colspan="1"><button type="submit">create</button></td>
+					<th><span wicket:id="groupName">Group name</span></th>
 				</tr>
 			</table>
-		</form>
+
+		</wicket:fragment>
 
 
 

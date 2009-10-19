@@ -43,8 +43,17 @@ ul.horizontal li {
 #aft ul.horizontal li a:active { text-decoration: underline; color: blue; }
 
 
-ul.feedbackPanel { text-align: center; border-top: 1px solid #990000; padding: 1em 0.2em 0.2em 0.2em; }
-ul.feedbackPanel li { list-style: none; }
+ul.vertical { padding: 0.1em; }
+ul.vertical li { list-style: none; white-space: nowrap; }
+ul.vertical li a { }
+
+#hatch { vertical-align: top; }
+#hatch ul.vertical { vertical-align: top; }
+#hatch ul.vertical li { font-size: 0.8em; font-weight: bold; padding: 0.2em 0.2em; }
+#hatch ul.vertical li button { width: 100%; }
+
+ul.feedbackPanel { text-align: center; border-top: 1px solid #990000; padding: 0.5em 0.2em; margin: 0; }
+ul.feedbackPanel li { list-style: none; font-size: 0.75em; }
 ul.feedbackPanel li.feedbackPanelINFO { color: #00aa00; }
 ul.feedbackPanel li.feedbackPanelERROR { color: #aa0000; }
 

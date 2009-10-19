@@ -49,11 +49,11 @@ body {  background-color: #cc0000;  color: black; }
 .compartment { padding: 0.2em 1em; }
 body { padding: 0.2em; }
 #ocean { margin-left: 1em; }
-#ballast { width: 40em; padding: 2em; min-height: 18em;  }
+#ballast { width: 40em; padding: 2em; min-height: 14em;  }
 
 #port {  width: 1em; min-width: 1em; }
 #starboard {  width: 1em; min-width: 1em;   }
-#hatch { width: 1em; min-width: 1em;   }
+#hatch { width: 8em; min-width: 8em;   }
 #deck { width: 1em; min-width: 1em;  }
 
 #port.compartment ,
@@ -126,5 +126,5 @@ body {  }
 #ama > .compartment > iframe, #ama > .compartment img { }
 
 
-#prow, #foremast, #port, #starboard, #hatch, #deck  { display: none; }
-#tug, #net, #ama { display: none; }
+#prow, #foremast, #starboard, #port, #deck  { display: none; }
+#tug, #net, #ama { display: none; } 
