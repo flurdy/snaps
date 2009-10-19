@@ -6,9 +6,15 @@
 package com.flurdy.grid.fotogator.domain;
 
 import java.io.Serializable;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
-public class HolidayGroup implements Serializable{
+@Entity
+public class HolidayGroup implements Serializable {
 
+	@Id
+	@GeneratedValue
 	private Long groupId;
 
 	private String groupName;

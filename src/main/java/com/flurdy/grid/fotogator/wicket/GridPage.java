@@ -4,6 +4,7 @@
  */
 package com.flurdy.grid.fotogator.wicket;
 
+import com.flurdy.grid.fotogator.service.IHolidayGroupService;
 import com.flurdy.grid.fotogator.wicket.html.MenuLink;
 import com.flurdy.grid.fotogator.wicket.panel.LookoutPanel;
 import com.flurdy.grid.fotogator.wicket.panel.DragonsPanel;
@@ -19,6 +20,7 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.protocol.http.WebRequest;
+import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +33,9 @@ public class GridPage extends WebPage {
 	protected transient Logger log = LoggerFactory.getLogger(this.getClass());
 
 	private static final String FEEDBACK_ID ="feedback";
+
+	@SpringBean
+	protected IHolidayGroupService holidayGroupService;
 
 	public GridPage() {
 		super();

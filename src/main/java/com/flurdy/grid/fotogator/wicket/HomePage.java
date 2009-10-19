@@ -1,9 +1,10 @@
 package com.flurdy.grid.fotogator.wicket;
 
 import com.flurdy.grid.fotogator.wicket.holiday.HolidayGroupPage;
+import com.flurdy.grid.fotogator.wicket.holiday.HolidayGroupModel;
 import com.flurdy.grid.fotogator.domain.HolidayGroup;
+import java.util.Set;
 import org.apache.wicket.PageParameters;
-import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.StatelessForm;
@@ -40,9 +41,14 @@ public class HomePage extends GridPage {
 			protected void onSubmit() {
 				HolidayGroup holidayGroup = getModelObject();
 //				info( "Find Group id is " + holidayGroup);
-				HolidayGroup existingHolidayGroup = searchForHolidayGroup(holidayGroup.getGroupName());
-				if( existingHolidayGroup != null ){
-					setResponsePage(new HolidayGroupPage(existingHolidayGroup));
+				Set<HolidayGroup> existingHolidayGroups = holidayGroupService.searchForHolidayGroups(holidayGroup.getGroupName());
+				if( existingHolidayGroups != null && existingHolidayGroups.size() > 0 ){
+					if( existingHolidayGroups.size() == 1 ){
+						HolidayGroupModel holidayGroupModel  = new HolidayGroupModel(existingHolidayGroups.iterator().next());
+						setResponsePage(new HolidayGroupPage( holidayGroupModel ));
+					} else {
+						info("Several holiday groups matched.");
+					}
 				} else {
 					warn("Holiday group could not be found");
 				}
@@ -62,7 +68,4 @@ public class HomePage extends GridPage {
 
 	}
 
-	private HolidayGroup searchForHolidayGroup(String groupName) {
-		return new HolidayGroup(groupName);
-	}
 }
