@@ -20,15 +20,15 @@
 #net > .compartment > iframe, #net > .compartment img ,
 #ama > .compartment > iframe, #ama > .compartment img ,
 #hull {
-	border-radius: 30px;
-	-webkit-border-radius: 30px;
-	-moz-border-radius: 30px;
+	border-radius: 20px;
+	-webkit-border-radius: 20px;
+	-moz-border-radius: 20px;
 	-moz-box-shadow: 10px 10px 15px -5px #333333;
 }
 
 
 /* internal */
-#bow, #lookout,  #stern, #aft { border-top: 1px solid #990000; }
+#lookout,  #stern, #aft { border-top: 1px solid #990000; }
 #lookout, #jib, #foremast { border-bottom: 1px solid #990000;  }
 #port, #hatch { border-right: 1px solid #990000;  }
 #starboard, #deck { border-left: 1px solid #990000;  }

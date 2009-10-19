@@ -6,8 +6,8 @@ import com.flurdy.grid.fotogator.domain.HolidayGroup;
 import java.util.Set;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.StatelessForm;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 
@@ -40,14 +40,17 @@ public class HomePage extends GridPage {
 			@Override
 			protected void onSubmit() {
 				HolidayGroup holidayGroup = getModelObject();
-//				info( "Find Group id is " + holidayGroup);
+				log.info( "Looking for groups with [" + holidayGroup.getGroupName() + "]");
 				Set<HolidayGroup> existingHolidayGroups = holidayGroupService.searchForHolidayGroups(holidayGroup.getGroupName());
 				if( existingHolidayGroups != null && existingHolidayGroups.size() > 0 ){
 					if( existingHolidayGroups.size() == 1 ){
 						HolidayGroupModel holidayGroupModel  = new HolidayGroupModel(existingHolidayGroups.iterator().next());
 						setResponsePage(new HolidayGroupPage( holidayGroupModel ));
 					} else {
-						info("Several holiday groups matched.");
+						log.info("Several holiday groups matched.");
+
+						setResponsePage(new HolidayGroupPage( existingHolidayGroups ));
+
 					}
 				} else {
 					warn("Holiday group could not be found");
@@ -55,7 +58,7 @@ public class HomePage extends GridPage {
 			}
 		};
 		add(findGroupForm);
-		findGroupForm.add(new RequiredTextField<String>(FIND_GROUP_FORM_GROUP_ID));
+		findGroupForm.add(new TextField<String>(FIND_GROUP_FORM_GROUP_ID));
 
 		Form<Void> newGroupForm = new StatelessForm<Void>(NEW_GROUP_FORM_ID) {
 

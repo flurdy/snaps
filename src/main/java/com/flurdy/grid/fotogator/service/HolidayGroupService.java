@@ -39,21 +39,19 @@ public class HolidayGroupService implements IHolidayGroupService {
 
 	@Override
 	public void addHolidayGroup(HolidayGroup holidayGroup) {
-		log.debug("Adding group");
-		
+		log.debug("Adding group");		
 		holidayGroupRepository.addHolidayGroup( holidayGroup );
-
 	}
 
 	@Override
 	public HolidayGroup findHolidayGroup(Long groupId) {
 		log.debug("finding group");
-
 		return holidayGroupRepository.findHolidayGroup( groupId );
-
 	}
 
 	private Set<HolidayGroup> findHolidayGroups(String groupName) {
+		if(groupName == null)
+			groupName = "";
 		return new HashSet<HolidayGroup>(holidayGroupRepository.findHolidayGroups( groupName ));
 	}
 

@@ -72,6 +72,21 @@ and open the template in the editor.
 
 		</wicket:fragment>
 
+		<wicket:fragment wicket:id="selectGroupFragment">
+
+			<p>
+				Several holiday groups matched your search
+			</p>
+
+			<table>
+				<tr wicket:id="groupRow">
+					<th><a href="#" wicket:id="groupLink1"><span wicket:id="groupName">Group name</span></a></th>
+					<td><a href="#" wicket:id="groupLink2">view</a></td>
+				</tr>
+			</table>
+
+		</wicket:fragment>
+
 
 
 	</wicket:extend>
