@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+        <action>
+            <actionName>CUSTOM-jetty</actionName>
+            <displayName>jetty</displayName>
+            <goals>
+                <goal>jetty:run</goal>
+            </goals>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+            </properties>
+        </action>
+        <action>
+            <actionName>build</actionName>
+            <goals>
+                <goal>compile</goal>
+            </goals>
+        </action>
+    </actions>
