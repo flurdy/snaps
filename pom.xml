@@ -20,6 +20,7 @@
 	<url>http://code.flurdy.com/grid/snaps</url>
 
 	<properties>
+		<wicket.version>1.4.3</wicket.version>
 		<jetty.version>6.1.4</jetty.version>
 		<slf4j.version>1.5.8</slf4j.version>
 		<spring.version>3.0.2.RELEASE</spring.version>
@@ -157,6 +158,37 @@
 
 	<dependencies>
 
+		<dependency>
+			<groupId>com.flurdy.grid</groupId>
+			<artifactId>grid-wicket</artifactId>
+			<version>0.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.wicket</groupId>
+			<artifactId>wicket</artifactId>
+			<version>${wicket.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.wicket</groupId>
+			<artifactId>wicket-ioc</artifactId>
+			<version>${wicket.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.wicket</groupId>
+			<artifactId>wicket-spring</artifactId>
+			<version>${wicket.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.wicket</groupId>
+			<artifactId>wicket-extensions</artifactId>
+			<version>${wicket.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.wicket</groupId>
+			<artifactId>wicket-auth-roles</artifactId>
+			<version>${wicket.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.slf4j</groupId>
