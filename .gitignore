@@ -2,3 +2,4 @@ target
 #.nbactions.xml
 .settings
 src/main/resources/javarebel.lic
+*.*~

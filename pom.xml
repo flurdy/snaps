@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -12,23 +12,31 @@
 
 
 	<groupId>com.flurdy.grid</groupId>
-	<artifactId>fotogator</artifactId>
+	<artifactId>snaps</artifactId>
 	<packaging>war</packaging>
-	<version>0.1-SNAPSHOT</version>
-	<name>fotogator</name>
+	<version>0.2-SNAPSHOT</version>
+	<name>snaps</name>
 	<description>event photo aggregator</description>
-	<url>http://code.flurdy.com</url>
+	<url>http://code.flurdy.com/grid/snaps</url>
 
 	<properties>
-		<wicket.version>1.4.1</wicket.version>
 		<jetty.version>6.1.4</jetty.version>
 		<slf4j.version>1.5.8</slf4j.version>
-		<spring.version>2.5.6</spring.version>
+		<spring.version>3.0.2.RELEASE</spring.version>
 		<web.port>8886</web.port>
-		<web.context>/foto</web.context>
+		<web.context>/snaps</web.context>
+		<logFolder>target/logs</logFolder>
+		<db.url>jdbc:hsqldb:file:${project.basedir}/target/db/build;shutdown=true</db.url>
+		<db.driverClassName>org.hsqldb.jdbcDriver</db.driverClassName>
+		<db.username>sa</db.username>
+		<db.password></db.password>
 	</properties>
 
-
+	<scm>
+		<url>scm:git:git@github.com:flurdy/snaps.git</url>
+		<connection>scm:git:git@github.com:flurdy/snaps.git</connection>
+		<developerConnection>scm:git:git@github.com:flurdy/snaps.git</developerConnection>
+	</scm>
 
 	<build>
 		<resources>
@@ -58,14 +66,33 @@
 					<exclude>**/*.java</exclude>
 				</excludes>
 			</testResource>
+			<testResource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</testResource>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>false</filtering>
+			</testResource>
 		</testResources>
+
 
 		<filters>
 			<filter>src/main/filters/application.properties</filter>
 		</filters>
 
+
 		<plugins>
 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<!--
 			<plugin>
 				<groupId>org.zeroturnaround</groupId>
 				<artifactId>javarebel-maven-plugin</artifactId>
@@ -79,8 +106,7 @@
 					</execution>
 				</executions>
 			</plugin>
-
-
+-->
 			<plugin>
 				<groupId>org.mortbay.jetty</groupId>
 				<artifactId>maven-jetty-plugin</artifactId>
@@ -131,37 +157,6 @@
 
 	<dependencies>
 
-		<dependency>
-			<groupId>com.flurdy.grid</groupId>
-			<artifactId>grid-wicket</artifactId>
-			<version>0.1-SNAPSHOT</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.wicket</groupId>
-			<artifactId>wicket</artifactId>
-			<version>${wicket.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.wicket</groupId>
-			<artifactId>wicket-ioc</artifactId>
-			<version>${wicket.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.wicket</groupId>
-			<artifactId>wicket-spring</artifactId>
-			<version>${wicket.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.wicket</groupId>
-			<artifactId>wicket-extensions</artifactId>
-			<version>${wicket.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.wicket</groupId>
-			<artifactId>wicket-auth-roles</artifactId>
-			<version>${wicket.version}</version>
-		</dependency>
 
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -318,7 +313,6 @@
 			</exclusions>
 		</dependency>
 
-
 		<dependency>
 			<groupId>javax.persistence</groupId>
 			<artifactId>persistence-api</artifactId>
@@ -355,7 +349,6 @@
 			<version>1.3.4</version>
 		</dependency>
 
-		<!--
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
@@ -383,12 +376,226 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		-->
 
 	</dependencies>
 
 
+	<profiles>
 
+		<profile>
+			<id>dbunit</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>dbunit-maven-plugin</artifactId>
+						<version>1.0-beta-3</version>
+						<dependencies>
+							<dependency>
+								<groupId>hsqldb</groupId>
+								<artifactId>hsqldb</artifactId>
+								<version>${version.hsql}</version>
+							</dependency>
+						</dependencies>
+						<configuration>
+							<dataTypeFactoryName>org.dbunit.ext.hsqldb.HsqldbDataTypeFactory</dataTypeFactoryName>
+							<url>jdbc:hsqldb:file:${project.basedir}/target/db/wish-build;shutdown=true</url>
+							<driver>org.hsqldb.jdbcDriver</driver>
+							<username>sa</username>
+							<password></password>
+							<type>CLEAN_INSERT</type>
+							<src>src/test/data/stub.xml</src>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>hbm-export</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>hibernate3-maven-plugin</artifactId>
+						<version>2.2</version>
+						<executions>
+							<execution>
+								<phase>process-classes</phase>
+								<goals>
+									<goal>hbm2ddl</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<components>
+								<component>
+									<name>hbm2ddl</name>
+									<implementation>jpaconfiguration</implementation>
+								</component>
+							</components>
+							<componentProperties>
+								<persistenceunit>wish</persistenceunit>
+								<outputfilename>schema.ddl</outputfilename>
+								<drop>false</drop>
+								<create>true</create>
+								<export>false</export>
+								<format>true</format>
+								<!--<configurationfile>/src/main/resources/hibernate.cfg</configurationfile>-->
+							</componentProperties>
+						</configuration>
+						<dependencies>
+							<dependency>
+								<groupId>hsqldb</groupId>
+								<artifactId>hsqldb</artifactId>
+								<version>${version.hsql}</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>surefire-integration</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<skip>true</skip>
+						</configuration>
+						<executions>
+							<execution>
+								<id>surefire-it</id>
+								<phase>integration-test</phase>
+								<goals>
+									<goal>test</goal>
+								</goals>
+								<configuration>
+									<skip>false</skip>
+									<includes>
+										<include>**/*IntegrationTest.java</include>
+									</includes>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>sqlmaven</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>sql-maven-plugin</artifactId>
+						<version>1.3</version>
+						<dependencies>
+							<dependency>
+								<groupId>hsqldb</groupId>
+								<artifactId>hsqldb</artifactId>
+								<version>${version.hsql}</version>
+							</dependency>
+						</dependencies>
+						<configuration>
+							<driver>${db.driverClassName}</driver>
+							<url>${db.url}</url>
+							<username>${db.username}</username>
+							<password>${db.password}</password>
+							<autocommit>true</autocommit>
+							<srcFiles>
+								<srcFile>target/hibernate3/sql/schema.ddl</srcFile>
+							</srcFiles>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>jrebel</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.zeroturnaround</groupId>
+						<artifactId>javarebel-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>generate-rebel-xml</id>
+								<phase>process-resources</phase>
+								<goals>
+									<goal>generate</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+			<pluginRepositories>
+				<pluginRepository>
+					<id>zt-repo</id>
+					<name>Zero turnaround repo</name>
+					<url>http://repos.zeroturnaround.com/maven2</url>
+				</pluginRepository>
+			</pluginRepositories>
+		</profile>
+
+		<profile>
+			<id>java.net-repo</id>
+			<activation>
+			</activation>
+			<repositories>
+				<repository>
+					<id>maven2-repository.dev.java.net</id>
+					<name>Java.net Repository for Maven</name>
+					<url>http://download.java.net/maven/2/</url>
+					<layout>default</layout>
+					<snapshots>
+						<enabled>false</enabled>
+					</snapshots>
+				</repository>
+				<repository>
+					<id>maven1-repository.dev.java.net</id>
+					<name>Java.net Repository for Maven 1</name>
+					<url>http://download.java.net/maven/1/</url>
+					<layout>legacy</layout>
+					<snapshots>
+						<enabled>false</enabled>
+					</snapshots>
+				</repository>
+			</repositories>
+		</profile>
+
+
+		<profile>
+			<id>jboss-repo</id>
+			<repositories>
+				<repository>
+					<id>jboss</id>
+					<url>http://repository.jboss.com/maven2</url>
+					<releases>	</releases>
+					<snapshots>
+						<enabled>false</enabled>
+					</snapshots>
+				</repository>
+			</repositories>
+			<pluginRepositories>
+				<pluginRepository>
+					<id>jboss-plugins</id>
+					<url>http://repository.jboss.com/maven2</url>
+					<releases> </releases>
+					<snapshots>
+						<enabled>false</enabled>
+					</snapshots>
+				</pluginRepository>
+			</pluginRepositories>
+		</profile>
+
+	</profiles>
 
 </project>
 
