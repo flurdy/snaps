@@ -8,6 +8,7 @@
 	<definition name="gridTemplate" template="/WEB-INF/views/grid.jsp">
 		<put-attribute name="pageTitle" value="snaps @ flurdy"/>
 		<put-attribute name="bowTitle" value="snaps"/>
+		<put-attribute name="version" value="v.0.2&amp;alpha;"/>
 		<!-- <put-attribute name="dragons" value="/WEB-INF/views/dragons.jsp" -->
 	</definition>
 

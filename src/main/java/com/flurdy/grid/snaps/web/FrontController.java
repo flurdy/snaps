@@ -16,9 +16,9 @@ public class FrontController {
 	protected transient Logger log = LoggerFactory.getLogger(this.getClass());
 
     @RequestMapping("/index.html")
-	public String indexHandler(){log.error("");  return "index"; }
+	public String indexHandler(){ return "index"; }
 
     @RequestMapping("/front.html")
-	public String frontHandler(){ log.error(""); return "index"; }
+	public String frontHandler(){ return "index"; }
 
 }

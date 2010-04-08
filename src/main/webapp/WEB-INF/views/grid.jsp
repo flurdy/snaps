@@ -13,7 +13,7 @@
 		<link rel="stylesheet" type="text/css" href="style/cargo.css"/>
 		<script type="text/javascript">
 			function loader(){
-					window.setTimeout("window.location.reload()", 3000);
+					// window.setTimeout("window.location.reload()", 3000);
 			}
 		</script>
     </head>
@@ -57,12 +57,12 @@
 								<div id="aft" class="compartment">
 									<ul class="horizontal">
 										<li><a href="http://flurdy.com/contact/">contact</a></li>
-										<li><a wicket:id="aboutLink" href="#">about</a></li>
-										<li><a wicket:id="helpLink" href="#">help</a></li>
+										<li><a wicket:id="aboutLink" href="http://code.flurdy.com/grid/snaps">about</a></li>
+										<li><a wicket:id="helpLink" href="http://code.flurdy.com/grid/snaps">help</a></li>
 									</ul>
 								</div>
 								<div id="stern" class="compartment">
-									<p>v.0.2&alpha;</p>
+									<p><tiles:getAsString name="version"/></p>
 									<a href="http://flurdy.com"><img alt="flurdy" src="images/flurdy-small-crop.png"  /></a>
 								</div>
 							</div>
@@ -81,9 +81,7 @@
 					</div>
 				</div>
 			</div>
-			<div id="buoy" class="structure">
-				<div class="compartment"><!--  --></div>
-			</div>
+			<div id="buoy" class="structure"><div class="compartment">buoy</div></div>
 		</div>
 		<div id="dragons" class="structure"><!-- tiles:insertAttribute name="dragoons"  --></div>
     </body>

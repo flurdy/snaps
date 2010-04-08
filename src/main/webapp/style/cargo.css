@@ -61,4 +61,19 @@ ul.feedbackPanel li.feedbackPanelERROR { color: #aa0000; font-weight: bold; }
 
 #jib { text-align: center; }
 #jib h2 { font-size:1.4em; margin:0.05em 0.2em; }
- 
+
+#tug > .compartment > iframe, #tug > .compartment img,
+#net > .compartment > iframe, #net > .compartment img { width: 36em; height: 3em; }
+#ama > .compartment > iframe, #ama > .compartment img { width: 6em; height: 22em; }
+
+#lighthouse > .compartment { height: 1em; }
+
+#cargo {
+	font-size: 1em;
+}
+#cargo h1 {
+	font-size: 1.3em;
+}
+#cargo p {
+	font-size: 1em;
+}

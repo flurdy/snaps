@@ -9,6 +9,7 @@
 #tug > .compartment > iframe, #tug > .compartment img ,
 #net > .compartment > iframe, #net > .compartment img ,
 #ama > .compartment > iframe, #ama > .compartment img,
+#lighthouse  > .compartment, #buoy  > .compartment,
 #hull {
 	border: 0.2em outset #990000;
 }
@@ -21,9 +22,27 @@
 	border-radius: 20px;
 	-webkit-border-radius: 20px;
 	-moz-border-radius: 20px;
-	-moz-box-shadow: 10px 10px 15px -5px #333333;
 }
 
+ #lighthouse  > .compartment {
+	border-top-width: 0.1em;
+	border-bottom-right-radius: 20px;
+	border-bottom-left-radius:  20px;
+	-moz-border-radius-bottomleft: 20px;
+	-moz-border-radius-bottomright: 20px;
+	-webkit-border-bottom-left-radius: 20px;
+	-webkit-border-bottom-right-radius: 20px;
+}
+
+#tug > .compartment > iframe, #tug > .compartment img ,
+#net > .compartment > iframe, #net > .compartment img ,
+#ama > .compartment > iframe, #ama > .compartment img ,
+#lighthouse  > .compartment, #buoy  > .compartment,
+#hull {
+	box-shadow: 10px 10px 15px -5px #333333;
+	-webkit-box-shadow: 10px 10px 15px -5px #333333;
+	-moz-box-shadow: 10px 10px 15px -5px #333333;
+}
 
 /* internal */
 #lookout,  #stern, #aft { border-top: 1px solid #990000; }
@@ -37,7 +56,8 @@ body {  background-color: #cc0000;  color: black; }
 #hull { background-color: #ffffff;  }
 #tug > .compartment > iframe, #tug > .compartment img ,
 #net > .compartment > iframe, #net > .compartment img ,
-#ama > .compartment > iframe, #ama > .compartment img {
+#ama > .compartment > iframe, #ama > .compartment img,
+#lighthouse  > .compartment, #buoy  > .compartment {
 	background-color: #ffffff;
 }
 
@@ -45,7 +65,7 @@ body {  background-color: #cc0000;  color: black; }
 /* dimensions   */
 .structure {  }
 .compartment { padding: 0.2em 1em; }
-body { padding: 0.2em; }
+body {  }
 #ocean { margin-left: 1em; }
 #ballast { width: 40em; padding: 2em; min-height: 14em;  }
 
@@ -122,10 +142,6 @@ body {  }
 #tug > .compartment > iframe, #tug > .compartment img,
 #net > .compartment > iframe, #net > .compartment img,
 #ama > .compartment > iframe, #ama > .compartment img { padding: 0.5em; }
-#tug > .compartment > iframe, #tug > .compartment img,
-#net > .compartment > iframe, #net > .compartment img { width: 36em; height: 4em; }
-#ama > .compartment > iframe, #ama > .compartment img { width: 6em; height: 22em; }
 
 
-#prow, #foremast, #starboard, #port, #deck  {  }
-#tug, #net, #ama {  } 
+#buoy { display: none; }

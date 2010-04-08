@@ -9,7 +9,7 @@
 
 root {  }
 html { height: 100%; }
-body { width: 98%; height: 98%; padding: 0; margin: 0; }
+body { width: 98%; height: 99%; padding: 0; margin: 0; }
 #ocean { display: table; width: 100%; height: 100%; margin: 0 auto; }
 #fleet { display: table-cell; vertical-align: middle; }
 #regatta { display: table; margin: auto; }
@@ -44,3 +44,5 @@ body { width: 98%; height: 98%; padding: 0; margin: 0; }
 #ama { display: table-cell; }
 #net { display: table-row; }
 #buoy { display: table-row; }
+#lighthouse > .compartment { display: table-cell; }
+#buoy > .compartment { display: table-cell; }
