@@ -1,11 +1,9 @@
 /* 
-    Document   : grid
+    Document   : site
     Created on : Sep 16, 2009, 9:08:21 AM
     Author     : ivar
     Description:
 */
-
-
 /* borders */
 /* ship borders */
 #tug > .compartment > iframe, #tug > .compartment img ,
@@ -121,10 +119,13 @@ body {  }
 #net > .compartment {  }
 #ama > .compartment {  }
 
-#tug > .compartment > iframe, #tug > .compartment img { }
-#net > .compartment > iframe, #net > .compartment img { }
-#ama > .compartment > iframe, #ama > .compartment img { }
+#tug > .compartment > iframe, #tug > .compartment img,
+#net > .compartment > iframe, #net > .compartment img,
+#ama > .compartment > iframe, #ama > .compartment img { padding: 0.5em; }
+#tug > .compartment > iframe, #tug > .compartment img,
+#net > .compartment > iframe, #net > .compartment img { width: 36em; height: 4em; }
+#ama > .compartment > iframe, #ama > .compartment img { width: 6em; height: 22em; }
 
 
-#prow, #foremast, #starboard, #port, #deck  { display: none; }
-#tug, #net, #ama { display: none; } 
+#prow, #foremast, #starboard, #port, #deck  {  }
+#tug, #net, #ama {  } 

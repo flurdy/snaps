@@ -86,30 +86,12 @@
 		<appender-ref ref="springLog" />
 	</logger>
 
-
-	<logger name="org.apache.wicket.version">
-		<level value="info" />
-		<appender-ref ref="console" />
-	</logger>
-	<logger name="org.apache.wicket.RequestCycle">
-		<level value="info" />
-		<appender-ref ref="console" />
-	</logger>
-	<logger name="org.apache.wicket.protocol.http.HttpSessionStore">
-		<level value="info" />
-		<appender-ref ref="console" />
-	</logger>
-	<logger name="org.apache.wicket">
-		<level value="warn" />
-		<appender-ref ref="wicketLog" />
-	</logger>
-
-
 	<logger name="org.apache">
 		<level value="warn" />
 		<appender-ref ref="allLog" />
 	</logger>
-
+	
+	<!--
 	<logger name="org.springframework.ws.soap.security">
 		<level value="warn" />
 		<appender-ref ref="securityLog" />
@@ -122,9 +104,10 @@
 		<level value="warn" />
 		<appender-ref ref="securityLog" />
 	</logger>
+	-->	
 
 	<root>
-		<level value="warn" />
+		<level value="error" />
 		<appender-ref ref="allLog" />
 		<appender-ref ref="console" />
 	</root>

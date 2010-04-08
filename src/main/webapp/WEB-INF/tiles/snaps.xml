@@ -4,24 +4,17 @@
 	"http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
 
 <tiles-definitions>
-	<!--
-	<definition name="admin" template="/WEB-INF/admin/admin.swf" />
-
-	<definition name="intro" extends="standardLayout">
-		<put-attribute name="body" value="/WEB-INF/intro.jsp" />
+	
+	<definition name="gridTemplate" template="/WEB-INF/views/grid.jsp">
+		<put-attribute name="pageTitle" value="snaps @ flurdy"/>
+		<put-attribute name="bowTitle" value="snaps"/>
+		<!-- <put-attribute name="dragons" value="/WEB-INF/views/dragons.jsp" -->
 	</definition>
 
-	<definition name="login" extends="standardLayout">
-		<put-attribute name="body" value="/WEB-INF/login.jsp" />
+
+	<definition name="index" extends="gridTemplate">
+		<put-attribute name="cargo" value="/WEB-INF/views/front.jsp"/>
 	</definition>
 
-	<definition name="logoutSuccess" extends="standardLayout">
-		<put-attribute name="body" value="/WEB-INF/logoutSuccess.jsp" />
-	</definition>
-
-	<definition name="preferences" extends="standardLayout">
-		<put-attribute name="body" value="/WEB-INF/test.jsp" />
-	</definition>
-	-->
 
 </tiles-definitions>

@@ -10,7 +10,23 @@
 		<param-name>contextConfigLocation</param-name>
 		<param-value>classpath:database.xml, classpath:application.xml</param-value>
 	</context-param>
+
 	
+	<filter>
+		<filter-name>UrlRewriteFilter</filter-name>
+		<filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
+		<init-param>
+			<param-name>confPath</param-name>
+		    <param-value>/WEB-INF/urlrewrite.xml</param-value>
+		</init-param>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>UrlRewriteFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
@@ -27,7 +43,7 @@
 
 	<servlet-mapping>
 		<servlet-name>springmvc</servlet-name>
-		<url-pattern>/*</url-pattern>
+		<url-pattern>*.html</url-pattern>
 	</servlet-mapping>
 
 
