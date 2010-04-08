@@ -109,6 +109,29 @@
 -->
 			<plugin>
 				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>7.0.2.v20100331</version>
+				<configuration>					
+					<connectors>
+						<connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+							<port>${web.port}</port>
+						</connector>
+					</connectors>
+					<scanIntervalSeconds>0</scanIntervalSeconds>
+					<webAppConfig>
+						<contextPath>${web.context}</contextPath>
+					</webAppConfig>
+					<systemproperties>
+						<systemproperty>
+							<name>log4j.configuration</name>
+							<value>file:${project.basedir}/target/classes/log4j.xml</value>
+						</systemproperty>
+					</systemproperties>
+				</configuration>
+			</plugin>
+			<!--
+			<plugin>
+				<groupId>org.mortbay.jetty</groupId>
 				<artifactId>maven-jetty-plugin</artifactId>
 				<configuration>
 					<connectors>
@@ -127,12 +150,6 @@
 						</sessionHandler>
 					</webAppConfig>
 					<systemproperties>
-						<!--
-						<systemproperty>
-							<name>slf4j</name>
-							<value>true</value>
-						</systemproperty>
-						-->
 						<systemproperty>
 							<name>log4j.configuration</name>
 							<value>file:${project.basedir}/target/classes/log4j.xml</value>
@@ -140,6 +157,7 @@
 					</systemproperties>
 				</configuration>
 			</plugin>
+			-->
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -348,7 +366,7 @@
 			</exclusions>
 		</dependency>
 		-->
-		
+
 		<!--
 		<dependency>
 			<groupId>org.mortbay.jetty</groupId>
@@ -386,6 +404,11 @@
 			<groupId>org.apache.tiles</groupId>
 			<artifactId>tiles-jsp</artifactId>
 			<version>2.1.2</version>
+		</dependency>
+		<dependency>
+				<groupId>org.apache.tomcat</groupId>
+				<artifactId>jasper-el</artifactId>
+				<version>6.0.26</version>
 		</dependency>
 		<!-- <dependency>
 			<groupId>javax.servlet</groupId>
