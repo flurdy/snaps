@@ -8,11 +8,13 @@
 
 
 #bow { text-align: center;  }
+#bow a { text-decoration: none;  color: black; }
 #bow h1 {
-	margin: 0.2em 0em 0.2em 0;
+	font-size: 3em;
+	margin: 0em 0em 0.2em 0;
 	padding: 0em;
-	text-shadow: black 0.1em 0.1em 0.2em;
-	-moz-text-shadow: black 0.1em 0.1em 0.2em;
+	text-shadow: gray 0.1em 0.1em 0.2em;
+	-moz-text-shadow: gray 0.1em 0.1em 0.2em;
 }
 
 #stern { padding: 0.2em 1em 1em 1em; }
@@ -62,11 +64,14 @@ ul.feedbackPanel li.feedbackPanelERROR { color: #aa0000; font-weight: bold; }
 #jib { text-align: center; }
 #jib h2 { font-size:1.4em; margin:0.05em 0.2em; }
 
+#foremast { text-align: center; }
+#foremast > img { width: 36em; height: 3em; }
+
 #tug > .compartment > iframe, #tug > .compartment img,
 #net > .compartment > iframe, #net > .compartment img { width: 36em; height: 3em; }
-#ama > .compartment > iframe, #ama > .compartment img { width: 6em; height: 22em; }
+#ama > .compartment > iframe, #ama > .compartment img { width: 6em; height: 27em; }
 
-#lighthouse > .compartment { height: 1em; }
+#lighthouse > .compartment { height: 0.5em; }
 
 #cargo {
 	font-size: 1em;
@@ -77,3 +82,23 @@ ul.feedbackPanel li.feedbackPanelERROR { color: #aa0000; font-weight: bold; }
 #cargo p {
 	font-size: 1em;
 }
+
+#port {  }
+.rotatemenu { margin: 1em 0 0 1em; padding: 0; }
+.rotatemenu li { 
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	width: 1em;
+	height: 4em;
+	font-size: 1.3em;
+	font-weight: bold;
+	left: 1em;
+	position: relative;
+	-webkit-transform: rotate(-90deg);
+	-moz-transform: rotate(-90deg);
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+	-o-transform: rotate(-90deg);
+}
+.rotatemenu li a { text-decoration: none; color: black; }
+.rotatemenu li a:hover { text-decoration: underline; }

@@ -8,14 +8,14 @@
 		<meta name="keywords" content="snaps,photo,photography,holiday,travel,events,friends,social,group,flurdy" />
 		<meta name="description" content="holiday photo snaps aggregator" />
 		<link rel="shortcut icon" href="favicon.ico">
-		<link rel="stylesheet" type="text/css" href="style/grid.css"/>
-		<link rel="stylesheet" type="text/css" href="style/site.css"/>
-		<link rel="stylesheet" type="text/css" href="style/cargo.css"/>
-		<script type="text/javascript">
-			function loader(){
+			<link rel="stylesheet" type="text/css" href="style/grid.css"/>
+			<link rel="stylesheet" type="text/css" href="style/site.css"/>
+			<link rel="stylesheet" type="text/css" href="style/cargo.css"/>
+			<script type="text/javascript">
+				function loader(){
 					// window.setTimeout("window.location.reload()", 3000);
-			}
-		</script>
+				}
+			</script>
     </head>
     <body onload="loader()">
 		<div id="ocean" class="structure">
@@ -34,13 +34,25 @@
 						<div id="hull" class="structure">
 							<div id="vaka" class="structure">
 								<div id="prow" class="compartment"><!--  --></div>
-								<div id="bow" class="compartment"><h1><tiles:getAsString name="bowTitle"/></h1></div>
-								<div id="lookout" class="compartment" wicket:id="lookout"><!-- super menu --></div>
+								<div id="bow" class="compartment"><a href="/"><h1><tiles:getAsString name="bowTitle"/></h1></a></div>
+								<div id="lookout" class="compartment" wicket:id="lookout">
+									<ul class="horizontal">
+										<li><a href="/">home</a></li>
+										<li><a href="http://code.flurdy.com/grid/snaps">about</a></li>
+									</ul>
+								</div>
 								<div id="keel" class="structure">
-									<div id="port" class="compartment"><!-- site menu --></div>
+									<div id="port" class="compartment">
+										<ul class="rotatemenu">
+											<li><a href="/">home</a></li>
+											<li><a href="http://code.flurdy.com/grid/snaps">about</a></li>
+										</ul>
+									</div>
 									<div id="innerhull" class="structure">
 										<div id="jib" class="compartment" wicket:id="jib"><!-- page title --></div>
-										<div id="foremast" class="compartment"><!-- breadcrumb --></div>
+										<div id="foremast" class="compartment">
+											<img src="images/leaderboard.gif" alt=""/>
+										</div>
 										<div id="bulkhead" class="structure">
 											<div id="hatch" class="compartment" wicket:id="hatch"><!-- item menu --></div>
 											<div id="ballast" class="structure compartment">
@@ -57,7 +69,7 @@
 								<div id="aft" class="compartment">
 									<ul class="horizontal">
 										<li><a href="http://flurdy.com/contact/">contact</a></li>
-										<li><a wicket:id="aboutLink" href="http://code.flurdy.com/grid/snaps">about</a></li>
+										<li><a wicket:id="aboutLink" href="http://code.flurdy.com/grid/snaps">project</a></li>
 										<li><a wicket:id="helpLink" href="http://code.flurdy.com/grid/snaps">help</a></li>
 									</ul>
 								</div>
