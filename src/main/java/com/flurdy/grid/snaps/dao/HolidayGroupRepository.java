@@ -1,11 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+package com.flurdy.grid.snaps.dao;
 
-package com.flurdy.grid.fotogator.dao;
-
-import com.flurdy.grid.fotogator.domain.HolidayGroup;
+import com.flurdy.grid.snaps.domain.HolidayGroup;
 import java.util.Collection;
 import java.util.List;
 import javax.persistence.EntityManager;

@@ -5,20 +5,21 @@
 
 package com.flurdy.grid.snaps.web;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller(value="/")
-public class FrontController {
-
-	protected transient Logger log = LoggerFactory.getLogger(this.getClass());
+public class FrontController extends AbstractGridController {
 
     @RequestMapping("/index.html")
-	public String indexHandler(){ return "index"; }
+	public ModelAndView indexHandler(){ log.debug("index"); return returnTemplate("index"); }
 
-    @RequestMapping("/front.html")
-	public String frontHandler(){ return "index"; }
+	@RequestMapping("/about.html")
+	public ModelAndView aboutHandler(){ log.debug("about"); return returnTemplate("about"); }
+
+	@RequestMapping("/join.html")
+	public ModelAndView joinHandler(){ log.debug("join"); return returnTemplate("join"); }
+
 
 }

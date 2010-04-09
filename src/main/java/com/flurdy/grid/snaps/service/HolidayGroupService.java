@@ -1,12 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+package com.flurdy.grid.snaps.service;
 
-package com.flurdy.grid.fotogator.service;
-
-import com.flurdy.grid.fotogator.dao.IHolidayGroupRepository;
-import com.flurdy.grid.fotogator.domain.HolidayGroup;
+import com.flurdy.grid.snaps.dao.IHolidayGroupRepository;
+import com.flurdy.grid.snaps.domain.HolidayGroup;
 import java.util.HashSet;
 import java.util.Set;
 import org.slf4j.Logger;

@@ -1,21 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE tiles-definitions PUBLIC
-	"-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN"
-	"http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
+"-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+"http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
 
 <tiles-definitions>
-	
+
+
+
 	<definition name="gridTemplate" template="/WEB-INF/views/grid.jsp">
-		<put-attribute name="pageTitle" value="snaps @ flurdy"/>
-		<put-attribute name="bowTitle" value="snaps"/>
-		<put-attribute name="version" value="v.0.2&amp;alpha;"/>
-		<!-- <put-attribute name="dragons" value="/WEB-INF/views/dragons.jsp" -->
+		<put-attribute name="headerTitle" type="string" value="snaps @ flurdy"/>
+		<put-attribute name="bowTitle" type="string" value="snaps"/>
+		<put-attribute name="version" type="string" value="v.0.2&amp;alpha;"/>
+		<put-attribute name="dragons">
+			<definition template="/WEB-INF/views/dragons.jsp">
+				<put-attribute name="analyticsId" value="var pageTracker = _gat._getTracker('123');"/>
+			</definition>
+		</put-attribute>
 	</definition>
 
 
 	<definition name="index" extends="gridTemplate">
+		<put-attribute name="pageTitle" type="string" value=""/>
 		<put-attribute name="cargo" value="/WEB-INF/views/front.jsp"/>
 	</definition>
 
+	<definition name="about" extends="gridTemplate">
+		<put-attribute name="pageTitle" type="string" value="about"/>
+		<put-attribute name="cargo" value="/WEB-INF/views/about.jsp"/>
+	</definition>
+
+	<definition name="join" extends="gridTemplate">
+		<put-attribute name="pageTitle" type="string" value="join"/>
+		<put-attribute name="cargo" value="/WEB-INF/views/register.jsp"/>
+	</definition>
+
+	<definition name="contact" extends="gridTemplate">
+		<put-attribute name="pageTitle" type="string" value="contact"/>
+		<put-attribute name="cargo" value="/WEB-INF/views/contact.jsp"/>
+	</definition>
+
+	<definition name="holidayTemplate" extends="gridTemplate">
+		<put-attribute name="pageTitle" type="string" value="holiday group"/>
+	</definition>
+
+	<definition name="holiday/create" extends="holidayTemplate">
+		<put-attribute name="cargo" value="/WEB-INF/views/holiday/create.jsp"/>
+	</definition>
+
+	<definition name="holiday/read" extends="holidayTemplate">
+		<put-attribute name="cargo" value="/WEB-INF/views/holiday/read.jsp"/>
+	</definition>
+
+	<definition name="holiday/list" extends="holidayTemplate">
+		<put-attribute name="cargo" value="/WEB-INF/views/holiday/list.jsp"/>
+	</definition>
 
 </tiles-definitions>

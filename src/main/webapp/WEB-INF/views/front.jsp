@@ -1,23 +1,31 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
 
+<style>
+	#jib { display: none; }
+</style>
 
-<style>#cargo { text-align: center}</style>
-
-
-
-
-<h2>holiday group: <input type="text" /><button type="submit">find</button></h2>
-<br/>
-<hr width="80%"/>
-<br/><br/>
-<h3>New holiday group: <input type="text" /><button type="submit">create</button></h3>
-
+<div class="centreCargo">
+	
+	
+	<form action="holiday/" method="get">
+		<h2>holiday group: <input type="text" name="groupname"/><button type="submit">find</button></h2>
+	</form>
+	<br/>
 
 
 
 
+	<hr width="80%"/>
+
+	<br/><br/>
+
+	<form action="holiday/new.html"><button type="submit">create holiday group</button>
+	</form>
+
+
+
+
+</div>
 
 
 

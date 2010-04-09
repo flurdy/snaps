@@ -43,7 +43,7 @@
 
 	<servlet-mapping>
 		<servlet-name>springmvc</servlet-name>
-		<url-pattern>*.html</url-pattern>
+		<url-pattern>/app/*</url-pattern>
 	</servlet-mapping>
 
 

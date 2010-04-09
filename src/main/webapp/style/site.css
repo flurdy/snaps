@@ -11,7 +11,7 @@
 #ama > .compartment > iframe, #ama > .compartment img,
 #lighthouse  > .compartment, #buoy  > .compartment,
 #hull {
-	border: 0.2em outset #990000;
+	border: 0.2em outset #222222;
 }
 
 /* rounding & shadows */
@@ -150,4 +150,4 @@ body {  }
 
 
 #starboard, #tug, #net, #ama, #hatch, #deck, #prow, #port,
-#jib, #foremast, #lighthouse, #buoy { display: none; }
+#foremast, #lighthouse, #buoy { display: none; }

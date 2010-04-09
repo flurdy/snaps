@@ -4,13 +4,37 @@
 
 	<rule>
 		<from>/</from>
-		<to>/index.html</to>
+		<to>/app/index.html</to>
 	</rule>
 
 	<rule>
-		<from>/index.html</from>
-		<to>/index.html</to>
+		<from>/images/**</from>
+		<to>/images/$1</to>
 	</rule>
 
+	<rule>
+		<from>/style/**</from>
+		<to>/style/$1</to>
+	</rule>
+
+	<rule>
+		<from>/scripts/**</from>
+		<to>/scripts/$1</to>
+	</rule>
+
+	<rule>
+		<from>/favicon.ico</from>
+		<to>/favicon.ico</to>
+	</rule>
+
+	<rule>
+		<from>/**</from>
+		<to>/app/$1</to>
+	</rule>
+
+	<outbound-rule>
+		<from>/app/**</from>
+		<to>/$1</to>
+	</outbound-rule>
 	
 </urlrewrite>

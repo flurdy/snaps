@@ -117,8 +117,8 @@
 							<port>${web.port}</port>
 						</connector>
 					</connectors>
-					<scanIntervalSeconds>3</scanIntervalSeconds>
-					<!-- <reload>automatic</reload> -->
+					<scanIntervalSeconds>0</scanIntervalSeconds>
+					<reload>manual</reload>
 					<webAppConfig>
 						<contextPath>${web.context}</contextPath>
 						<!--
@@ -637,12 +637,26 @@
 		</profile>
 
 		<profile>
+			<id>jrebel-repo</id>
+			<repositories>
+				<repository>
+					<id>zt-repo-again</id>
+					<name>Zero turnaround repo</name>
+					<url>http://repos.zeroturnaround.com/maven2</url>
+					<snapshots>
+						<enabled>false</enabled>
+					</snapshots>
+				</repository>
+			</repositories>
+		</profile>
+
+		<profile>
 			<id>jrebel</id>
 			<build>
 				<plugins>
 					<plugin>
 						<groupId>org.zeroturnaround</groupId>
-						<artifactId>javarebel-maven-plugin</artifactId>
+						<artifactId>jrebel-maven-plugin</artifactId>
 						<executions>
 							<execution>
 								<id>generate-rebel-xml</id>
@@ -662,6 +676,41 @@
 					<url>http://repos.zeroturnaround.com/maven2</url>
 				</pluginRepository>
 			</pluginRepositories>
+			<dependencies>
+				<!--
+				<dependency>
+					<groupId>org.zeroturnaround</groupId>
+					<artifactId>struts2-jr-plugin</artifactId>
+					<version>2.2</version>
+					<exclusions>						
+						<exclusion>
+							<groupId>org.apache.struts</groupId>
+							<artifactId>struts2-core</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<dependency>
+					<groupId>org.zeroturnaround</groupId>
+					<artifactId>spring-jr-plugin</artifactId>
+					<version>2.2</version>
+				</dependency>
+				<dependency>
+					<groupId>org.zeroturnaround</groupId>
+					<artifactId>spring-mvc-jr-plugin</artifactId>
+					<version>2.2</version>
+				</dependency>
+				<dependency>
+					<groupId>org.zeroturnaround</groupId>
+					<artifactId>log4j-jr-plugin</artifactId>
+					<version>2.2</version>
+				</dependency>
+				<<dependency>
+					<groupId>org.zeroturnaround</groupId>
+					<artifactId>hibernate-jr-plugin</artifactId>
+					<version>3.0-RC1</version>
+				</dependency>
+				-->
+			</dependencies>
 		</profile>
 
 		<profile>

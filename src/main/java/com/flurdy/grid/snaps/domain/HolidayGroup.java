@@ -1,9 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-package com.flurdy.grid.fotogator.domain;
+package com.flurdy.grid.snaps.domain;
 
 import java.io.Serializable;
 import javax.persistence.Entity;
