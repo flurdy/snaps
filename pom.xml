@@ -398,7 +398,11 @@
 			<groupId>javax.servlet.jsp</groupId>
 			<artifactId>jsp-api</artifactId>
 			<version>2.1</version>
+			<scope>runtime</scope>
+			<!--
+			<scope>provided</scope>
 			<scope>compile</scope>
+			-->
 		</dependency>
 		<dependency>
 			<groupId>org.apache.tiles</groupId>
@@ -409,6 +413,12 @@
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>jasper-el</artifactId>
 			<version>6.0.26</version>
+			<!-- <scope>compile</scope> -->
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.tuckey</groupId>
@@ -703,6 +713,24 @@
 					</snapshots>
 				</pluginRepository>
 			</pluginRepositories>
+		</profile>
+
+		<profile>
+			<id>tomcat-build</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.apache.tomcat</groupId>
+					<artifactId>jasper-el</artifactId>
+					<version>6.0.26</version>
+					<scope>provided</scope>
+				</dependency>
+				<dependency>
+					<groupId>javax.servlet.jsp</groupId>
+					<artifactId>jsp-api</artifactId>
+					<version>2.1</version>
+					<scope>provided</scope>
+				</dependency>
+			</dependencies>
 		</profile>
 
 	</profiles>

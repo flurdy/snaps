@@ -149,5 +149,5 @@ body {  }
 #ama > .compartment > iframe, #ama > .compartment img { padding: 0.5em; }
 
 
-#starboard, #tug, #ama, #hatch, #deck, #prow, #port,
+#starboard, #tug, #net, #ama, #hatch, #deck, #prow, #port,
 #jib, #foremast, #lighthouse, #buoy { display: none; }
