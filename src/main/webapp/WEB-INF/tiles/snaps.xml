@@ -52,6 +52,7 @@
 	</definition>
 
 	<definition name="holiday/list" extends="holidayTemplate">
+		<put-attribute name="pageTitle" type="string" value="holiday groups"/>
 		<put-attribute name="cargo" value="/WEB-INF/views/holiday/list.jsp"/>
 	</definition>
 

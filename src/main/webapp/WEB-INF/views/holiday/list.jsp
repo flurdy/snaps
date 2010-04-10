@@ -1,19 +1,13 @@
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 
 <div class="centreCargo">
 
 	<ul>
-		<li><a href="${contextPage.request.contextPath}/holiday/123431">holiday name</a></li>
-		<li><a href="${contextPage.request.contextPath}/holiday/123431">holiday name</a></li>
-		<li><a href="${contextPage.request.contextPath}/holiday/123431">holiday name</a></li>
-		<li><a href="${contextPage.request.contextPath}/holiday/123431">holiday name</a></li>
-		<li><a href="${contextPage.request.contextPath}/holiday/123431">holiday name</a></li>
-		<li><a href="${contextPage.request.contextPath}/holiday/123431">holiday name</a></li>
-		<li><a href="${contextPage.request.contextPath}/holiday/123431">holiday name</a></li>
+		<c:forEach var="holidayGroup" items="${holidayGroups}">
+		<li><a href="${pageContext.request.contextPath}/holiday/${holidayGroup.groupId}">${holidayGroup.groupName}</a></li>
+		</c:forEach>
 	</ul>
 </div>
-
-
-
 

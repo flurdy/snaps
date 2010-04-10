@@ -1,9 +1,8 @@
 /* 
-    Document   : grid
+    Document   : cargo
     Created on : Sep 16, 2009, 9:08:21 AM
     Author     : ivar
     Description:
-        Purpose of the stylesheet follows.
 */
 
 
@@ -131,3 +130,9 @@ ul.feedbackPanel li.feedbackPanelERROR { color: #aa0000; font-weight: bold; }
 
 #cargo .centreCargo { text-align: center; }
 #cargo .centreCargo table { margin-left:auto; margin-right:auto }
+
+
+
+#cargo li { list-style: none; }
+
+

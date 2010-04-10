@@ -8,7 +8,10 @@
 	
 	
 	<form action="holiday/" method="get">
-		<h2>holiday group: <input type="text" name="groupname"/><button type="submit">find</button></h2>
+		<h2>holiday group<br/>
+			<input type="text" name="groupName"/>
+			<button type="submit">find</button>
+		</h2>
 	</form>
 	<br/>
 
@@ -19,7 +22,7 @@
 
 	<br/><br/>
 
-	<form action="holiday/new.html"><button type="submit">create holiday group</button>
+	<form action="holiday/new.html"><button type="submit">create new holiday group</button>
 	</form>
 
 
