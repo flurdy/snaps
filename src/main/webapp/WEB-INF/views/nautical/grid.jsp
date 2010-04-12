@@ -18,8 +18,14 @@
 			#bow h1 { display: none; } */
 		</style>
 		</c:if>
+		<style>
+			#ocean #ship #stern { display: none; }
+			#ocean #ship #aft { display: none; }
+		</style>
 		<script type="text/javascript">
 			function loader(){
+				document.getElementById("stern").style.display="block";
+				document.getElementById("aft").style.display="block";
 				// window.setTimeout("window.location.reload()", 3000);
 			}
 		</script>
@@ -50,7 +56,10 @@
 									<a href="${pageContext.request.contextPath}/j_spring_security_logout">logout</a>
 									</sec:authorize>									
 								</div>
-								<div id="bow" class="compartment"><a href="${pageContext.request.contextPath}/"><h1><tiles:getAsString name="bowTitle"/></h1></a></div>
+								<div id="bow" class="compartment">
+									<a href="${pageContext.request.contextPath}/"><h1><tiles:getAsString name="bowTitle"/></h1></a>
+									<!-- <div id="mission">your holiday photos</div> -->
+								</div>
 								<div id="lookout" class="compartment">
 									<ul class="horizontal">
 										<li><a href="${pageContext.request.contextPath}/">home</a></li>

@@ -42,6 +42,27 @@
 		</snapshotRepository>
 	</distributionManagement>
 
+	<!-- for dependecies only avaialable on 3rd party repos:
+		E.g Hibernate on jboss, JPA on java.net, jrebel on zeroturnaround -->
+	<repositories>
+		<repository>
+			<id>code-flurdy-repo</id>
+			<name>code@flurdy repository</name>
+			<url>http://code.flurdy.com/nexus/content/public</url>
+			<releases><enabled>true</enabled></releases>
+			<snapshots><enabled>false</enabled></snapshots>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>code-flurdy-repo</id>
+			<name>code@flurdy repository</name>
+			<url>http://code.flurdy.com/nexus/content/public</url>
+			<releases><enabled>true</enabled></releases>
+			<snapshots><enabled>false</enabled></snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
 	<properties>
 		<jetty.version>7.0.2.v20100331</jetty.version>
 		<slf4j.version>1.5.8</slf4j.version>
@@ -186,6 +207,8 @@
 			</plugin>
 
 		</plugins>
+
+
 	</build>
 
 
@@ -683,20 +706,6 @@
 		</profile>
 
 		<profile>
-			<id>jrebel-repo</id>
-			<repositories>
-				<repository>
-					<id>zt-repo-again</id>
-					<name>Zero turnaround repo</name>
-					<url>http://repos.zeroturnaround.com/maven2</url>
-					<snapshots>
-						<enabled>false</enabled>
-					</snapshots>
-				</repository>
-			</repositories>
-		</profile>
-
-		<profile>
 			<id>jrebel</id>
 			<build>
 				<plugins>
@@ -715,6 +724,7 @@
 					</plugin>
 				</plugins>
 			</build>
+			<!--
 			<pluginRepositories>
 				<pluginRepository>
 					<id>zt-repo</id>
@@ -722,6 +732,7 @@
 					<url>http://repos.zeroturnaround.com/maven2</url>
 				</pluginRepository>
 			</pluginRepositories>
+			-->
 			<dependencies>
 				<!--
 				<dependency>
@@ -758,7 +769,23 @@
 				-->
 			</dependencies>
 		</profile>
+		<!--
+		<profile>
+			<id>jrebel-repo</id>
+			<repositories>
+				<repository>
+					<id>zt-repo-again</id>
+					<name>Zero turnaround repo</name>
+					<url>http://repos.zeroturnaround.com/maven2</url>
+					<snapshots>
+						<enabled>false</enabled>
+					</snapshots>
+				</repository>
+			</repositories>
+		</profile>
+		-->
 
+		<!--
 		<profile>
 			<id>java.net-repo</id>
 			<activation>
@@ -784,8 +811,8 @@
 				</repository>
 			</repositories>
 		</profile>
-
-
+		-->
+		<!--
 		<profile>
 			<id>jboss-repo</id>
 			<repositories>
@@ -809,6 +836,7 @@
 				</pluginRepository>
 			</pluginRepositories>
 		</profile>
+		-->
 
 		<profile>
 			<id>tomcat-build</id>

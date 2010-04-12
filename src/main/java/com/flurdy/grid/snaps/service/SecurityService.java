@@ -15,7 +15,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class SecurityService implements ISecurityService {
-	
+
+	private static final String DEFAULT_SUPER_USERNAME = "super";
+	private static final String DEFAULT_SUPER_FULLNAME = "Super User";
+	private static final String DEFAULT_SUPER_PASSWORD = "superpassword"; // TODO create a reset pw email instead
+	private static final String DEFAULT_SUPER_EMAIL = "info@code.flurdy.com";
+
 	protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	private static final AuthorityRole[] defaultAuthorityRoles = {AuthorityRole.ROLE_USER};
@@ -29,9 +34,10 @@ public class SecurityService implements ISecurityService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
+	
+	
 	@Override
 	public SecurityDetail findLogin(String username) {
-
 		if (username != null && username.length() > 0) {
 			return securityRepository.findSecurityDetail(username);
 		} else {
@@ -75,9 +81,52 @@ public class SecurityService implements ISecurityService {
 		}
 	}
 
+
 	private synchronized void applyEncryptedPassword(SecurityDetail securityDetail) {
 		securityDetail.setPassword( passwordEncoder.encodePassword(
 				securityDetail.getPassword(), securityDetail.getUsername() ) );
+	}
+
+	@Override
+	public void enforceAristocracy() {
+		if(!doesSuperUserExist()){
+			if( findLogin(DEFAULT_SUPER_USERNAME) != null  ){
+				updateDefaultSuperUser();
+			} else
+				createDefaultSuperUser();
+		}
+	}
+
+	private boolean doesSuperUserExist() {
+		SecurityDetail securityDetail = securityRepository.findSecurityDetail(DEFAULT_SUPER_USERNAME);
+		// TODO loop all users
+		if( securityDetail != null ){
+			for (SecurityAuthority authority : securityDetail.getAuthorities()) {
+				if( authority.getAuthorityRole().equals(AuthorityRole.ROLE_SUPER) ){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	private void updateDefaultSuperUser() {
+		throw new UnsupportedOperationException("Not yet implemented");
+	}
+
+	private void createDefaultSuperUser() {
+		Traveller traveller = new Traveller.Builder()
+					.username(DEFAULT_SUPER_USERNAME)
+					.fullname(DEFAULT_SUPER_FULLNAME)
+					.password(DEFAULT_SUPER_PASSWORD)
+					.email(DEFAULT_SUPER_EMAIL)
+					.authorities(new HashSet<SecurityAuthority>(){{
+						add(new SecurityAuthority(AuthorityRole.ROLE_SUPER));
+						add(new SecurityAuthority(AuthorityRole.ROLE_ADMIN));
+						add(new SecurityAuthority(AuthorityRole.ROLE_USER));
+					}})
+					.build();
+		registerTraveller(traveller);
 	}
 
 }

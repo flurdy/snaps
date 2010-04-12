@@ -45,8 +45,8 @@
 }
 
 /* internal */
-#lookout,  #stern, #aft { border-top: 1px solid #990000; }
-#lookout, #prow, #jib, #foremast { border-bottom: 1px solid #990000;  }
+#aft { border-top: 1px solid #990000; }
+#lookout, #foremast { border-bottom: 1px solid #990000;  }
 #port, #hatch { border-right: 1px solid #990000;  }
 #starboard, #deck { border-left: 1px solid #990000;  }
 
@@ -79,12 +79,12 @@ body {  }
 #hatch.compartment ,
 #deck.compartment  {  padding: 0.2em 0.2em; }
 
-#prow.compartment  {  padding: 0 2em; }
-#bridge.compartment  {  padding: 0 0; }
-
-#port.compartment {
+#prow.compartment  {  
+	padding: 0 2em;
 	vertical-align: top;
+	height: 0;
 }
+#bridge.compartment  {  padding: 0 0; }
 
 #ama { padding: 0.3em 0 0 1em;  }
 #tug > .compartment { margin: 0 0 0.5em 0; text-align: center; }

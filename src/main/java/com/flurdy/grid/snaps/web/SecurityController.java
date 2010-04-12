@@ -48,4 +48,14 @@ public class SecurityController extends AbstractGridController {
 		
 	}
 
+    @RequestMapping("aristocracy/enforce.html")
+	public String enforceAristocracyHandler(){
+	
+		log.warn("Checking aristocracy!");
+		
+		securityService.enforceAristocracy();
+
+		return "redirect:/";
+	}
+
 }

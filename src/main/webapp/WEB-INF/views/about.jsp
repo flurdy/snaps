@@ -2,7 +2,6 @@
 
 <div>
 	
-	<h1>about</h1>
 
 	<h4>
 		<b>snaps @ flurdy</a>

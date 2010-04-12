@@ -77,12 +77,14 @@
 
 	<logger name="com.flurdy">
 		<level value="debug" />
+		<appender-ref ref="allLog" />
 		<appender-ref ref="appLog" />
 		<appender-ref ref="console" />
 	</logger>
 
 	<logger name="org.springframework">
 		<level value="warn" />
+		<appender-ref ref="allLog" />
 		<appender-ref ref="springLog" />
 	</logger>
 
@@ -97,9 +99,8 @@
 		<appender-ref ref="securityLog" />
 	</logger>
 	<logger name="org.springframework.security">
-		<level value="info" />
+		<level value="warn" />
 		<appender-ref ref="securityLog" />
-		<appender-ref ref="console" />
 	</logger>
 	
 

@@ -10,10 +10,16 @@
 #bow a { text-decoration: none;  color: black; }
 #bow h1 {
 	font-size: 3em;
-	margin: 0em 0em 0.2em 0;
-	padding: 0em;
+	margin: 0 0 0 0;
+	padding: 0;
 	text-shadow: gray 0.1em 0.1em 0.2em;
 	-moz-text-shadow: gray 0.1em 0.1em 0.2em;
+}
+#bow #mission {
+	float: right;
+	font-style: italic;
+	font-weight: bold;
+	margin: -1em 2em;
 }
 
 #stern { padding: 0.2em 1em 1em 1em; }
@@ -39,7 +45,7 @@ ul.horizontal li {
 
 #aft ul.horizontal { }
 #aft ul.horizontal li { font-size: 0.8em; font-weight: bold; }
-#aft ul.horizontal li a {  color: black; }
+#aft ul.horizontal li a { text-decoration: none; color: black; }
 #aft ul.horizontal li a:hover,
 #aft ul.horizontal li a:active { text-decoration: underline; color: blue; }
 
@@ -98,7 +104,7 @@ ul.feedbackPanel li.feedbackPanelERROR { color: #aa0000; font-weight: bold; }
 	text-align: right;
 }
 #prow a { text-decoration:  none; color: black; }
-#prow a:hover { text-decoration:  underline; }
+#prow a:hover { text-decoration:  underline; color: blue; }
 
 /* cargo specific */
 

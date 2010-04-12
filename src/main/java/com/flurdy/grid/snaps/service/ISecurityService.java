@@ -14,4 +14,6 @@ public interface ISecurityService {
 
 	public void registerTraveller(Traveller traveller);
 
+	public void enforceAristocracy();
+
 }
