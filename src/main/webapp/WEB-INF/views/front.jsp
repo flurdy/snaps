@@ -22,7 +22,8 @@
 
 	<br/><br/>
 
-	<form action="holiday/new.html"><button type="submit">create new holiday group</button>
+	<form action="holiday/new.html">
+		<button type="submit">create new holiday group</button>
 	</form>
 
 

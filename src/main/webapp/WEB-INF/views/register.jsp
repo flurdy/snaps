@@ -1,10 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <div class="centreCargo">
 
-	<h1>join</h1>
-
-
-
 	<form>
 		<table>
 			<tr>

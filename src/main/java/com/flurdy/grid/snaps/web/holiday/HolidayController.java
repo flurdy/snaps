@@ -8,6 +8,7 @@ package com.flurdy.grid.snaps.web.holiday;
 import com.flurdy.grid.snaps.domain.HolidayGroup;
 import com.flurdy.grid.snaps.web.AbstractGridController;
 import java.util.Set;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -29,10 +30,8 @@ public class HolidayController extends AbstractGridController {
 		
 		Set<HolidayGroup> holidayGroups = holidayGroupService.searchForHolidayGroups(groupName);
 
-		log.debug("groups:"+holidayGroups.size());
-		for (HolidayGroup holidayGroup : holidayGroups) {
-			log.debug("hG:" + holidayGroup);
-		}
+		if( holidayGroups.size()==1)
+			return readHolidayHandler(holidayGroups.iterator().next().getGroupId());
 
 		ModelAndView modelAndView = new ModelAndView("holiday/list");
 		modelAndView.addObject("holidayGroups", holidayGroups);

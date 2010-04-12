@@ -91,20 +91,17 @@
 		<appender-ref ref="allLog" />
 	</logger>
 	
-	<!--
+	
 	<logger name="org.springframework.ws.soap.security">
 		<level value="warn" />
 		<appender-ref ref="securityLog" />
 	</logger>
 	<logger name="org.springframework.security">
-		<level value="warn" />
+		<level value="info" />
 		<appender-ref ref="securityLog" />
+		<appender-ref ref="console" />
 	</logger>
-	<logger name="org.acegisecurity">
-		<level value="warn" />
-		<appender-ref ref="securityLog" />
-	</logger>
-	-->	
+	
 
 	<root>
 		<level value="error" />

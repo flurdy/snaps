@@ -1,4 +1,6 @@
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:wicket="http://wicket.apache.org">
@@ -7,15 +9,20 @@
 		<title><tiles:getAsString name="pageTitle"/> <tiles:getAsString name="headerTitle"/></title>
 		<meta name="keywords" content="snaps,photo,photography,holiday,travel,events,friends,social,group,flurdy" />
 		<meta name="description" content="holiday photo snaps aggregator" />
-		<link rel="shortcut icon" href="${pageContext.request.contextPath}/favicon.ico">
-			<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/style/grid.css"/>
-			<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/style/site.css"/>
-			<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/style/cargo.css"/>
-			<script type="text/javascript">
-				function loader(){
-					// window.setTimeout("window.location.reload()", 3000);
-				}
-			</script>
+		<link rel="shortcut icon" href="${pageContext.request.contextPath}/favicon.ico"/>
+		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/style/grid.css"/>
+		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/style/site.css"/>
+		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/style/cargo.css"/>
+		<c:if test="${pageContext.request.serverName == 'localhost'}"><style>
+			body { background-color: #ffffff; }
+			#bow h1 { display: none; }
+		</style>
+		</c:if>
+		<script type="text/javascript">
+			function loader(){
+				// window.setTimeout("window.location.reload()", 3000);
+			}
+		</script>
     </head>
     <body onload="loader()">
 		<div id="ocean" class="structure">
@@ -33,13 +40,24 @@
 						<div id="figurehead" class="compartment"><!--  --></div>
 						<div id="hull" class="structure">
 							<div id="vaka" class="structure">
-								<div id="prow" class="compartment"><!--  --></div>
+								<div id="prow" class="compartment">									
+									<sec:authorize ifNotGranted="ROLE_USER">
+									<a href="${pageContext.request.contextPath}/login.html">login</a>
+									</sec:authorize>									
+									<sec:authorize ifAllGranted="ROLE_USER">
+									<sec:authentication property="principal.username" />
+									| 
+									<a href="${pageContext.request.contextPath}/j_spring_security_logout">logout</a>
+									</sec:authorize>									
+								</div>
 								<div id="bow" class="compartment"><a href="${pageContext.request.contextPath}/"><h1><tiles:getAsString name="bowTitle"/></h1></a></div>
 								<div id="lookout" class="compartment">
 									<ul class="horizontal">
 										<li><a href="${pageContext.request.contextPath}/">home</a></li>
-											<li><a href="${pageContext.request.contextPath}/join.html">join</a></li>
-											<li><a href="${pageContext.request.contextPath}/about.html">about</a></li>
+										<sec:authorize ifNotGranted="ROLE_USER">
+										<li><a href="${pageContext.request.contextPath}/join.html">join</a></li>
+										</sec:authorize>
+										<li><a href="${pageContext.request.contextPath}/about.html">about</a></li>
 									</ul>
 								</div>
 								<div id="keel" class="structure">

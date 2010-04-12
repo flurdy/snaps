@@ -5,8 +5,6 @@
 
 <tiles-definitions>
 
-
-
 	<definition name="gridTemplate" template="/WEB-INF/views/grid.jsp">
 		<put-attribute name="headerTitle" type="string" value="snaps @ flurdy"/>
 		<put-attribute name="bowTitle" type="string" value="snaps"/>
@@ -18,6 +16,11 @@
 		</put-attribute>
 	</definition>
 
+
+	<definition name="login" extends="gridTemplate">
+		<put-attribute name="pageTitle" type="string" value="login"/>
+		<put-attribute name="cargo" value="/WEB-INF/views/login.jsp"/>
+	</definition>
 
 	<definition name="index" extends="gridTemplate">
 		<put-attribute name="pageTitle" type="string" value=""/>

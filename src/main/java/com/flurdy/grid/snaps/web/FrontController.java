@@ -9,7 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-@Controller(value="/")
+@Controller
+@RequestMapping("/")
 public class FrontController extends AbstractGridController {
 
     @RequestMapping("/index.html")

@@ -18,9 +18,32 @@
 	<description>event photo aggregator</description>
 	<url>http://code.flurdy.com/grid/snaps</url>
 
+	<issueManagement>
+		<system>Github</system>
+		<url>http://github.com/flurdy/snaps/issues/</url>
+	</issueManagement>
+
+	<scm>
+		<url>http://github.com:flurdy/snaps</url>
+		<connection>scm:git:git@github.com:flurdy/snaps.git</connection>
+		<developerConnection>scm:git:git@github.com:flurdy/snaps.git</developerConnection>
+	</scm>
+
+	<distributionManagement>
+		<repository>
+			<id>flurdy-code-repo</id>
+			<name>code@flurdy repository</name>
+			<url>http://code.flurdy.com/nexus/content/repositories/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>flurdy-code-repo</id>
+			<name>code@flurdy repository</name>
+			<url>http://code.flurdy.com/nexus/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
 	<properties>
-		<wicket.version>1.4.3</wicket.version>
-		<jetty.version>6.1.4</jetty.version>
+		<jetty.version>7.0.2.v20100331</jetty.version>
 		<slf4j.version>1.5.8</slf4j.version>
 		<spring.version>3.0.2.RELEASE</spring.version>
 		<web.port>8886</web.port>
@@ -31,12 +54,6 @@
 		<db.username>sa</db.username>
 		<db.password></db.password>
 	</properties>
-
-	<scm>
-		<url>scm:git:git@github.com:flurdy/snaps.git</url>
-		<connection>scm:git:git@github.com:flurdy/snaps.git</connection>
-		<developerConnection>scm:git:git@github.com:flurdy/snaps.git</developerConnection>
-	</scm>
 
 	<build>
 		<resources>
@@ -110,7 +127,7 @@
 			<plugin>
 				<groupId>org.mortbay.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
-				<version>7.0.2.v20100331</version>
+				<version>${jetty.version}</version>
 				<configuration>
 					<connectors>
 						<connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
@@ -175,37 +192,6 @@
 
 	<dependencies>
 
-		<dependency>
-			<groupId>com.flurdy.grid</groupId>
-			<artifactId>grid-wicket</artifactId>
-			<version>0.1-SNAPSHOT</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.wicket</groupId>
-			<artifactId>wicket</artifactId>
-			<version>${wicket.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.wicket</groupId>
-			<artifactId>wicket-ioc</artifactId>
-			<version>${wicket.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.wicket</groupId>
-			<artifactId>wicket-spring</artifactId>
-			<version>${wicket.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.wicket</groupId>
-			<artifactId>wicket-extensions</artifactId>
-			<version>${wicket.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.wicket</groupId>
-			<artifactId>wicket-auth-roles</artifactId>
-			<version>${wicket.version}</version>
-		</dependency>
 
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -408,6 +394,12 @@
 			<groupId>org.apache.tiles</groupId>
 			<artifactId>tiles-jsp</artifactId>
 			<version>2.1.2</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
@@ -472,7 +464,7 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
-			<version>3.0.0.RELEASE</version>
+			<version>3.0.2.RELEASE</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.springframework</groupId>
@@ -495,6 +487,60 @@
 					<artifactId>commons-logging</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>3.0.2.RELEASE</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-context</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-aop</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-support</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- <dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-openid</artifactId>
+			<version>3.0.2.RELEASE</version>
+		</dependency> -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>3.0.2.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>3.0.2.RELEASE</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-taglibs</artifactId>
+			<version>3.0.2.RELEASE</version>
 		</dependency>
 
 	</dependencies>
@@ -682,7 +728,7 @@
 					<groupId>org.zeroturnaround</groupId>
 					<artifactId>struts2-jr-plugin</artifactId>
 					<version>2.2</version>
-					<exclusions>						
+					<exclusions>
 						<exclusion>
 							<groupId>org.apache.struts</groupId>
 							<artifactId>struts2-core</artifactId>
