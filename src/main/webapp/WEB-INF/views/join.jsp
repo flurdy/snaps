@@ -17,11 +17,11 @@
 			</tr>
 			<tr>
 				<th>password</th>
-				<td><input type="text" name="password"/></td>
+				<td><input type="password" name="password"/></td>
 			</tr>
 			<tr>
 				<th>confirm</th>
-				<td><input type="text" name="confirmPassword" /></td>
+				<td><input type="password" name="confirmPassword" /></td>
 			</tr>
 			<tr>
 				<td colspan="2"><input type="submit" value="join"/></td>
