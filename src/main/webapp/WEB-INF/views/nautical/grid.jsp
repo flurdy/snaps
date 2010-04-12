@@ -1,4 +1,4 @@
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <?xml version="1.0" encoding="UTF-8"?>
@@ -14,8 +14,8 @@
 		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/style/site.css"/>
 		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/style/cargo.css"/>
 		<c:if test="${pageContext.request.serverName == 'localhost'}"><style>
-			body { background-color: #ffffff; }
-			#bow h1 { display: none; }
+			/* body { background-color: #ffffff; }
+			#bow h1 { display: none; } */
 		</style>
 		</c:if>
 		<script type="text/javascript">

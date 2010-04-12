@@ -19,8 +19,5 @@ public class FrontController extends AbstractGridController {
 	@RequestMapping("/about.html")
 	public ModelAndView aboutHandler(){ log.debug("about"); return returnTemplate("about"); }
 
-	@RequestMapping("/join.html")
-	public ModelAndView joinHandler(){ log.debug("join"); return returnTemplate("join"); }
-
 
 }

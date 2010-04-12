@@ -16,6 +16,7 @@
 		<intercept-url pattern="/admin/*"				access="hasAnyRole('ROLE_ADMIN','ROLE_SUPER')"/>
 		<intercept-url pattern="/status.html"			access="hasAnyRole('ROLE_MONITOR','ROLE_ADMIN','ROLE_SUPER')"/>
 		<intercept-url pattern="/account/**"			access="isAuthenticated()" />
+		<!-- <intercept-url pattern="/holiday/new.html"		access="isAuthenticated()" /> -->
 		<intercept-url pattern="/holiday/**"			access="permitAll" />
 		<intercept-url pattern="/about.html"			access="permitAll" />
 		<intercept-url pattern="/login.html"			access="isAnonymous()" />
@@ -32,23 +33,17 @@
     </http>
 
     <authentication-manager>
-        <authentication-provider>
-			<!--
+        <authentication-provider user-service-ref='userDetailsService'>
 			<password-encoder hash="sha">
-				<security:salt-source user-property="username"/>
+				<salt-source user-property="username"/>
 			</password-encoder>
-            <password-encoder hash="md5"/>
-			-->
-            <user-service>
-				<user name="flurdy" password="flurdy" authorities="ROLE_USER" />
-				<user name="admin"  password="admin"  authorities="ROLE_USER,ROLE_ADMIN" />
-				<user name="super"  password="super"  authorities="ROLE_USER,ROLE_ADMIN,ROLE_SUPER" />
-            </user-service>
-        </authentication-provider>
+		</authentication-provider>
     </authentication-manager>
 
-	 <global-method-security secured-annotations="enabled" />
+	<!-- <global-method-security secured-annotations="enabled" pre-post-annotations="enabled"/> -->
+	<global-method-security pre-post-annotations="enabled"/>
 
+	<beans:bean id="userDetailsService" class="com.flurdy.grid.snaps.security.TravellerUserDetails" />
 
 	<!--	<security:http auto-config="true" access-denied-page="/access.html">
 		<security:logout logout-url="/logout" logout-success-url="/" />
@@ -56,10 +51,17 @@
 		< - <security:remember-me key="" /> - >
 	</security:http>
 
-	<security:authentication-provider user-service-ref='userDetailsService'>
+	<security:authentication-provider>
+			
+            <password-encoder hash="md5"/>
+			
+            <user-service>
+				<user name="flurdy" password="flurdy" authorities="ROLE_USER" />
+				<user name="admin"  password="admin"  authorities="ROLE_USER,ROLE_ADMIN" />
+				<user name="super"  password="super"  authorities="ROLE_USER,ROLE_ADMIN,ROLE_SUPER" />
+            </user-service>
+        </authentication-provider>
 	</security:authentication-provider>
-
-	<bean id="userDetailsService" class="" />
 	-->
 
 </beans:beans>

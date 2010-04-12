@@ -1,5 +1,10 @@
 target
-#.nbactions.xml
+nbactions.xml
+catalog.xml
+nb-configuration.xml
+nbactions-jrebel.xml
+#	src/main/resources/rebel.xml
 .settings
 src/main/resources/javarebel.lic
 *.*~
+

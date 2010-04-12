@@ -6,6 +6,7 @@
 package com.flurdy.grid.snaps.web;
 
 import com.flurdy.grid.snaps.service.IHolidayGroupService;
+import com.flurdy.grid.snaps.service.ISecurityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ public abstract class AbstractGridController {
 	protected transient Logger log = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired protected IHolidayGroupService holidayGroupService;
+	@Autowired protected ISecurityService securityService;
 
 	protected ModelAndView returnTemplate(String view){
 		ModelAndView modelAndView = new ModelAndView(view);

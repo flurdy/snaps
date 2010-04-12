@@ -5,12 +5,12 @@
 
 <tiles-definitions>
 
-	<definition name="gridTemplate" template="/WEB-INF/views/grid.jsp">
+	<definition name="gridTemplate" template="/WEB-INF/views/nautical/grid.jsp">
 		<put-attribute name="headerTitle" type="string" value="snaps @ flurdy"/>
 		<put-attribute name="bowTitle" type="string" value="snaps"/>
 		<put-attribute name="version" type="string" value="v.0.2&amp;alpha;"/>
 		<put-attribute name="dragons">
-			<definition template="/WEB-INF/views/dragons.jsp">
+			<definition template="/WEB-INF/views/nautical/dragons.jsp">
 				<put-attribute name="analyticsId" value="var pageTracker = _gat._getTracker('123');"/>
 			</definition>
 		</put-attribute>
@@ -34,7 +34,12 @@
 
 	<definition name="join" extends="gridTemplate">
 		<put-attribute name="pageTitle" type="string" value="join"/>
-		<put-attribute name="cargo" value="/WEB-INF/views/register.jsp"/>
+		<put-attribute name="cargo" value="/WEB-INF/views/join.jsp"/>
+	</definition>
+
+	<definition name="registered" extends="gridTemplate">
+		<put-attribute name="pageTitle" type="string" value="registered"/>
+		<put-attribute name="cargo" value="/WEB-INF/views/registered.jsp"/>
 	</definition>
 
 	<definition name="contact" extends="gridTemplate">
