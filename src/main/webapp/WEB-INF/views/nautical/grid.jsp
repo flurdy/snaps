@@ -3,7 +3,7 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns:wicket="http://wicket.apache.org">
+<html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 		<title><tiles:getAsString name="pageTitle"/> <tiles:getAsString name="headerTitle"/></title>
@@ -15,11 +15,12 @@
 		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/style/cargo.css"/>
 		<c:if test="${pageContext.request.serverName == 'localhost'}"><style>
 			/* body { background-color: #ffffff; }
-			#bow h1 { display: none; } */
+			#bow, #jib { display: none; } */
 		</style>
 		</c:if>
 		<style>
-			#ocean #ship #stern { display: none; }
+			/* firefox css bug hack */
+			#ocean #ship #stern { display: none; } 
 			#ocean #ship #aft { display: none; }
 		</style>
 		<script type="text/javascript">
@@ -39,7 +40,7 @@
 				<div id="regatta" class="structure">
 					<div id="tug" class="structure">
 						<div class="compartment">
-							<img src="${pageContext.request.contextPath}/images/leaderboard.gif" alt=""/>
+							<!-- <img src="${pageContext.request.contextPath}/images/leaderboard.gif" alt=""/> -->
 						</div>
 					</div>
 					<div id="ship" class="structure">
@@ -48,12 +49,11 @@
 							<div id="vaka" class="structure">
 								<div id="prow" class="compartment">									
 									<sec:authorize ifNotGranted="ROLE_USER">
-									<a href="${pageContext.request.contextPath}/login.html">login</a>
+										<a href="${pageContext.request.contextPath}/login.html">login</a>
 									</sec:authorize>									
 									<sec:authorize ifAllGranted="ROLE_USER">
-									<sec:authentication property="principal.username" />
-									| 
-									<a href="${pageContext.request.contextPath}/j_spring_security_logout">logout</a>
+										<sec:authentication property="principal.username" />
+										| <a href="${pageContext.request.contextPath}/j_spring_security_logout">logout</a>
 									</sec:authorize>									
 								</div>
 								<div id="bow" class="compartment">
@@ -74,7 +74,7 @@
 									<div id="innerhull" class="structure">
 										<div id="jib" class="compartment"><h2><tiles:getAsString name="pageTitle"/></h2></div>
 										<div id="foremast" class="compartment">
-											<img src="${pageContext.request.contextPath}/images/leaderboard.gif" alt=""/>
+											<!-- <img src="${pageContext.request.contextPath}/images/leaderboard.gif" alt=""/> -->
 										</div>
 										<div id="bulkhead" class="structure">
 											<div id="hatch" class="compartment"><!-- item menu --></div>
@@ -106,17 +106,17 @@
 					</div>
 					<div id="ama" class="structure">
 						<div class="compartment">
-							<img src="${pageContext.request.contextPath}/images/wideskyscraper.gif" alt=""/>
+						<!--	<img src="${pageContext.request.contextPath}/images/wideskyscraper.gif" alt=""/> -->
 						</div>
 					</div>
 					<div id="net" class="structure">
 						<div class="compartment">
-							<img src="${pageContext.request.contextPath}/images/leaderboard_img.jpg" alt=""/>
+							<!-- <img src="${pageContext.request.contextPath}/images/leaderboard_img.jpg" alt=""/> -->
 						</div>
 					</div>
 				</div>
 			</div>
-			<div id="buoy" class="structure"><div class="compartment">buoy</div></div>
+			<div id="buoy" class="structure"><div class="compartment"><!--  --></div></div>
 		</div>
 		<div id="dragons" class="structure"><tiles:insertAttribute name="dragons"/></div>
     </body>

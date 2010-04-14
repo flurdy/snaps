@@ -87,15 +87,25 @@ public class SecurityService implements ISecurityService {
 				securityDetail.getPassword(), securityDetail.getUsername() ) );
 	}
 
+
+
 	@Override
 	public void enforceAristocracy() {
+		log.warn("Enforcing aristocracy check!");
 		if(!doesSuperUserExist()){
+			log.warn("Aristocracy will be enforced! As no super user exist!");
+			// TODO: reset pw by email instead
 			if( findLogin(DEFAULT_SUPER_USERNAME) != null  ){
+				log.info("Updating old super user as it exist.");
 				updateDefaultSuperUser();
-			} else
+			} else {
 				createDefaultSuperUser();
-		}
+			}
+		} else
+			log.info("Aristocracy preserved. Super user was found.");
 	}
+
+
 
 	private boolean doesSuperUserExist() {
 		SecurityDetail securityDetail = securityRepository.findSecurityDetail(DEFAULT_SUPER_USERNAME);
@@ -110,23 +120,139 @@ public class SecurityService implements ISecurityService {
 		return false;
 	}
 
+
 	private void updateDefaultSuperUser() {
 		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
+	
+	private SecurityAuthority createAndAddAuthority(AuthorityRole role){
+		SecurityAuthority authority = securityRepository.findAuthority(role);
+		if( authority == null ){
+			securityRepository.addAuthority(new SecurityAuthority( role ));
+			authority = securityRepository.findAuthority( role );
+		}
+		return authority;
+	}
+
+	
 	private void createDefaultSuperUser() {
+
+		log.info("Creating default super user");
+
 		Traveller traveller = new Traveller.Builder()
 					.username(DEFAULT_SUPER_USERNAME)
 					.fullname(DEFAULT_SUPER_FULLNAME)
 					.password(DEFAULT_SUPER_PASSWORD)
 					.email(DEFAULT_SUPER_EMAIL)
-					.authorities(new HashSet<SecurityAuthority>(){{
-						add(new SecurityAuthority(AuthorityRole.ROLE_SUPER));
-						add(new SecurityAuthority(AuthorityRole.ROLE_ADMIN));
-						add(new SecurityAuthority(AuthorityRole.ROLE_USER));
-					}})
 					.build();
-		registerTraveller(traveller);
+
+		traveller.getSecurityDetail().addAuthority(createAndAddAuthority(AuthorityRole.ROLE_SUPER));
+		traveller.getSecurityDetail().addAuthority(createAndAddAuthority(AuthorityRole.ROLE_ADMIN));
+		traveller.getSecurityDetail().addAuthority(createAndAddAuthority(AuthorityRole.ROLE_USER));
+
+		applyEncryptedPassword(traveller.getSecurityDetail());
+
+		securityRepository.addSecurityDetail(traveller.getSecurityDetail());
+		travellerRepository.addTraveller(traveller);
+
 	}
+
+
+
+	@Override
+	public void changeSecurityDetailPassword(String username, String password) {
+
+		// TODO validate
+		
+		log.info("Changing password for: " + username);
+
+		SecurityDetail securityDetail = securityRepository.findSecurityDetail(username);
+
+		assert securityDetail != null;
+		if( password !=null && password.trim().length()>0)
+			securityDetail.setPassword(password);
+
+		applyEncryptedPassword(securityDetail);
+
+		securityRepository.updateSecurityDetail(securityDetail);
+	}
+
+
+
+	@Override
+	public void disableSecurityDetail(String username) {
+
+		log.info("Disabling user: " + username);
+
+		SecurityDetail securityDetail = securityRepository.findSecurityDetail(username);
+		assert securityDetail != null;
+
+		securityDetail.setEnabled(false);
+
+		securityRepository.updateSecurityDetail(securityDetail);
+	}
+
+
+	
+	@Override
+	public void enableSecurityDetail(String username) {
+
+		log.info("Enabling user: " + username);
+
+		SecurityDetail securityDetail = securityRepository.findSecurityDetail(username);
+		assert securityDetail != null;
+
+		securityDetail.setEnabled(true);
+
+		securityRepository.updateSecurityDetail(securityDetail);
+	}
+
+
+	@Override
+	public void removeAuthority(String username, SecurityAuthority authority) {
+
+		// TODO validate
+
+		log.info("Removing authority ["+authority+"] from: " + username);
+
+		SecurityDetail securityDetail = securityRepository.findSecurityDetail(username);
+		SecurityAuthority realAuthority = securityRepository.findAuthority(authority.getAuthorityRole());
+
+		log.debug("Auths:"+securityDetail.getAuthorities().size());
+		
+		securityDetail.getAuthorities().remove(realAuthority);
+
+		log.debug("Auths:"+securityDetail.getAuthorities().size());
+
+		securityRepository.updateSecurityDetail(securityDetail);
+
+	}
+
+	
+
+	@Override
+	public void addAuthority(String username, SecurityAuthority authority) {
+
+		// TODO validate
+
+		assert username != null && username.length()>0;
+		assert authority != null && authority.getAuthorityRole() != null;
+		
+		log.info("Adding authority ["+authority+"] from: " + username);
+		
+
+		SecurityDetail securityDetail = securityRepository.findSecurityDetail(username);
+		SecurityAuthority realAuthority = securityRepository.findAuthority(authority.getAuthorityRole());
+
+		log.debug("Auths:"+securityDetail.getAuthorities().size());
+
+		securityDetail.getAuthorities().add(realAuthority);
+
+		log.debug("Auths:"+securityDetail.getAuthorities().size());
+
+		securityRepository.updateSecurityDetail(securityDetail);
+	}
+
 
 }

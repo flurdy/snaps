@@ -14,4 +14,6 @@ public interface ISecurityRepository {
 
 	public void addSecurityDetail(SecurityDetail securityDetail);
 
+	public void updateSecurityDetail(SecurityDetail securityDetail);
+
 }

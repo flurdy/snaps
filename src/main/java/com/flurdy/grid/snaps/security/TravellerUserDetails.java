@@ -22,18 +22,18 @@ public class TravellerUserDetails implements UserDetailsService {
 	protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
-	protected ISecurityService securityServiceAdapter;
+	protected ISecurityService securityService;
 
 	@Override
 	public UserDetails loadUserByUsername(String username)
 			throws UsernameNotFoundException, DataAccessException {
 
-		log.debug("Loading user: "+ username);
+//		log.debug("Loading user: "+ username);
 
 		SecurityDetail securityDetail = null;
 
 		try {
-			securityDetail = securityServiceAdapter.findLogin(username);
+			securityDetail = securityService.findLogin(username);
 		} catch (Exception ex) {
 			log.error("username error",ex);
 			throw new DataAccessResourceFailureException("Security loading problem.",ex);
@@ -44,12 +44,12 @@ public class TravellerUserDetails implements UserDetailsService {
 				throw new UsernameNotFoundException("User is not on this system.");
 		}
 
-		log.debug("Found security detail: " +securityDetail);
+//		log.debug("Found security detail: " +securityDetail);
 		
 		Set<GrantedAuthority> grantedAuthorities = new HashSet<GrantedAuthority>();
 		if( securityDetail.getAuthorities() != null ) {
 			for(SecurityAuthority authority : securityDetail.getAuthorities() ){
-				log.debug("Authority: " + authority);
+//				log.debug("Authority: " + authority);
 				grantedAuthorities.add( new GrantedAuthorityImpl( authority.getAuthorityRole().toString() ));
 			}
 		}

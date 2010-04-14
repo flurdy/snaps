@@ -11,9 +11,10 @@
 		<intercept-url pattern="/images/**"				filters="none"/>
 		<intercept-url pattern="/favicon.ico"			filters="none"/>
 		<intercept-url pattern="/robot.txt"				filters="none"/>
-		<intercept-url pattern="/error/*"				filters="none"/>		
-		<intercept-url pattern="/admin/super/*"			access="hasAnyRole('ROLE_SUPER')"/>
-		<intercept-url pattern="/admin/*"				access="hasAnyRole('ROLE_ADMIN','ROLE_SUPER')"/>
+		<intercept-url pattern="/error/*"				filters="none"/>
+		<intercept-url pattern="/admin/aristocracy/enforce*" access="isAuthenticated()" />
+		<intercept-url pattern="/admin/super/**"			access="hasRole('ROLE_SUPER')"/>
+		<intercept-url pattern="/admin/**"				access="hasAnyRole('ROLE_ADMIN','ROLE_SUPER')"/>
 		<intercept-url pattern="/status.html"			access="hasAnyRole('ROLE_MONITOR','ROLE_ADMIN','ROLE_SUPER')"/>
 		<intercept-url pattern="/account/**"			access="isAuthenticated()" />
 		<!-- <intercept-url pattern="/holiday/new.html"		access="isAuthenticated()" /> -->

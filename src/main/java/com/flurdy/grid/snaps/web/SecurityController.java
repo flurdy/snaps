@@ -25,6 +25,7 @@ public class SecurityController extends AbstractGridController {
     @RequestMapping("login.html")
 	public ModelAndView showLoginHandler(){ return returnTemplate("login"); }
 
+	
     @RequestMapping(value="registration",method=RequestMethod.POST)
 	public String registerNewTravellerHandler(
 			String username, 		String fullname,
@@ -48,10 +49,11 @@ public class SecurityController extends AbstractGridController {
 		
 	}
 
-    @RequestMapping("aristocracy/enforce.html")
+	
+    @RequestMapping("/admin/aristocracy/enforce")
 	public String enforceAristocracyHandler(){
 	
-		log.warn("Checking aristocracy!");
+		log.info("Checking aristocracy!");
 		
 		securityService.enforceAristocracy();
 

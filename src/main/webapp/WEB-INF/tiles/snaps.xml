@@ -16,6 +16,14 @@
 		</put-attribute>
 	</definition>
 
+	<definition name="holidayTemplate" extends="gridTemplate">
+		<put-attribute name="pageTitle" type="string" value="holiday group"/>
+	</definition>
+
+	<definition name="adminTemplate" extends="gridTemplate">
+		<put-attribute name="pageTitle" type="string" value="admin"/>
+	</definition>
+
 
 	<definition name="login" extends="gridTemplate">
 		<put-attribute name="pageTitle" type="string" value="login"/>
@@ -47,9 +55,7 @@
 		<put-attribute name="cargo" value="/WEB-INF/views/contact.jsp"/>
 	</definition>
 
-	<definition name="holidayTemplate" extends="gridTemplate">
-		<put-attribute name="pageTitle" type="string" value="holiday group"/>
-	</definition>
+
 
 	<definition name="holiday/create" extends="holidayTemplate">
 		<put-attribute name="cargo" value="/WEB-INF/views/holiday/create.jsp"/>
@@ -63,5 +69,17 @@
 		<put-attribute name="pageTitle" type="string" value="holiday groups"/>
 		<put-attribute name="cargo" value="/WEB-INF/views/holiday/list.jsp"/>
 	</definition>
+
+
+	<definition name="admin/index" extends="adminTemplate">
+		<put-attribute name="cargo" value="/WEB-INF/views/admin/list.jsp"/>
+	</definition>
+
+
+	<definition name="admin/traveller/read" extends="adminTemplate">
+		<put-attribute name="pageTitle" type="string" value="traveller"/>
+		<put-attribute name="cargo" value="/WEB-INF/views/admin/traveller.jsp"/>
+	</definition>
+
 
 </tiles-definitions>

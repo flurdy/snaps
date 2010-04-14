@@ -156,7 +156,7 @@
 						</connector>
 					</connectors>
 					<scanIntervalSeconds>0</scanIntervalSeconds>
-					<reload>manual</reload>
+					<!-- <reload>manual</reload> -->
 					<webAppConfig>
 						<contextPath>${web.context}</contextPath>
 						<!--

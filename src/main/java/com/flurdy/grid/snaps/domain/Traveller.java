@@ -7,8 +7,21 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 
+@NamedQueries({
+    @NamedQuery(name = "traveller.findAll",
+		query = "select trav from Traveller trav " +
+		"left join fetch trav.securityDetail " +
+		"order by trav.fullname"),
+    @NamedQuery(name = "traveller.findById",
+		query = "select distinct trav from Traveller trav " +
+		"left join fetch trav.securityDetail " +
+		"where trav.travellerId = :travellerId")
+//		query = "from Traveller")traveller.findById
+})
  @Entity
 public class Traveller implements Serializable {
 

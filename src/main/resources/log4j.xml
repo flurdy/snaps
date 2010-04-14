@@ -88,22 +88,22 @@
 		<appender-ref ref="springLog" />
 	</logger>
 
+	<logger name="org.springframework.web">
+		<level value="warn" />
+		<appender-ref ref="console" />
+	</logger>
+
+	<logger name="org.springframework.security">
+		<level value="warn" />
+		<appender-ref ref="securityLog" />
+		<appender-ref ref="console" />
+	</logger>
+
 	<logger name="org.apache">
 		<level value="warn" />
 		<appender-ref ref="allLog" />
 	</logger>
 	
-	
-	<logger name="org.springframework.ws.soap.security">
-		<level value="warn" />
-		<appender-ref ref="securityLog" />
-	</logger>
-	<logger name="org.springframework.security">
-		<level value="warn" />
-		<appender-ref ref="securityLog" />
-	</logger>
-	
-
 	<root>
 		<level value="error" />
 		<appender-ref ref="allLog" />

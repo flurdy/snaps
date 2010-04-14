@@ -1,6 +1,7 @@
 package com.flurdy.grid.snaps.domain;
 
 import java.io.Serializable;
+import javassist.NotFoundException;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -39,7 +40,18 @@ public class SecurityAuthority implements Serializable {
 	}
 
 	public SecurityAuthority(String role){
+		if(findRole(role)==null)
+			throw new NullPointerException();
+		authorityRole = role;
+	}
 
+	private AuthorityRole findRole(String role){
+		for (AuthorityRole possibleRole : AuthorityRole.values() ) {
+			if( possibleRole.toString().equalsIgnoreCase(role) ){
+				return possibleRole;
+			}
+		}
+		return null;
 	}
 
 	public SecurityAuthority(AuthorityRole role){
@@ -47,11 +59,7 @@ public class SecurityAuthority implements Serializable {
 	}
 
 	public AuthorityRole getAuthorityRole() {
-		for (AuthorityRole possibleRole : AuthorityRole.values() ) {
-				 if( possibleRole.toString().equalsIgnoreCase(this.authorityRole) )
-							return possibleRole;
-		}
-		return null;
+		return findRole(this.authorityRole);
 	}
 
 	public void setAuthorityRole(AuthorityRole authorityRole) {

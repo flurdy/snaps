@@ -1,6 +1,7 @@
 package com.flurdy.grid.snaps.domain;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -42,6 +43,12 @@ public class SecurityDetail implements Serializable {
 		this.password = builder.password;
 		this.enabled = builder.enabled;
 		this.authorities = builder.authorities;
+	}
+
+	public void addAuthority(SecurityAuthority authority) {
+		if( authorities == null )
+			authorities = new HashSet<SecurityAuthority>();
+		authorities.add(authority);
 	}
 
 
