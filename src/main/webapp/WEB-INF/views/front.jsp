@@ -8,7 +8,7 @@
 	
 	
 	<form action="holiday/" method="get">
-		<!-- <h2>holiday photo group<br/> -->
+		<h2>holiday photo group<br/> 
 			<input type="text" name="groupName"/>
 			<button type="submit">find</button>
 		</h2>
