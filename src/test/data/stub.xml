@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+  <table name="HOLIDAYGROUP">
+    <column>GROUPID</column>
+    <column>GROUPNAME</column>
+  </table>
+  <table name="SECURITYAUTHORITY">
+    <column>AUTHORITY_ID</column>
+    <column>AUTHORITY_ROLE</column>
+    <row>
+      <value>1</value>
+      <value>ROLE_USER</value>
+    </row>
+    <row>
+      <value>2</value>
+      <value>ROLE_SUPER</value>
+    </row>
+    <row>
+      <value>3</value>
+      <value>ROLE_ADMIN</value>
+    </row>
+  </table>
+  <table name="SECURITYDETAIL">
+    <column>USERNAME</column>
+    <column>ENABLED</column>
+    <column>PASSWORD</column>
+    <row>
+      <value>flurdy</value>
+      <value>true</value>
+      <value>1b6b40f7ca0074ae4c80f1e9334636ae34df88d8</value>
+    </row>
+    <row>
+      <value>super</value>
+      <value>true</value>
+      <value>52c53c2ecfe3438af8b702641d65df5edaef5d90</value>
+    </row>
+  </table>
+  <table name="SECURITYDETAIL_SECURITYAUTHORITY">
+    <column>SECURITYDETAIL_USERNAME</column>
+    <column>AUTHORITIES_AUTHORITY_ID</column>
+    <row>
+      <value>flurdy</value>
+      <value>1</value>
+    </row>
+    <row>
+      <value>super</value>
+      <value>1</value>
+    </row>
+    <row>
+      <value>super</value>
+      <value>2</value>
+    </row>
+    <row>
+      <value>super</value>
+      <value>3</value>
+    </row>
+  </table>
+  <table name="TRAVELLER">
+    <column>TRAVELLERID</column>
+    <column>EMAIL</column>
+    <column>FULLNAME</column>
+    <column>SECURITYDETAIL_USERNAME</column>
+    <row>
+      <value>1</value>
+      <value>invalid@example.com</value>
+      <value><![CDATA[Ivar Abrahamsen]]></value>
+      <value>flurdy</value>
+    </row>
+    <row>
+      <value>2</value>
+      <value>invalid@example.com</value>
+      <value><![CDATA[Super User]]></value>
+      <value>super</value>
+    </row>
+  </table>
+</dataset>

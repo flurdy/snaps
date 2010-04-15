@@ -14,6 +14,7 @@
 				<put-attribute name="analyticsId" value="var pageTracker = _gat._getTracker('123');"/>
 			</definition>
 		</put-attribute>
+		<put-attribute name="port" type="string" value="snaps"/>
 	</definition>
 
 	<definition name="holidayTemplate" extends="gridTemplate">
@@ -63,12 +64,20 @@
 
 	<definition name="holiday/read" extends="holidayTemplate">
 		<put-attribute name="cargo" value="/WEB-INF/views/holiday/read.jsp"/>
+		<put-attribute name="port" value="/WEB-INF/views/holiday/readPort.jsp"/>
 	</definition>
 
 	<definition name="holiday/list" extends="holidayTemplate">
 		<put-attribute name="pageTitle" type="string" value="holiday groups"/>
 		<put-attribute name="cargo" value="/WEB-INF/views/holiday/list.jsp"/>
 	</definition>
+
+
+	<definition name="holiday/edit" extends="holidayTemplate">
+		<put-attribute name="cargo" value="/WEB-INF/views/holiday/read.jsp"/>
+		<put-attribute name="port" value="/WEB-INF/views/holiday/editPort.jsp"/>
+	</definition>
+
 
 
 	<definition name="admin/index" extends="adminTemplate">
@@ -80,6 +89,7 @@
 		<put-attribute name="pageTitle" type="string" value="traveller"/>
 		<put-attribute name="cargo" value="/WEB-INF/views/admin/traveller.jsp"/>
 	</definition>
+
 
 
 </tiles-definitions>

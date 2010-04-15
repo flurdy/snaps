@@ -67,6 +67,7 @@
 		<jetty.version>7.0.2.v20100331</jetty.version>
 		<slf4j.version>1.5.8</slf4j.version>
 		<spring.version>3.0.2.RELEASE</spring.version>
+		<hsqldb.version>1.8.0.10</hsqldb.version>
 		<web.port>8886</web.port>
 		<web.context>/snaps</web.context>
 		<logFolder>target/logs</logFolder>
@@ -450,7 +451,7 @@
 		<dependency>
 			<groupId>hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
-			<version>1.8.0.10</version>
+			<version>${hsqldb.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-dbcp</groupId>
@@ -583,12 +584,12 @@
 							<dependency>
 								<groupId>hsqldb</groupId>
 								<artifactId>hsqldb</artifactId>
-								<version>${version.hsql}</version>
+								<version>${hsqldb.version}</version>
 							</dependency>
 						</dependencies>
 						<configuration>
 							<dataTypeFactoryName>org.dbunit.ext.hsqldb.HsqldbDataTypeFactory</dataTypeFactoryName>
-							<url>jdbc:hsqldb:file:${project.basedir}/target/db/wish-build;shutdown=true</url>
+							<url>jdbc:hsqldb:file:${project.basedir}/target/db/build;shutdown=true</url>
 							<driver>org.hsqldb.jdbcDriver</driver>
 							<username>sa</username>
 							<password></password>
@@ -624,7 +625,7 @@
 								</component>
 							</components>
 							<componentProperties>
-								<persistenceunit>wish</persistenceunit>
+								<persistenceunit>${project.artifactId}</persistenceunit>
 								<outputfilename>schema.ddl</outputfilename>
 								<drop>false</drop>
 								<create>true</create>
@@ -637,7 +638,7 @@
 							<dependency>
 								<groupId>hsqldb</groupId>
 								<artifactId>hsqldb</artifactId>
-								<version>${version.hsql}</version>
+								<version>${hsqldb.version}</version>
 							</dependency>
 						</dependencies>
 					</plugin>
@@ -687,7 +688,7 @@
 							<dependency>
 								<groupId>hsqldb</groupId>
 								<artifactId>hsqldb</artifactId>
-								<version>${version.hsql}</version>
+								<version>${hsqldb.version}</version>
 							</dependency>
 						</dependencies>
 						<configuration>

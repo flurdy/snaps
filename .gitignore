@@ -6,5 +6,6 @@ nbactions-jrebel.xml
 #	src/main/resources/rebel.xml
 .settings
 src/main/resources/javarebel.lic
+src/main/resources/rebel.xml
 *.*~
 

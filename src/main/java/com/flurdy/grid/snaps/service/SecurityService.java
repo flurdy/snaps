@@ -19,7 +19,7 @@ public class SecurityService implements ISecurityService {
 	private static final String DEFAULT_SUPER_USERNAME = "super";
 	private static final String DEFAULT_SUPER_FULLNAME = "Super User";
 	private static final String DEFAULT_SUPER_PASSWORD = "superpassword"; // TODO create a reset pw email instead
-	private static final String DEFAULT_SUPER_EMAIL = "info@code.flurdy.com";
+	private static final String DEFAULT_SUPER_EMAIL = "invalid@example.com";
 
 	protected final Logger log = LoggerFactory.getLogger(this.getClass());
 

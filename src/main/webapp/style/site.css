@@ -78,7 +78,7 @@ body {  }
 #starboard.compartment ,
 #hatch.compartment ,
 #deck.compartment  {  padding: 0.2em 0.2em; }
-
+#innerhull { padding: 0; margin: 0; }
 #prow.compartment  {  
 	padding: 0 2em;
 	vertical-align: top;
@@ -110,7 +110,7 @@ body {  }
 #vaka {  }
 #hull {  }
 #keel {  }
-#innerhull { }
+#innerhull { vertical-align: top; }
 #bulkhead {  }
 #ballast {  }
 

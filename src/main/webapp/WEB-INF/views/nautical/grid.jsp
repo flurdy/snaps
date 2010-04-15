@@ -4,7 +4,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
-    <head>
+	<head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 		<title><tiles:getAsString name="pageTitle"/> <tiles:getAsString name="headerTitle"/></title>
 		<meta name="keywords" content="snaps,photo,photography,holiday,travel,events,friends,social,group,flurdy" />
@@ -14,13 +14,15 @@
 		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/style/site.css"/>
 		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/style/cargo.css"/>
 		<c:if test="${pageContext.request.serverName == 'localhost'}"><style>
-			/* body { background-color: #ffffff; }
-			#bow, #jib { display: none; } */
+			 body { background-color: #ffffff; }
+			/* #bow { display: none; }
+			 #jib { display: none; }
+			#cargo h2 { display: none; } */
 		</style>
 		</c:if>
 		<style>
 			/* firefox css bug hack */
-			#ocean #ship #stern { display: none; } 
+			#ocean #ship #stern { display: none; }
 			#ocean #ship #aft { display: none; }
 		</style>
 		<script type="text/javascript">
@@ -30,7 +32,7 @@
 				// window.setTimeout("window.location.reload()", 3000);
 			}
 		</script>
-    </head>
+	</head>
     <body onload="loader()">
 		<div id="ocean" class="structure">
 			<div id="lighthouse" class="structure">
@@ -47,14 +49,14 @@
 						<div id="figurehead" class="compartment"><!--  --></div>
 						<div id="hull" class="structure">
 							<div id="vaka" class="structure">
-								<div id="prow" class="compartment">									
+								<div id="prow" class="compartment">
 									<sec:authorize ifNotGranted="ROLE_USER">
 										<a href="${pageContext.request.contextPath}/login.html">login</a>
-									</sec:authorize>									
+									</sec:authorize>
 									<sec:authorize ifAllGranted="ROLE_USER">
 										<sec:authentication property="principal.username" />
 										| <a href="${pageContext.request.contextPath}/j_spring_security_logout">logout</a>
-									</sec:authorize>									
+									</sec:authorize>
 								</div>
 								<div id="bow" class="compartment">
 									<a href="${pageContext.request.contextPath}/"><h1><tiles:getAsString name="bowTitle"/></h1></a>
@@ -70,14 +72,14 @@
 									</ul>
 								</div>
 								<div id="keel" class="structure">
-									<div id="port" class="compartment">	</div>
+<div id="port" class="compartment"><tiles:insertAttribute name="port" /></div>
 									<div id="innerhull" class="structure">
 										<div id="jib" class="compartment"><h2><tiles:getAsString name="pageTitle"/></h2></div>
 										<div id="foremast" class="compartment">
 											<!-- <img src="${pageContext.request.contextPath}/images/leaderboard.gif" alt=""/> -->
 										</div>
 										<div id="bulkhead" class="structure">
-											<div id="hatch" class="compartment"><!-- item menu --></div>
+											<div id="hatch" class="compartment"></div>
 											<div id="ballast" class="structure compartment">
 												<div id="cargo" class="compartment">
 													<tiles:insertAttribute name="cargo" />

@@ -17,7 +17,7 @@ body { width: 97%; height: 99%; padding: 0; margin: 0; }
 #vaka { display: table-row; }
 #hull { display: table-cell; }
 #keel { display: table; }
-#innerhull { }
+#innerhull { display: table-cell; }
 #bulkhead { display: table; }
 #ballast { }
 
