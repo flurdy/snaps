@@ -14,15 +14,20 @@
 				<put-attribute name="analyticsId" value="var pageTracker = _gat._getTracker('123');"/>
 			</definition>
 		</put-attribute>
-		<put-attribute name="port" type="string" value="snaps"/>
+		<put-attribute name="port" type="string" value=""/>
+		<put-attribute name="cargoJQuery" type="string" value=""/>
+	</definition>
+
+	<definition name="adminTemplate" extends="gridTemplate">
+		<put-attribute name="pageTitle" type="string" value="admin"/>
 	</definition>
 
 	<definition name="holidayTemplate" extends="gridTemplate">
 		<put-attribute name="pageTitle" type="string" value="holiday group"/>
 	</definition>
 
-	<definition name="adminTemplate" extends="gridTemplate">
-		<put-attribute name="pageTitle" type="string" value="admin"/>
+	<definition name="albumTemplate" extends="holidayTemplate">
+		<put-attribute name="pageTitle" type="string" value="holiday photo album"/>
 	</definition>
 
 
@@ -73,9 +78,9 @@
 	</definition>
 
 
-	<definition name="holiday/edit" extends="holidayTemplate">
-		<put-attribute name="cargo" value="/WEB-INF/views/holiday/read.jsp"/>
-		<put-attribute name="port" value="/WEB-INF/views/holiday/editPort.jsp"/>
+	<definition name="holiday/album/new" extends="albumTemplate">
+		<put-attribute name="cargo" value="/WEB-INF/views/holiday/album/new.jsp"/>
+		<put-attribute name="cargoJQuery" value="/WEB-INF/views/holiday/album/new.js"/>
 	</definition>
 
 
