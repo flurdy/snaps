@@ -1,46 +1,53 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
-<div class="centreCargo">
-<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+	<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<!--
+	<link href="${contextPage.request.contextPath}/style/jquery-ui.custom.css" rel="stylesheet" type="text/css"/>
+-->
+<style>
+	.ui-widget-header {
+		background: none;
+	}
+	.ui-widget-content {
+		border: 0;
+	}
+	.ui-widget-header {
+		border: 0;
+		border-bottom: 1px solid black;
+	}
+}
 
+</style>
 
-<div id="tabs">
-    <ul>
-        <li><a href="#fragment-1"><span>One</span></a></li>
-        <li><a href="#fragment-2"><span>Two</span></a></li>
-        <li><a href="#fragment-3"><span>Three</span></a></li>
-    </ul>
-    <div id="fragment-1">
-        <p>First tab is active by default:</p>
-        <pre><code>$('#example').tabs();</code></pre>
-    </div>
-    <div id="fragment-2">
-        Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.
-        Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.
-    </div>
-    <div id="fragment-3">
-        Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.
-        Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.
-        Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.
-    </div>
-</div>
+	<div id="tabs">
+		<ul>
+			<li><a href="#tabs-1"><span>Picasa</span></a></li>
+			<li><a href="#tabs-2"><span>Flickr</span></a></li>
+			<!--
+			<li><a href="#tabs-3"><span>SnapFish</span></a></li>
+			<li><a href="#tabs-4"><span>Fotobucket</span></a></li>
+			<li><a href="#tabs-5"><span>FotoKnudsen</span></a></li>
+			-->
+		</ul>
+		<div id="tabs-1">
+			<form action="" method="post">
+				<input type="hidden" name="provider" value="picasa"/>
 
-	<!--
-	<form action="${pageContext.request.contextPath}/holiday${holidayGroup.groupId}/album" method="post">
-		<h4>
+				URL: <input type="text" name="url" value=""/>
 
-		</h4>
+				<button>add album</button>
 
-		<input type="text" name="" />
+			</form>
+		</div>
+		<div id="tabs-2">
 
-		<br/>
+			<form action="" method="post">
+				<input type="hidden" name="provider" value="flickr"/>
+				URL: <input type="text" name="url" value=""/>
 
-		<input type="submit" value="add album"/>
+				<button>add set</button>
 
-	</form>
-	-->
-</div>
-
-
-
+			</form>
+		</div>
+	</div>
 

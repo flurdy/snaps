@@ -7,6 +7,8 @@ package com.flurdy.grid.snaps.web;
 
 import com.flurdy.grid.snaps.service.IAdminService;
 import com.flurdy.grid.snaps.service.IHolidayGroupService;
+import com.flurdy.grid.snaps.service.IPhotoAlbumService;
+import com.flurdy.grid.snaps.service.IPhotoSharingProviderService;
 import com.flurdy.grid.snaps.service.ISecurityService;
 import com.flurdy.grid.snaps.service.ITravellerService;
 import org.slf4j.Logger;
@@ -22,6 +24,8 @@ public abstract class AbstractGridController {
 	@Autowired protected ISecurityService securityService;
 	@Autowired protected IAdminService adminService;
 	@Autowired protected ITravellerService travellerService;
+	@Autowired protected IPhotoAlbumService photoAlbumService;
+	@Autowired protected IPhotoSharingProviderService sharingProviderService;
 
 	protected ModelAndView returnTemplate(String view){
 		ModelAndView modelAndView = new ModelAndView(view);
