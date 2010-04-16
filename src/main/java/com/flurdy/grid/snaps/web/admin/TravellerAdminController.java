@@ -14,17 +14,26 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping("/admin")
-public class AdminController extends AbstractGridController {
+public class TravellerAdminController extends AbstractGridController {
 
 	@RequestMapping("")
 	public ModelAndView showAdminHandler() {
 
+		return returnTemplate("admin/index");
+	}
+
+
+	@RequestMapping(value = "/traveller", method = RequestMethod.GET)
+	public ModelAndView listTravellersHandler() {
+		
 		List<Traveller> travellers = travellerService.findTravellers();
 
-		ModelAndView modelAndView = new ModelAndView("admin/index");
+		ModelAndView modelAndView = new ModelAndView("admin/traveller/list");
 		modelAndView.getModel().put("travellers", travellers);
 		return returnTemplate(modelAndView);
 	}
+
+
 
 	@RequestMapping(value = "/traveller/{travellerId}/edit", method = RequestMethod.GET)
 	public ModelAndView showTravellerEditFormHandler(@PathVariable("travellerId") long travellerId) {

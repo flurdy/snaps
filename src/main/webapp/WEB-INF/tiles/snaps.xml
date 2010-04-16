@@ -86,6 +86,10 @@
 
 
 	<definition name="admin/index" extends="adminTemplate">
+		<put-attribute name="cargo" value="/WEB-INF/views/admin/index.jsp"/>
+	</definition>
+
+	<definition name="admin/traveller/list" extends="adminTemplate">
 		<put-attribute name="cargo" value="/WEB-INF/views/admin/list.jsp"/>
 	</definition>
 

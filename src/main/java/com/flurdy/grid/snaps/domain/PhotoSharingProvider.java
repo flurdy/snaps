@@ -5,11 +5,12 @@
 
 package com.flurdy.grid.snaps.domain;
 
+import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Entity
-public class PhotoSharingProvider {
+public class PhotoSharingProvider implements Serializable {
 
 	@Id
 	private Long providerId;
