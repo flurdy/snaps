@@ -13,17 +13,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping("/admin")
+@RequestMapping("/admin/traveller")
 public class TravellerAdminController extends AbstractGridController {
 
-	@RequestMapping("")
-	public ModelAndView showAdminHandler() {
-
-		return returnTemplate("admin/index");
-	}
 
 
-	@RequestMapping(value = "/traveller", method = RequestMethod.GET)
+	@RequestMapping(value = "", method = RequestMethod.GET)
 	public ModelAndView listTravellersHandler() {
 		
 		List<Traveller> travellers = travellerService.findTravellers();
@@ -35,7 +30,7 @@ public class TravellerAdminController extends AbstractGridController {
 
 
 
-	@RequestMapping(value = "/traveller/{travellerId}/edit", method = RequestMethod.GET)
+	@RequestMapping(value = "/{travellerId}/edit", method = RequestMethod.GET)
 	public ModelAndView showTravellerEditFormHandler(@PathVariable("travellerId") long travellerId) {
 
 		Traveller traveller = travellerService.findTraveller(travellerId);
@@ -47,7 +42,7 @@ public class TravellerAdminController extends AbstractGridController {
 		return returnTemplate(modelAndView);
 	}
 
-	@RequestMapping(value = "/traveller/{travellerId}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/{travellerId}", method = RequestMethod.PUT)
 	public String updateTravellerHandler(Traveller traveller) {
 
 		adminService.updateTraveller(traveller);
@@ -55,7 +50,7 @@ public class TravellerAdminController extends AbstractGridController {
 		return "redirect:/admin";//traveller/"+traveller.getTravellerId();
 	}
 
-	@RequestMapping(value = "/traveller/security/{username}/password", method = RequestMethod.PUT)
+	@RequestMapping(value = "/security/{username}/password", method = RequestMethod.PUT)
 	public String changeSecurityDetailPasswordHandler(
 			@PathVariable("username") String username,
 			String password, String confirmPassword) {
@@ -71,7 +66,7 @@ public class TravellerAdminController extends AbstractGridController {
 		}
 	}
 
-	@RequestMapping(value = "/traveller/security/{username}/enable", method = RequestMethod.PUT)
+	@RequestMapping(value = "/security/{username}/enable", method = RequestMethod.PUT)
 	public String enableOrDisableSecurityDetailHandler(
 			@PathVariable("username") String username,
 			boolean enable) {
@@ -85,7 +80,7 @@ public class TravellerAdminController extends AbstractGridController {
 		return "redirect:/admin";
 	}
 
-	@RequestMapping(value = "/traveller/security/{username}/authority/{authorityRole}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/security/{username}/authority/{authorityRole}", method = RequestMethod.DELETE)
 	public String deleteAuthorityHandler(
 			@PathVariable("username") String username,
 			@PathVariable("authorityRole") String authorityRole) {
@@ -100,7 +95,7 @@ public class TravellerAdminController extends AbstractGridController {
 		}
 	}
 
-	@RequestMapping(value = "/traveller/security/{username}/authority", method = RequestMethod.POST)
+	@RequestMapping(value = "/security/{username}/authority", method = RequestMethod.POST)
 	public String addAuthorityHandler(
 			@PathVariable("username") String username,
 			String authorityRole) {
@@ -119,7 +114,7 @@ public class TravellerAdminController extends AbstractGridController {
 	}
 
 
-	@RequestMapping(value = "/traveller/{travellerId}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/{travellerId}", method = RequestMethod.DELETE)
 	public String deleteTravellerHandler(@PathVariable("travellerId") long travellerId) {
 
 //		Traveller traveller = travellerService.findTraveller(travellerId);
