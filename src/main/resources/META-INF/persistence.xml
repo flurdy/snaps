@@ -5,5 +5,6 @@
     <class>com.flurdy.grid.snaps.domain.SecurityAuthority</class>
     <class>com.flurdy.grid.snaps.domain.SecurityDetail</class>
     <class>com.flurdy.grid.snaps.domain.Traveller</class>
+    <class>com.flurdy.grid.snaps.domain.PhotoAlbum</class>
   </persistence-unit>
 </persistence>

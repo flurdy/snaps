@@ -6,4 +6,6 @@ public interface IPhotoAlbumRepository {
 
 	public void addAlbum(PhotoAlbum album);
 
+	public PhotoAlbum findAlbum(long albumId);
+
 }

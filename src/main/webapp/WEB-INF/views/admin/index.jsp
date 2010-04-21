@@ -10,10 +10,12 @@
 
 	<br/>
 	<br/>
+	<!--
 
 	<p>
 		<a href="providers">manage providers</a>
 	</p>
 
+ -->
 </div>
 

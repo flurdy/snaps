@@ -19,12 +19,12 @@ public class PhotoAlbumService implements IPhotoAlbumService {
 	@Override
 	public PhotoAlbum addAlbum(HolidayGroup holidayGroup, PhotoSharingProvider provider, String url) {
 
-		log.debug("Adding album from provider ["+provider.getName() + "] to group ["+ holidayGroup.getGroupName()+"] with url: " + url);
+		log.debug("Adding album from provider ["+provider.name() + "] to group ["+ holidayGroup.getGroupName()+"] with url: " + url);
 
 		// validate url ?
 
 		PhotoAlbum album = new PhotoAlbum.Builder()
-				.provider(provider)
+				.sharingProvider(provider)
 				.url(url)
 				.build();
 
@@ -32,5 +32,15 @@ public class PhotoAlbumService implements IPhotoAlbumService {
 
 		return album;
 	}
+
+	@Override
+	public PhotoAlbum findPhotoAlbum(long albumId){
+
+		log.debug("find album:"+albumId);
+
+		return photoAlbumRepository.findAlbum(albumId);
+
+	}
+
 
 }

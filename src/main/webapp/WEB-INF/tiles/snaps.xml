@@ -68,19 +68,23 @@
 	</definition>
 
 	<definition name="holiday/read" extends="holidayTemplate">
-		<put-attribute name="cargo" value="/WEB-INF/views/holiday/read.jsp"/>
+		<put-attribute name="cargo" value="/WEB-INF/views/holiday/readHoliday.jsp"/>
 		<put-attribute name="port" value="/WEB-INF/views/holiday/readPort.jsp"/>
 	</definition>
 
 	<definition name="holiday/list" extends="holidayTemplate">
 		<put-attribute name="pageTitle" type="string" value="holiday groups"/>
-		<put-attribute name="cargo" value="/WEB-INF/views/holiday/list.jsp"/>
+		<put-attribute name="cargo" value="/WEB-INF/views/holiday/listHolidays.jsp"/>
 	</definition>
 
 
 	<definition name="holiday/album/new" extends="albumTemplate">
-		<put-attribute name="cargo" value="/WEB-INF/views/holiday/album/new.jsp"/>
+		<put-attribute name="cargo" value="/WEB-INF/views/holiday/album/newAlbum.jsp"/>
 		<put-attribute name="cargoJQuery" value="/WEB-INF/views/holiday/album/new.js"/>
+	</definition>
+
+	<definition name="holiday/album/read" extends="albumTemplate">
+		<put-attribute name="cargo" value="/WEB-INF/views/holiday/album/readAlbum.jsp"/>
 	</definition>
 
 

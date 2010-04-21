@@ -1,9 +1,13 @@
 package com.flurdy.grid.snaps.domain;
 
 import java.io.Serializable;
+import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 @Entity
 public class HolidayGroup implements Serializable {
@@ -13,6 +17,9 @@ public class HolidayGroup implements Serializable {
 	private Long groupId;
 
 	private String groupName;
+
+	@OneToMany(mappedBy = "holidayGroup",cascade={CascadeType.ALL},fetch=FetchType.LAZY)
+	private Set<PhotoAlbum> photoAlbums;
 
 	public HolidayGroup(){
 	}
@@ -37,9 +44,20 @@ public class HolidayGroup implements Serializable {
 		this.groupId = groupId;
 	}
 
+	public Set<PhotoAlbum> getPhotoAlbums() {
+		return photoAlbums;
+	}
+
+	public void setPhotoAlbums(Set<PhotoAlbum> photoAlbums) {
+		this.photoAlbums = photoAlbums;
+	}
+
 	@Override
 	public String toString() {
-		return "Holiday Group: Id: "+ groupId + " | Name: " + groupName;
+		return "Holiday Group: Id: "+ groupId 
+				  + " | Name: " + groupName;
+//				  + " | albums: " 
+//				  + ((photoAlbums!=null) ? photoAlbums.size() : "null");
 	}
 
 

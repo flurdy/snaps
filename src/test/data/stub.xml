@@ -3,6 +3,16 @@
   <table name="HOLIDAYGROUP">
     <column>GROUPID</column>
     <column>GROUPNAME</column>
+    <row>
+      <value>1</value>
+      <value><![CDATA[Ibiza 2010]]></value>
+    </row>
+  </table>
+  <table name="PHOTOALBUM">
+    <column>ALBUMID</column>
+    <column>SHARINGPROVIDER</column>
+    <column>URL</column>
+    <column>HOLIDAYGROUP_GROUPID</column>
   </table>
   <table name="SECURITYAUTHORITY">
     <column>AUTHORITY_ID</column>

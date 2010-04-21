@@ -10,4 +10,6 @@ public interface IPhotoAlbumService {
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public PhotoAlbum addAlbum(HolidayGroup holidayGroup, PhotoSharingProvider provider, String url);
 
+	public PhotoAlbum findPhotoAlbum(long albumId);
+
 }

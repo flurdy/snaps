@@ -29,9 +29,10 @@
 			<li><a href="#tabs-5"><span>FotoKnudsen</span></a></li>
 			-->
 		</ul>
+				
 		<div id="tabs-1">
-			<form action="" method="post">
-				<input type="hidden" name="provider" value="picasa"/>
+			<form action="${pageContext.request.contextPath}/holiday/${holidayGroup.groupId}/album" method="post">
+				<input type="hidden" name="providerName" value="PicasaWeb"/>
 
 				URL: <input type="text" name="url" value=""/>
 
@@ -41,8 +42,8 @@
 		</div>
 		<div id="tabs-2">
 
-			<form action="" method="post">
-				<input type="hidden" name="provider" value="flickr"/>
+			<form action="${pageContext.request.contextPath}/holiday/${holidayGroup.groupId}/album" method="post">
+				<input type="hidden" name="providerName" value="flickr"/>
 				URL: <input type="text" name="url" value=""/>
 
 				<button>add set</button>
