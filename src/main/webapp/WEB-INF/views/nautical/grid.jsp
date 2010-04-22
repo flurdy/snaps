@@ -1,11 +1,12 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 	<head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 		<title><tiles:getAsString name="pageTitle"/> <tiles:getAsString name="headerTitle"/></title>
 		<meta name="keywords" content="snaps,photo,photography,holiday,travel,events,friends,social,group,flurdy" />
 		<meta name="description" content="holiday photo snaps aggregator" />
@@ -13,14 +14,13 @@
 		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/style/grid.css"/>
 		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/style/site.css"/>
 		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/style/cargo.css"/>
-		<c:if test="${pageContext.request.serverName == 'localhost'}"><style>
-			 body { background-color: #ffffff; }
-			 #bow { display: none; }
-			/* #jib { display: none; }
-			#cargo h2 { display: none; } */
-		</style>
-		</c:if>
 		<style>
+			<c:if test="${pageContext.request.serverName == 'localhost' || fn:startsWith(pageContext.request.serverName,'192.168') }">/* incognito/paranoia.. */
+				body { background-color: #ffffff; }
+				#bow { display: none; }
+				/* #jib, #cargo h2  { display: none; } */
+				#bow, #bow a, #jib, #cargo h2  { color: #e0e0e0; }
+		</c:if>
 			/* firefox css bug hack */
 			#ocean #ship #stern { display: none; }
 			#ocean #ship #aft { display: none; }
@@ -30,14 +30,14 @@
 		<!-- <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.custom.min.js"></script> -->
 		<script type="text/javascript">
 			<tiles:insertAttribute name="cargoJQuery"/>
-			function loader(){
-				document.getElementById("stern").style.display="block";
-				document.getElementById("aft").style.display="block";
-				// window.setTimeout("window.location.reload()", 3000);
-			}
+				function loader(){
+					document.getElementById("stern").style.display="block";
+					document.getElementById("aft").style.display="block";
+					// window.setTimeout("window.location.reload()", 3000);
+				}
 		</script>
 	</head>
-    <body onload="loader()">
+	<body onload="loader()">
 		<div id="ocean" class="structure">
 			<div id="lighthouse" class="structure">
 				<div class="compartment"><!--  --></div>
@@ -45,7 +45,7 @@
 			<div id="fleet" class="structure">
 				<div id="regatta" class="structure">
 					<div id="tug" class="structure">
-						<div class="compartment">
+						<div class="compartment ad">
 							<!-- <img src="${pageContext.request.contextPath}/images/leaderboard.gif" alt=""/> -->
 						</div>
 					</div>
@@ -70,13 +70,13 @@
 									<ul class="horizontal">
 										<li><a href="${pageContext.request.contextPath}/">home</a></li>
 										<sec:authorize ifNotGranted="ROLE_USER">
-										<li><a href="${pageContext.request.contextPath}/join.html">join</a></li>
+											<li><a href="${pageContext.request.contextPath}/join.html">join</a></li>
 										</sec:authorize>
 										<li><a href="${pageContext.request.contextPath}/about.html">about</a></li>
 									</ul>
 								</div>
 								<div id="keel" class="structure">
-<div id="port" class="compartment"><tiles:insertAttribute name="port" /></div>
+									<div id="port" class="compartment"><tiles:insertAttribute name="port" /></div>
 									<div id="innerhull" class="structure">
 										<div id="jib" class="compartment"><h2><tiles:getAsString name="pageTitle"/></h2></div>
 										<div id="foremast" class="compartment">
@@ -111,12 +111,12 @@
 						<div id="anchor" class="compartment"><!--  --></div>
 					</div>
 					<div id="ama" class="structure">
-						<div class="compartment">
+						<div class="compartment ad">
 						<!--	<img src="${pageContext.request.contextPath}/images/wideskyscraper.gif" alt=""/> -->
 						</div>
 					</div>
 					<div id="net" class="structure">
-						<div class="compartment">
+						<div class="compartment ad">
 							<!-- <img src="${pageContext.request.contextPath}/images/leaderboard_img.jpg" alt=""/> -->
 						</div>
 					</div>
@@ -125,6 +125,6 @@
 			<div id="buoy" class="structure"><div class="compartment"><!--  --></div></div>
 		</div>
 		<div id="dragons" class="structure"><tiles:insertAttribute name="dragons"/></div>
-    </body>
-	<!-- Copyright Ivar Abrahamsen 2010. Copyleft: CC (by sa) -->
+	</body>
+	<!-- Copyright Ivar Abrahamsen 2010. Copyleft: AGPL & CC (by sa) -->
 </html>

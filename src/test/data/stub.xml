@@ -13,6 +13,12 @@
     <column>SHARINGPROVIDER</column>
     <column>URL</column>
     <column>HOLIDAYGROUP_GROUPID</column>
+    <row>
+      <value>1</value>
+      <value>flickr</value>
+      <value>http://www.flickr.com/photos/flurdy/sets/72157622527536656/</value>
+      <null/>
+    </row>
   </table>
   <table name="SECURITYAUTHORITY">
     <column>AUTHORITY_ID</column>

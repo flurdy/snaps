@@ -101,6 +101,15 @@ public class PhotoAlbum implements Serializable{
 		this.holidayGroup = holidayGroup;
 	}
 
+	@Override
+	public String toString() {
+		return "Id: " + albumId
+				+ " | provider: " + sharingProvider
+				+ " | url: " + url;
+	}
+
+
+
 
 
 
