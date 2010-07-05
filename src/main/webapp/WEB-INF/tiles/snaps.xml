@@ -9,12 +9,15 @@
 		<put-attribute name="headerTitle" type="string" value="snaps @ flurdy"/>
 		<put-attribute name="bowTitle" type="string" value="snaps"/>
 		<put-attribute name="version" type="string" value="v.0.2&amp;alpha;"/>
+		<put-attribute name="releaseStage" type="string" value="&amp;alpha;lpha"/>
 		<put-attribute name="dragons">
 			<definition template="/WEB-INF/views/nautical/dragons.jsp">
 				<put-attribute name="analyticsId" value="var pageTracker = _gat._getTracker('123');"/>
 			</definition>
 		</put-attribute>
 		<put-attribute name="port" type="string" value=""/>
+		<put-attribute name="deck" type="string" value=""/>
+		<put-attribute name="starboard" type="string" value=""/>
 		<put-attribute name="cargoJQuery" type="string" value=""/>
 	</definition>
 
@@ -68,9 +71,10 @@
 	</definition>
 
 	<definition name="holiday/read" extends="holidayTemplate">
-		<put-attribute name="cargo" value="/WEB-INF/views/holiday/readHoliday.jsp"/>
-		<put-attribute name="port" value="/WEB-INF/views/holiday/readPort.jsp"/>
-	</definition>
+        <put-attribute name="cargo" value="/WEB-INF/views/holiday/readHoliday.jsp"/>
+        <put-attribute name="port" value="/WEB-INF/views/holiday/readPort.jsp"/>
+        <put-attribute name="starboard" value="/WEB-INF/views/holiday/holidayAlbums.jsp"/>
+    </definition>
 
 	<definition name="holiday/list" extends="holidayTemplate">
 		<put-attribute name="pageTitle" type="string" value="holiday groups"/>

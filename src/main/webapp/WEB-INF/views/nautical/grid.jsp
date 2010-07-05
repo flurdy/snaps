@@ -16,10 +16,10 @@
 		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/style/cargo.css"/>
 		<style>
 			<c:if test="${pageContext.request.serverName == 'localhost' || fn:startsWith(pageContext.request.serverName,'192.168') }">/* incognito/paranoia.. */
-				body { background-color: #ffffff; }
-				#bow { display: none; }
+				/* body { background-color: #ffffff; } */
+				/* #bow { display: none; } */
 				/* #jib, #cargo h2  { display: none; } */
-				#bow, #bow a, #jib, #cargo h2  { color: #e0e0e0; }
+				/* #bow, #bow a, #jib, #cargo h2  { color: #e0e0e0; }  */
 		</c:if>
 			/* firefox css bug hack */
 			#ocean #ship #stern { display: none; }
@@ -89,11 +89,11 @@
 													<tiles:insertAttribute name="cargo" />
 												</div>
 											</div>
-											<div id="deck" class="compartment"><!-- item info --></div>
+											<div id="deck" class="compartment"><tiles:insertAttribute name="deck" /></div>
 										</div>
 										<div id="bridge" class="compartment"><!--  --></div>
 									</div>
-									<div id="starboard" class="compartment"><!-- site info --></div>
+									<div id="starboard" class="compartment"><tiles:insertAttribute name="starboard" /></div>
 								</div>
 								<div id="aft" class="compartment">
 									<ul class="horizontal">
@@ -103,7 +103,7 @@
 									</ul>
 								</div>
 								<div id="stern" class="compartment">
-									<p><tiles:getAsString name="version"/></p>
+									<p><tiles:getAsString name="releaseStage"/></p><!-- <tiles:getAsString name="version"/> -->
 									<a href="http://flurdy.com"><img alt="flurdy" src="${pageContext.request.contextPath}/images/flurdy-small-crop.png"  /></a>
 								</div>
 							</div>

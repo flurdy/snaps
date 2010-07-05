@@ -42,34 +42,6 @@
 			<th>source code</th>
 			<td><a href="http://github.com/flurdy/snaps">github.com/flurdy/snaps</a></td>
 		</tr>
-		<tr>
-			<th class="valign">Technology</th>
-			<td>
-				<ul>
-					<li>Java</li>
-					<li>Spring</li>
-					<li>Spring MVC</li>
-					<li>Hibernate</li>
-					<li>Maven</li>
-					<li>Git</li>
-					<li>Jetty</li>
-					<li>JQuery</li>
-					<li>JRebel</li>
-					<li>Ubuntu</li>
-					<li>Amazon ec2</li>
-					<li>HSQLDB</li>
-					<li>Firebird</li>
-				</ul>
-			</td>
-		</tr>
-		<tr>
-			<th>people</th>
-			<td>
-				<ul>
-					<li>creator &amp; lead developer: <a href="http://flurdy.com">flurdy</a></li>
-				</ul>
-			</td>
-		</tr>
 	</table>
 
 	<p>

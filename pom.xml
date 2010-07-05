@@ -157,7 +157,7 @@
 							<port>${web.port}</port>
 						</connector>
 					</connectors>
-					<scanIntervalSeconds>0</scanIntervalSeconds>
+					<scanIntervalSeconds>5</scanIntervalSeconds>
 					<!-- <reload>manual</reload> -->
 					<webAppConfig>
 						<contextPath>${web.context}</contextPath>
@@ -189,12 +189,12 @@
 								<exclude>**/*.java</exclude>
 							</excludes>
 						</scanTargetPattern>
-						<scanTargetPattern>
+						<!-- <scanTargetPattern>
 							<directory>src/main/resources</directory>
 							<includes>
 								<include>**/*.xml</include>
 							</includes>
-						</scanTargetPattern>
+						</scanTargetPattern> -->
 					</scanTargetPatterns>
 				</configuration>
 			<dependencies>

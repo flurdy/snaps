@@ -115,6 +115,11 @@ ul.feedbackPanel li.feedbackPanelERROR { color: #aa0000; font-weight: bold; }
 	font-size: 1.3em;
 	font-weight: bold;
 }
+#cargo h3 {
+    margin-top: 0.2em;
+	font-size: 1em;
+	font-weight: bold;
+}
 #cargo h4 {
 	font-size: 1em;
 	font-weight: bold;
@@ -151,4 +156,8 @@ ul.feedbackPanel li.feedbackPanelERROR { color: #aa0000; font-weight: bold; }
 
 #cargo li { list-style: none; }
 
-
+#cargo #readHoliday #photoAlbums {  border: 3px outset silver; padding: 1em; }
+#cargo #readHoliday #photoAlbums .album { border: 2px inset silver; margin: 0.5em; }
+#cargo #readHoliday #photoAlbums .album .thumbnail  {  padding: 0.5em;  }
+#cargo #readHoliday #photoAlbums .album .thumbnail img {  width: 4em; height: 2em; background-color: black;  }
+#cargo #readHoliday #photoAlbums .album .mainThumbnail img { width: 6em;  }

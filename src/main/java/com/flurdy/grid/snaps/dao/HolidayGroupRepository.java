@@ -4,6 +4,7 @@ import com.flurdy.grid.snaps.domain.HolidayGroup;
 import java.util.Collection;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import org.slf4j.Logger;
@@ -29,7 +30,15 @@ public class HolidayGroupRepository implements IHolidayGroupRepository {
 	@Override
 	public HolidayGroup findHolidayGroup(Long groupId) {
 		assert groupId > 0;
-		return entityManager.find(HolidayGroup.class, groupId);
+		Query query = entityManager.createNamedQuery("holidayGroup.findById");
+		query.setParameter("groupId", groupId);
+		try {
+			return (HolidayGroup) query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+//		} catch (NonUniqueResultException ex) {
+//			throw new TechnicalException(TechnicalError.DATA_ERROR,ex);
+		}
 	}
 
 	@Override

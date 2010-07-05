@@ -2,19 +2,20 @@ package com.flurdy.grid.snaps.domain;
 
 import java.io.Serializable;
 import java.util.Set;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 
+@NamedQueries({
+	@NamedQuery(name="holidayGroup.findById",
+			query="select distinct hg from HolidayGroup hg "
+			+ "left join fetch hg.photoAlbums "		
+			+ "where hg.groupId = :groupId")
+})
 @Entity
 public class HolidayGroup implements Serializable {
 
 	@Id
 	@GeneratedValue
-	private Long groupId;
+	private Long groupId;              
 
 	private String groupName;
 
