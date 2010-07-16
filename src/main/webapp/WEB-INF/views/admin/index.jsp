@@ -5,7 +5,7 @@
 <div class="centreCargo">
 
 	<p>
-		<a href="traveller">manage travellers</a>
+		<a href="${pageContext.request.contextPath}/admin/traveller">manage travellers</a>
 	</p>
 
 	<br/>

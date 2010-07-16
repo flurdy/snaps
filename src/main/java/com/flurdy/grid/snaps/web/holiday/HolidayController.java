@@ -30,8 +30,10 @@ public class HolidayController extends AbstractGridController {
 		
 		Set<HolidayGroup> holidayGroups = holidayGroupService.searchForHolidayGroups(groupName);
 
-		if( holidayGroups.size()==1)
-			return readHolidayHandler(holidayGroups.iterator().next().getGroupId());
+		if( holidayGroups.size()==1){
+			HolidayGroup holidayGroup = holidayGroups.iterator().next();
+			return showHolidayHandler(holidayGroup.getGroupId());
+		}
 
 		ModelAndView modelAndView = new ModelAndView("holiday/list");
 		modelAndView.addObject("holidayGroups", holidayGroups);
@@ -53,7 +55,7 @@ public class HolidayController extends AbstractGridController {
 
 
 	@RequestMapping("/{groupId}")
-	public ModelAndView readHolidayHandler(@PathVariable("groupId") long groupId){
+	public ModelAndView showHolidayHandler(@PathVariable("groupId") long groupId){
 		log.debug("read holiday group");
 		HolidayGroup holidayGroup = holidayGroupService.findHolidayGroup(groupId);
 		log.debug("holiday group: "+holidayGroup);

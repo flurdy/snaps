@@ -7,18 +7,33 @@
       <value>1</value>
       <value><![CDATA[Ibiza 2010]]></value>
     </row>
+    <row>
+      <value>2</value>
+      <value><![CDATA[Ecuador &amp; Galapagos]]></value>
+    </row>
   </table>
   <table name="PHOTOALBUM">
     <column>ALBUMID</column>
     <column>SHARINGPROVIDER</column>
     <column>URL</column>
     <column>HOLIDAYGROUP_GROUPID</column>
+    <column>OWNER_TRAVELLERID</column>
+    <row>
+      <value>1</value>
+      <value>flickr</value>
+      <value>http://www.flickr.com/photos/flurdy/sets/72157624009834665/</value>
+      <value>1</value>
+      <value>1</value>
+    </row>
+      <!--
     <row>
       <value>1</value>
       <value>flickr</value>
       <value>http://www.flickr.com/photos/flurdy/sets/72157622527536656/</value>
+      <value>2</value>
       <value>1</value>
     </row>
+      -->
   </table>
   <table name="SECURITYAUTHORITY">
     <column>AUTHORITY_ID</column>
@@ -41,9 +56,14 @@
     <column>ENABLED</column>
     <column>PASSWORD</column>
     <row>
-      <value>flurdy</value>
+      <value>testuser</value>
       <value>true</value>
-      <value>1b6b40f7ca0074ae4c80f1e9334636ae34df88d8</value>
+      <value>3a565c26e11d736f3e72e82f91e97c2b604850a0</value>
+    </row>
+    <row>
+      <value>admin</value>
+      <value>true</value>
+      <value>095d5f156b54198fad962bde6ef83a875376be24</value>
     </row>
     <row>
       <value>super</value>
@@ -55,8 +75,16 @@
     <column>SECURITYDETAIL_USERNAME</column>
     <column>AUTHORITIES_AUTHORITY_ID</column>
     <row>
-      <value>flurdy</value>
+      <value>testuser</value>
       <value>1</value>
+    </row>
+    <row>
+      <value>admin</value>
+      <value>1</value>
+    </row>
+    <row>
+      <value>admin</value>
+      <value>3</value>
     </row>
     <row>
       <value>super</value>
@@ -78,12 +106,18 @@
     <column>SECURITYDETAIL_USERNAME</column>
     <row>
       <value>1</value>
-      <value>invalid@example.com</value>
-      <value><![CDATA[Ivar Abrahamsen]]></value>
-      <value>flurdy</value>
+      <value>invalid@example.net</value>
+      <value><![CDATA[Test User]]></value>
+      <value>testuser</value>
     </row>
     <row>
       <value>2</value>
+      <value>invalid@example.com</value>
+      <value><![CDATA[Administrator]]></value>
+      <value>admin</value>
+    </row>
+    <row>
+      <value>3</value>
       <value>invalid@example.com</value>
       <value><![CDATA[Super User]]></value>
       <value>super</value>

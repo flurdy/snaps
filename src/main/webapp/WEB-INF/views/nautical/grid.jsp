@@ -1,3 +1,4 @@
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
@@ -98,12 +99,12 @@
 								<div id="aft" class="compartment">
 									<ul class="horizontal">
 										<li><a href="http://flurdy.com/contact/">contact</a></li>
-										<li><a wicket:id="aboutLink" href="http://code.flurdy.com/grid/snaps">project</a></li>
-										<li><a wicket:id="helpLink" href="http://code.flurdy.com/grid/snaps">help</a></li>
+										<li><a href="http://code.flurdy.com/grid/snaps">project</a></li>
+										<li><a href="http://code.flurdy.com/grid/snaps">help</a></li>
 									</ul>
 								</div>
 								<div id="stern" class="compartment">
-									<p><tiles:getAsString name="releaseStage"/></p><!-- <tiles:getAsString name="version"/> -->
+									<p title="<tiles:getAsString name="version"/>"><tiles:getAsString name="releaseStage"/></p>
 									<a href="http://flurdy.com"><img alt="flurdy" src="${pageContext.request.contextPath}/images/flurdy-small-crop.png"  /></a>
 								</div>
 							</div>

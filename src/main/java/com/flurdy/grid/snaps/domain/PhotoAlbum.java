@@ -31,6 +31,9 @@ public class PhotoAlbum implements Serializable{
 
 	private String sharingProvider;
 
+	@ManyToOne(cascade={CascadeType.MERGE},fetch=FetchType.EAGER)
+	private Traveller owner;
+
 	public PhotoAlbum() { 	}
 	
 	public PhotoAlbum( PhotoSharingProvider sharingProvider, String url ){
@@ -42,12 +45,16 @@ public class PhotoAlbum implements Serializable{
 		this.sharingProvider = builder.sharingProvider.name();
 		this.url = builder.url;
 		this.holidayGroup = builder.holidayGroup;
+		this.owner = builder.owner;
 	}
 
+
+	
 	public static class Builder {
 		private String url;
 		private HolidayGroup holidayGroup;
 		private PhotoSharingProvider sharingProvider;
+		private Traveller owner;
 		public Builder(){
 		}
 		public Builder url(String url){
@@ -60,6 +67,10 @@ public class PhotoAlbum implements Serializable{
 		}
 		public Builder sharingProvider(PhotoSharingProvider sharingProvider){
 			this.sharingProvider = sharingProvider;
+			return this;
+		}
+		public Builder owner(Traveller owner){
+			this.owner = owner;
 			return this;
 		}
 		public PhotoAlbum build() {
@@ -99,6 +110,14 @@ public class PhotoAlbum implements Serializable{
 
 	public void setHolidayGroup(HolidayGroup holidayGroup) {
 		this.holidayGroup = holidayGroup;
+	}
+
+	public Traveller getOwner() {
+		return owner;
+	}
+
+	public void setOwner(Traveller owner) {
+		this.owner = owner;
 	}
 
 	@Override

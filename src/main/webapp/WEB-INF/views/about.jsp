@@ -1,15 +1,32 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
-<div>
+<div class="centreCargo">
 	
 
 	<h4>
-		<b>snaps @ flurdy</a>
-		is a holiday photo aggregator.
+		<b>snaps @ flurdy</a> is a holiday photo aggregator.
 	</h4>
 	<p>
-		What that means it is a site for a group of people to share links to their photos with the other group members.
+		A holiday photo aggregator is a tool to gather holiday photos in one place.
 	</p>
+	<p>
+        By using <b>snaps</b>, people can share their photos with their fellow travellers.
+	</p>
+
+
+	<table>
+		<tr>
+			<th>project website</th>
+			<td><a href="http://code.flurdy.com/grid/snaps/">code.flurdy.com/grid/snaps/</a></td>
+		</tr>
+		<tr>
+			<th>source code</th>
+			<td><a href="http://github.com/flurdy/snaps">github.com/flurdy/snaps</a></td>
+		</tr>
+	</table>
+
+
+    <!--
 	<p>
 		People prefer different tools and websites to store their digital photos.
 		Sharing this with the others often becomes a mess of email links, attachments, 
@@ -32,25 +49,13 @@
 		to find out more about their upcomming and mostly their previous holiday(s).
 	</p>
 
-
-	<table>
-		<tr>
-			<th>project website</th>
-			<td><a href="http://code.flurdy.com/grid/snaps/">code.flurdy.com/grid/snaps/</a></td>
-		</tr>
-		<tr>
-			<th>source code</th>
-			<td><a href="http://github.com/flurdy/snaps">github.com/flurdy/snaps</a></td>
-		</tr>
-	</table>
-
 	<p>
 		<b>snaps</b> was initially called fotogator, short for photograph aggregator<br/>
 		Other suggested names was:
 		PhotoGate, EventGate, SnapGate, TeamGate, SnapGrid, FotoGrid,
 		TravelGate, SnapGroup, HoliGate...
 	</p>
-
+    -->
 
 
 
