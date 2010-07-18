@@ -12,7 +12,11 @@ import javax.persistence.*;
     @NamedQuery(name = "traveller.findById",
 		query = "select distinct trav from Traveller trav " +
 		"left join fetch trav.securityDetail " +
-		"where trav.travellerId = :travellerId")
+		"where trav.travellerId = :travellerId"),
+    @NamedQuery(name = "traveller.findByUsername",
+		query = "select distinct trav from Traveller trav " +
+		"left join fetch trav.securityDetail " +
+		"where trav.securityDetail.username = :username")
 //		query = "from Traveller")traveller.findById
 })
  @Entity

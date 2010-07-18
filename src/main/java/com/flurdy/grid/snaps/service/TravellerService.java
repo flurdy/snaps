@@ -14,12 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class TravellerService implements ITravellerService {
+public class TravellerService extends AbstractService implements ITravellerService {
 
-
-	protected transient final Logger log = LoggerFactory.getLogger(this.getClass());
-
-	@Autowired ITravellerRepository travellerRepository;
+	@Autowired ISecurityService securityService;
 
 	@Override
 	public List<Traveller> findTravellers() {
@@ -35,5 +32,11 @@ public class TravellerService implements ITravellerService {
 		}
 	}
 
-	
+	@Override
+	public Traveller findCurrentTraveller() {
+		final String username = securityService.findLoggedInUsername();
+		return travellerRepository.findTraveller(username);
+	}
+
+
 }

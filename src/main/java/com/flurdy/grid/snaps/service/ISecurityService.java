@@ -40,4 +40,8 @@ public interface ISecurityService {
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SUPER')")
 	public void disableSecurityDetail(String username);
 
+	@PreAuthorize("isAuthenticated()")
+	public String findLoggedInUsername();
+
+
 }

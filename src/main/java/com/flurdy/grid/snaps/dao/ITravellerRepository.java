@@ -15,4 +15,5 @@ public interface ITravellerRepository {
 
 	public void deleteTraveller(Traveller traveller);
 
+	public Traveller findTraveller(String username);
 }

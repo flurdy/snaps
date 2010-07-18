@@ -9,23 +9,27 @@ import com.flurdy.grid.snaps.domain.Traveller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
+
 @Service
-public class PhotoAlbumService implements IPhotoAlbumService {
+public class PhotoAlbumService extends AbstractService implements IPhotoAlbumService {
 
-	protected transient final Logger log = LoggerFactory.getLogger(this.getClass());
-
-	@Autowired IPhotoAlbumRepository photoAlbumRepository;
-	@Autowired
-	ITravellerRepository travellerRepository;
+	@Autowired ITravellerService travellerService;
 
 	@Override
 	public PhotoAlbum addAlbum(HolidayGroup holidayGroup, PhotoSharingProvider provider, String url) {
 
-		final Traveller owner = travellerRepository.findTraveller(1); // Todo find actual traveller
+		final Traveller owner = travellerService.findCurrentTraveller(); 
+		
 
-		log.debug("Traveller [" + owner.getSecurityDetail().getUsername()
+		log.info("Traveller [" + owner.getSecurityDetail().getUsername()
 				+ "] is adding album from provider ["+provider.name()
 				+ "] to group ["+ holidayGroup.getGroupName()+"] with url: " + url);
 

@@ -78,4 +78,23 @@ public class TravellerRepository extends AbstractRepository implements ITravelle
 
 		entityManager.flush();
 	}
+
+	@Override
+	public Traveller findTraveller(String username) {
+		assert username != null;
+
+		Query query = entityManager.createNamedQuery("traveller.findByUsername");
+		query.setParameter("username", username);
+		try {
+			return (Traveller) query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+//		} catch (NonUniqueResultException ex) {
+//			throw new TechnicalException(TechnicalError.DATA_ERROR,ex);
+		}
+	}
 }
+
+
+
+

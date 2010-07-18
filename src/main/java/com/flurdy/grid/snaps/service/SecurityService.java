@@ -11,10 +11,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SecurityService implements ISecurityService {
+public class SecurityService extends AbstractService implements ISecurityService {
 
 	private static final String DEFAULT_SUPER_USERNAME = "super";
 	private static final String DEFAULT_SUPER_FULLNAME = "Super User";
@@ -22,15 +24,8 @@ public class SecurityService implements ISecurityService {
 	private static final String DEFAULT_SUPER_EMAIL = "invalid@example.com";
 		
 
-	protected final Logger log = LoggerFactory.getLogger(this.getClass());
-
 	private static final AuthorityRole[] defaultAuthorityRoles = {AuthorityRole.ROLE_USER};
 
-	@Autowired
-	private ISecurityRepository securityRepository;
-
-	@Autowired
-	private ITravellerRepository travellerRepository;
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -193,8 +188,18 @@ public class SecurityService implements ISecurityService {
 		securityRepository.updateSecurityDetail(securityDetail);
 	}
 
+	@Override
+	public String findLoggedInUsername() {
 
-	
+		assert (SecurityContextHolder.getContext()!=null &&
+					SecurityContextHolder.getContext().getAuthentication() != null &&
+					SecurityContextHolder.getContext().getAuthentication().getPrincipal() != null &&
+					SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof User );
+		
+		return ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+	}
+
+
 	@Override
 	public void enableSecurityDetail(String username) {
 

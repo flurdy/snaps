@@ -17,4 +17,6 @@ public interface ITravellerService {
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SUPER')")
 	public Traveller findTraveller(long travellerId);
 
+	@PreAuthorize("isAuthenticated()")
+	public Traveller findCurrentTraveller();
 }
