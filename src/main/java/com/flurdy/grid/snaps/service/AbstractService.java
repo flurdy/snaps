@@ -1,5 +1,6 @@
 package com.flurdy.grid.snaps.service;
 
+import com.flurdy.grid.snaps.dao.IHolidayGroupRepository;
 import com.flurdy.grid.snaps.dao.IPhotoAlbumRepository;
 import com.flurdy.grid.snaps.dao.ISecurityRepository;
 import com.flurdy.grid.snaps.dao.ITravellerRepository;
@@ -20,6 +21,9 @@ public abstract class AbstractService {
 
 	@Autowired
 	protected ITravellerRepository travellerRepository;
+
+	@Autowired
+	protected IHolidayGroupRepository holidayGroupRepository;
 
 
 }

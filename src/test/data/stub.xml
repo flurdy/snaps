@@ -12,29 +12,6 @@
       <value><![CDATA[Ecuador &amp; Galapagos]]></value>
     </row>
   </table>
-  <table name="PHOTOALBUM">
-    <column>ALBUMID</column>
-    <column>SHARINGPROVIDER</column>
-    <column>URL</column>
-    <column>HOLIDAYGROUP_GROUPID</column>
-    <column>OWNER_TRAVELLERID</column>
-    <row>
-      <value>1</value>
-      <value>flickr</value>
-      <value>http://www.flickr.com/photos/flurdy/sets/72157624009834665/</value>
-      <value>1</value>
-      <value>1</value>
-    </row>
-      <!--
-    <row>
-      <value>1</value>
-      <value>flickr</value>
-      <value>http://www.flickr.com/photos/flurdy/sets/72157622527536656/</value>
-      <value>2</value>
-      <value>1</value>
-    </row>
-      -->
-  </table>
   <table name="SECURITYAUTHORITY">
     <column>AUTHORITY_ID</column>
     <column>AUTHORITY_ROLE</column>
@@ -61,6 +38,11 @@
       <value>3a565c26e11d736f3e72e82f91e97c2b604850a0</value>
     </row>
     <row>
+      <value>testuser2</value>
+      <value>true</value>
+      <value>7bb7bb804f4c9e5b49cbd8fd028ee411acca193f</value>
+    </row>
+    <row>
       <value>admin</value>
       <value>true</value>
       <value>095d5f156b54198fad962bde6ef83a875376be24</value>
@@ -76,6 +58,10 @@
     <column>AUTHORITIES_AUTHORITY_ID</column>
     <row>
       <value>testuser</value>
+      <value>1</value>
+    </row>
+    <row>
+      <value>testuser2</value>
       <value>1</value>
     </row>
     <row>
@@ -121,6 +107,43 @@
       <value>invalid@example.com</value>
       <value><![CDATA[Super User]]></value>
       <value>super</value>
+    </row>
+    <row>
+      <value>4</value>
+      <value>invalid@example.com</value>
+      <value><![CDATA[Test User 2]]></value>
+      <value>testuser2</value>
+    </row>
+  </table>
+  <table name="PHOTOALBUM">
+    <column>ALBUMID</column>
+    <column>SHARINGPROVIDER</column>
+    <column>URL</column>
+    <column>HOLIDAYGROUP_GROUPID</column>
+    <column>OWNER_TRAVELLERID</column>
+    <row>
+      <value>1</value>
+      <value>flickr</value>
+      <value>http://www.flickr.com/photos/flurdy/sets/72157624009834665/</value>
+      <value>1</value>
+      <value>1</value>
+    </row>
+    <row>
+      <value>2</value>
+      <value>flickr</value>
+      <value>http://www.flickr.com/photos/flurdy/sets/72157622527536656/</value>
+      <value>2</value>
+      <value>1</value>
+    </row>
+  </table>
+  <table name="HOLIDAYMEMBER">
+    <column>MEMBERID</column>
+    <column>HOLIDAYGROUP_GROUPID</column>
+    <column>TRAVELLER_TRAVELLERID</column>    
+    <row>
+        <value>1</value>
+        <value>1</value>
+        <value>1</value>
     </row>
   </table>
 </dataset>

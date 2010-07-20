@@ -36,7 +36,11 @@ public class Traveller implements Serializable {
 	private SecurityDetail securityDetail;
 
 	@OneToMany(mappedBy = "owner",cascade={CascadeType.ALL},fetch=FetchType.LAZY)
-	private Set<PhotoAlbum> photoAlbums;	
+		private Set<PhotoAlbum> photoAlbums;
+
+	@OneToMany(mappedBy = "traveller",cascade={CascadeType.ALL},fetch=FetchType.LAZY)
+	private Set<HolidayMember> holidayMemberships;
+
 
 	public Traveller(){
 	}
@@ -102,6 +106,7 @@ public class Traveller implements Serializable {
 
 	@Override
 	public boolean equals(Object object) {
+		
 		if( object != null && object instanceof Traveller){
 			Traveller traveller = (Traveller) object;
 
@@ -109,12 +114,14 @@ public class Traveller implements Serializable {
 					&& fullname.equals(traveller.getFullname())
 					&& email.equals(traveller.getEmail()) ){
 				if( (securityDetail != null && traveller.getSecurityDetail() != null
-						&& !traveller.getSecurityDetail().equals(this.securityDetail))
+						&& traveller.getSecurityDetail().equals(this.securityDetail))
 						|| (securityDetail == null && traveller.getSecurityDetail() == null )	){
 					return true;
 				}
 			}
+
 		}
+
 		return false;
 	}
 
@@ -177,5 +184,13 @@ public class Traveller implements Serializable {
 
 	public void setPhotoAlbums(Set<PhotoAlbum> photoAlbums) {
 		this.photoAlbums = photoAlbums;
+	}
+
+	public Set<HolidayMember> getHolidayMemberships() {
+		return holidayMemberships;
+	}
+
+	public void setHolidayMemberships(Set<HolidayMember> holidayMemberships) {
+		this.holidayMemberships = holidayMemberships;
 	}
 }

@@ -57,7 +57,9 @@ public class HolidayController extends AbstractGridController {
 	@RequestMapping("/{groupId}")
 	public ModelAndView showHolidayHandler(@PathVariable("groupId") long groupId){
 		log.debug("read holiday group");
+
 		HolidayGroup holidayGroup = holidayGroupService.findHolidayGroup(groupId);
+
 		log.debug("holiday group: "+holidayGroup);
 		ModelAndView modelAndView = new ModelAndView("holiday/read");
 		modelAndView.addObject("holidayGroup", holidayGroup);

@@ -4,6 +4,8 @@ import com.flurdy.grid.snaps.dao.IHolidayGroupRepository;
 import com.flurdy.grid.snaps.domain.HolidayGroup;
 import java.util.HashSet;
 import java.util.Set;
+
+import com.flurdy.grid.snaps.domain.Traveller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,12 +14,10 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-public class HolidayGroupService implements IHolidayGroupService {
-
-	protected transient final Logger log = LoggerFactory.getLogger(this.getClass());
+public class HolidayGroupService extends AbstractService implements IHolidayGroupService {
 
 	@Autowired
-	private IHolidayGroupRepository holidayGroupRepository;
+	private ITravellerService travellerService;
 
 	@Override
 	public Set<HolidayGroup> searchForHolidayGroups(String groupName) {
@@ -27,7 +27,7 @@ public class HolidayGroupService implements IHolidayGroupService {
 			Long groupId = Long.parseLong(groupName);
 			Set<HolidayGroup> holidayGroups = new HashSet<HolidayGroup>();
 			holidayGroups.add(findHolidayGroup(groupId));
-		return holidayGroups;
+			return holidayGroups;
 		} catch (NumberFormatException exception){
 			return findHolidayGroups(groupName);
 		}		
@@ -35,14 +35,24 @@ public class HolidayGroupService implements IHolidayGroupService {
 
 	@Override
 	public void addHolidayGroup(HolidayGroup holidayGroup) {
-		log.debug("Adding group");		
+		final Traveller traveller = travellerService.findCurrentTraveller();
+		log.info("Adding group:" + holidayGroup
+				+ " by traveller:" + traveller);
 		holidayGroupRepository.addHolidayGroup( holidayGroup );
 	}
 
 	@Override
 	public HolidayGroup findHolidayGroup(Long groupId) {
-		log.debug("finding group");
-		return holidayGroupRepository.findHolidayGroup( groupId );
+		final HolidayGroup holidayGroup = holidayGroupRepository.findHolidayGroup( groupId );
+		final Traveller traveller = travellerService.findCurrentTraveller();
+
+		if( holidayGroup.isMember(traveller)){
+			log.debug("Traveller is a member of this group");
+			return holidayGroup;
+		} else {
+			log.debug("Traveller is NOT a member of this group");
+			return holidayGroup.getBasicHolidayGroupClone();
+		}
 	}
 
 	private Set<HolidayGroup> findHolidayGroups(String groupName) {

@@ -15,7 +15,8 @@ import javax.persistence.NamedQuery;
 @NamedQueries({
 	@NamedQuery(name="photoAlbum.findById",
 			query="select distinct pa from PhotoAlbum pa "
-			+ "where pa.albumId = :albumId")
+				+ "left join fetch pa.holidayGroup "
+				+ "where pa.albumId = :albumId")
 })
 @Entity
 public class PhotoAlbum implements Serializable{

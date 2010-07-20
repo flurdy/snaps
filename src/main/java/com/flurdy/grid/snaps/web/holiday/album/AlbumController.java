@@ -36,8 +36,9 @@ public class AlbumController extends AbstractGridController {
 		log.debug("showing album");
 		HolidayGroup holidayGroup = holidayGroupService.findHolidayGroup(holidayGroupId);
 		log.debug("holiday group: "+holidayGroup);
-		PhotoAlbum photoAlbum = photoAlbumService.findPhotoAlbum(albumId);
+		PhotoAlbum photoAlbum = photoAlbumService.findPhotoAlbum(albumId,holidayGroupId);
 		log.debug("album: "+photoAlbum);
+		
 		ModelAndView modelAndView = new ModelAndView("holiday/album/read");
 		modelAndView.addObject("holidayGroup", holidayGroup);
 		modelAndView.addObject("photoAlbum", photoAlbum);

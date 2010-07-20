@@ -157,7 +157,7 @@
 							<port>${web.port}</port>
 						</connector>
 					</connectors>
-					<!-- <scanIntervalSeconds>5</scanIntervalSeconds> -->
+				    <scanIntervalSeconds>0</scanIntervalSeconds>
 					<reload>manual</reload>
 					<webAppConfig>
 						<contextPath>${web.context}</contextPath>

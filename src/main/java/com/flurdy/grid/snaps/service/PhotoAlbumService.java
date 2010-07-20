@@ -26,8 +26,7 @@ public class PhotoAlbumService extends AbstractService implements IPhotoAlbumSer
 	@Override
 	public PhotoAlbum addAlbum(HolidayGroup holidayGroup, PhotoSharingProvider provider, String url) {
 
-		final Traveller owner = travellerService.findCurrentTraveller(); 
-		
+		final Traveller owner = travellerService.findCurrentTraveller(); 		
 
 		log.info("Traveller [" + owner.getSecurityDetail().getUsername()
 				+ "] is adding album from provider ["+provider.name()
@@ -48,11 +47,23 @@ public class PhotoAlbumService extends AbstractService implements IPhotoAlbumSer
 	}
 
 	@Override
-	public PhotoAlbum findPhotoAlbum(long albumId){
+	public PhotoAlbum findPhotoAlbum(long albumId, long holidayId){
 
-		log.debug("find album:"+albumId);
-
-		return photoAlbumRepository.findAlbum(albumId);
+		final HolidayGroup holidayGroup = holidayGroupRepository.findHolidayGroup( holidayId );
+		final Traveller traveller = travellerService.findCurrentTraveller();
+		if( holidayGroup.isMember(traveller)){
+			final PhotoAlbum photoAlbum = photoAlbumRepository.findAlbum(albumId);
+			if( photoAlbum.getHolidayGroup().equals(holidayGroup)){
+				log.debug("Traveller is a member of this group");
+				return photoAlbum;
+			} else {
+				log.warn("Album is NOT for this group");
+				throw new RuntimeException("Photo album was NOT a for this holiday group");
+			}
+		} else {
+			log.warn("Traveller is NOT a member of this group");
+			throw new RuntimeException("Traveller was NOT a member of this holiday group");
+		}
 
 	}
 
