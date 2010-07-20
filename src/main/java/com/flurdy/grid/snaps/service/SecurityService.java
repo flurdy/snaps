@@ -1,10 +1,7 @@
 package com.flurdy.grid.snaps.service;
 
-import com.flurdy.grid.snaps.dao.ISecurityRepository;
-import com.flurdy.grid.snaps.dao.ITravellerRepository;
-import com.flurdy.grid.snaps.domain.SecurityAuthority;
-import com.flurdy.grid.snaps.domain.SecurityAuthority.AuthorityRole;
 import com.flurdy.grid.snaps.domain.SecurityDetail;
+import com.flurdy.grid.snaps.domain.SecurityDetail.AuthorityRole;
 import com.flurdy.grid.snaps.domain.Traveller;
 import java.util.HashSet;
 import org.slf4j.Logger;
@@ -23,14 +20,11 @@ public class SecurityService extends AbstractService implements ISecurityService
 	private static final String DEFAULT_SUPER_PASSWORD = "superpassword"; // TODO create a reset pw email instead
 	private static final String DEFAULT_SUPER_EMAIL = "invalid@example.com";
 		
-
 	private static final AuthorityRole[] defaultAuthorityRoles = {AuthorityRole.ROLE_USER};
 
-	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	
 	
 	@Override
 	public SecurityDetail findLogin(String username) {
@@ -64,16 +58,8 @@ public class SecurityService extends AbstractService implements ISecurityService
 	}
 
 	private synchronized void applyDefaultAuthorities(SecurityDetail securityDetail) {
-		securityDetail.setAuthorities(null);
-		securityDetail.setAuthorities(new HashSet<SecurityAuthority>());
-
 		for(int i=0;i<defaultAuthorityRoles.length;i++){
-			SecurityAuthority authority = securityRepository.findAuthority(defaultAuthorityRoles[i]);
-			if( authority == null ){
-				securityRepository.addAuthority(new SecurityAuthority(defaultAuthorityRoles[i]));
-				authority = securityRepository.findAuthority(defaultAuthorityRoles[i]);
-			}
-			securityDetail.getAuthorities().add(authority);
+			securityDetail.getAuthorities().add(defaultAuthorityRoles[i]);
 		}
 	}
 
@@ -106,8 +92,8 @@ public class SecurityService extends AbstractService implements ISecurityService
 		SecurityDetail securityDetail = securityRepository.findSecurityDetail(DEFAULT_SUPER_USERNAME);
 		// TODO loop all users
 		if( securityDetail != null ){
-			for (SecurityAuthority authority : securityDetail.getAuthorities()) {
-				if( authority.getAuthorityRole().equals(AuthorityRole.ROLE_SUPER) ){
+			for (AuthorityRole authority : securityDetail.getAuthorities()) {
+				if( authority.equals(AuthorityRole.ROLE_SUPER) ){
 					return true;
 				}
 			}
@@ -121,14 +107,14 @@ public class SecurityService extends AbstractService implements ISecurityService
 	}
 
 	
-	private SecurityAuthority createAndAddAuthority(AuthorityRole role){
-		SecurityAuthority authority = securityRepository.findAuthority(role);
-		if( authority == null ){
-			securityRepository.addAuthority(new SecurityAuthority( role ));
-			authority = securityRepository.findAuthority( role );
-		}
-		return authority;
-	}
+//	private SecurityAuthority createAndAddAuthority(AuthorityRole role){
+//		SecurityAuthority authority = securityRepository.findAuthority(role);
+//		if( authority == null ){
+//			securityRepository.addAuthority(new SecurityAuthority( role ));
+//			authority = securityRepository.findAuthority( role );
+//		}
+//		return authority;
+//	}
 
 	
 	private void createDefaultSuperUser() {
@@ -142,9 +128,9 @@ public class SecurityService extends AbstractService implements ISecurityService
 					.email(DEFAULT_SUPER_EMAIL)
 					.build();
 
-		traveller.getSecurityDetail().addAuthority(createAndAddAuthority(AuthorityRole.ROLE_SUPER));
-		traveller.getSecurityDetail().addAuthority(createAndAddAuthority(AuthorityRole.ROLE_ADMIN));
-		traveller.getSecurityDetail().addAuthority(createAndAddAuthority(AuthorityRole.ROLE_USER));
+		traveller.getSecurityDetail().addAuthority(AuthorityRole.ROLE_SUPER);
+		traveller.getSecurityDetail().addAuthority(AuthorityRole.ROLE_ADMIN);
+		traveller.getSecurityDetail().addAuthority(AuthorityRole.ROLE_USER);
 
 		applyEncryptedPassword(traveller.getSecurityDetail());
 
@@ -215,18 +201,18 @@ public class SecurityService extends AbstractService implements ISecurityService
 
 
 	@Override
-	public void removeAuthority(String username, SecurityAuthority authority) {
+	public void removeAuthority(String username, AuthorityRole authority) {
 
 		// TODO validate
 
 		log.info("Removing authority ["+authority+"] from: " + username);
 
 		SecurityDetail securityDetail = securityRepository.findSecurityDetail(username);
-		SecurityAuthority realAuthority = securityRepository.findAuthority(authority.getAuthorityRole());
+//		SecurityAuthority realAuthority = securityRepository.findAuthority(authority.getAuthorityRole());
 
 		log.debug("Auths:"+securityDetail.getAuthorities().size());
 		
-		securityDetail.getAuthorities().remove(realAuthority);
+		securityDetail.removeAuthority(authority);
 
 		log.debug("Auths:"+securityDetail.getAuthorities().size());
 
@@ -237,22 +223,21 @@ public class SecurityService extends AbstractService implements ISecurityService
 	
 
 	@Override
-	public void addAuthority(String username, SecurityAuthority authority) {
+	public void addAuthority(String username, AuthorityRole authority) {
 
 		// TODO validate
 
 		assert username != null && username.length()>0;
-		assert authority != null && authority.getAuthorityRole() != null;
 		
 		log.info("Adding authority ["+authority+"] from: " + username);
 		
 
 		SecurityDetail securityDetail = securityRepository.findSecurityDetail(username);
-		SecurityAuthority realAuthority = securityRepository.findAuthority(authority.getAuthorityRole());
+//		SecurityAuthority realAuthority = securityRepository.findAuthority(authority.getAuthorityRole());
 
 		log.debug("Auths:"+securityDetail.getAuthorities().size());
 
-		securityDetail.getAuthorities().add(realAuthority);
+		securityDetail.addAuthority(authority);
 
 		log.debug("Auths:"+securityDetail.getAuthorities().size());
 

@@ -1,7 +1,5 @@
 package com.flurdy.grid.snaps.dao;
 
-import com.flurdy.grid.snaps.domain.SecurityAuthority;
-import com.flurdy.grid.snaps.domain.SecurityAuthority.AuthorityRole;
 import com.flurdy.grid.snaps.domain.SecurityDetail;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -29,27 +27,27 @@ public class SecurityRepository extends AbstractRepository implements ISecurityR
 		}	
 	}
 
-	@Override
-	public SecurityAuthority findAuthority(AuthorityRole role) {
-        assert role != null;
-		Query query = entityManager.createNamedQuery("authority.findAuthorityByRole");
-		query.setParameter("authorityRole", role.toString());
-		try{
-			return (SecurityAuthority) query.getSingleResult();
-		} catch (NoResultException e) {
-			return null;
-//		} catch (NonUniqueResultException ex) {
-//			log.error("Too many authorities: "+role);
-//			new ex;
-		}
-	}
+//	@Override
+//	public SecurityAuthority findAuthority(AuthorityRole role) {
+//        assert role != null;
+//		Query query = entityManager.createNamedQuery("authority.findAuthorityByRole");
+//		query.setParameter("authorityRole", role.toString());
+//		try{
+//			return (SecurityAuthority) query.getSingleResult();
+//		} catch (NoResultException e) {
+//			return null;
+////		} catch (NonUniqueResultException ex) {
+////			log.error("Too many authorities: "+role);
+////			new ex;
+//		}
+//	}
 
-	@Override
-	public void addAuthority(SecurityAuthority authority) {
-		assert authority != null;
-		entityManager.persist(authority);
-        // entityManager.flush();
-	}
+//	@Override
+//	public void addAuthority(SecurityAuthority authority) {
+//		assert authority != null;
+//		entityManager.persist(authority);
+//        // entityManager.flush();
+//	}
 
 	@Override
 	public void addSecurityDetail(SecurityDetail securityDetail) {

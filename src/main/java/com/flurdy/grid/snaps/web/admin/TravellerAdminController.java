@@ -1,7 +1,6 @@
 package com.flurdy.grid.snaps.web.admin;
 
 import com.flurdy.grid.snaps.dao.SecurityRepository;
-import com.flurdy.grid.snaps.domain.SecurityAuthority;
 import com.flurdy.grid.snaps.domain.SecurityDetail;
 import com.flurdy.grid.snaps.domain.Traveller;
 import com.flurdy.grid.snaps.web.AbstractGridController;
@@ -87,7 +86,7 @@ public class TravellerAdminController extends AbstractGridController {
 		if (username != null && username.length() > 0 && authorityRole != null && authorityRole.length() > 0) {
 
 			log.debug("Role:"+authorityRole);
-			securityService.removeAuthority(username, new SecurityAuthority(authorityRole));
+			securityService.removeAuthority(username, SecurityDetail.findRole(authorityRole));
 
 			return "redirect:/admin/";
 		} else {
@@ -104,7 +103,7 @@ public class TravellerAdminController extends AbstractGridController {
 
 			log.debug("Role:"+authorityRole);
 
-			securityService.addAuthority(username, new SecurityAuthority(authorityRole));
+			securityService.addAuthority(username, SecurityDetail.findRole(authorityRole));
 
 			return "redirect:/admin/";
 		} else {

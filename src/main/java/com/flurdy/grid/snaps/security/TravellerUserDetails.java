@@ -1,7 +1,8 @@
 package com.flurdy.grid.snaps.security;
 
-import com.flurdy.grid.snaps.domain.SecurityAuthority;
+
 import com.flurdy.grid.snaps.domain.SecurityDetail;
+import com.flurdy.grid.snaps.domain.SecurityDetail.AuthorityRole;
 import com.flurdy.grid.snaps.service.ISecurityService;
 import java.util.HashSet;
 import java.util.Set;
@@ -48,9 +49,9 @@ public class TravellerUserDetails implements UserDetailsService {
 		
 		Set<GrantedAuthority> grantedAuthorities = new HashSet<GrantedAuthority>();
 		if( securityDetail.getAuthorities() != null ) {
-			for(SecurityAuthority authority : securityDetail.getAuthorities() ){
+			for(AuthorityRole authority : securityDetail.getAuthorities() ){
 //				log.debug("Authority: " + authority);
-				grantedAuthorities.add( new GrantedAuthorityImpl( authority.getAuthorityRole().toString() ));
+				grantedAuthorities.add( new GrantedAuthorityImpl( authority.toString() ));
 			}
 		}
 

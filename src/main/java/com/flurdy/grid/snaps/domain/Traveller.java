@@ -65,7 +65,7 @@ public class Traveller implements Serializable {
         private Long travellerId;
 		private String username;
 		private String password;
-		private Set<SecurityAuthority> authorities;
+		private Set<String> authorities;
 		private String fullname;
 		private String email;
 		private boolean enabled = true;
@@ -87,7 +87,7 @@ public class Traveller implements Serializable {
 			this.enabled = enabled;
 			return this;
 		}
-		public Builder authorities(Set<SecurityAuthority> authorities){
+		public Builder authorities(Set<String> authorities){
 			this.authorities = authorities;
 			return this;
 		}

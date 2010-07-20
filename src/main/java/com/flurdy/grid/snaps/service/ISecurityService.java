@@ -5,9 +5,8 @@
 
 package com.flurdy.grid.snaps.service;
 
-import com.flurdy.grid.snaps.domain.SecurityAuthority;
-import com.flurdy.grid.snaps.domain.SecurityAuthority.AuthorityRole;
 import com.flurdy.grid.snaps.domain.SecurityDetail;
+import com.flurdy.grid.snaps.domain.SecurityDetail.AuthorityRole;
 import com.flurdy.grid.snaps.domain.Traveller;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -26,10 +25,10 @@ public interface ISecurityService {
 //	public void updateSecurityDetail(String username, SecurityDetail securityDetail);
 	
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SUPER')")
-	public void removeAuthority(String username, SecurityAuthority authority);
+	public void removeAuthority(String username, AuthorityRole authority);
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SUPER')")
-	public void addAuthority(String username, SecurityAuthority authority);
+	public void addAuthority(String username, AuthorityRole authority);
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SUPER')")
 	public void changeSecurityDetailPassword(String username, String password);
