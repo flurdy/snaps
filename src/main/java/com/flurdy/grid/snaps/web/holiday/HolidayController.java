@@ -6,6 +6,7 @@
 package com.flurdy.grid.snaps.web.holiday;
 
 import com.flurdy.grid.snaps.domain.HolidayGroup;
+import com.flurdy.grid.snaps.domain.Traveller;
 import com.flurdy.grid.snaps.web.AbstractGridController;
 import java.util.Set;
 import org.springframework.security.access.annotation.Secured;
@@ -58,10 +59,13 @@ public class HolidayController extends AbstractGridController {
 	public ModelAndView showHolidayHandler(@PathVariable("groupId") long groupId){
 		log.debug("read holiday group");
 
-		HolidayGroup holidayGroup = holidayGroupService.findHolidayGroup(groupId);
+		final HolidayGroup holidayGroup = holidayGroupService.findHolidayGroup(groupId);
+		final Traveller traveller = travellerService.findCurrentTraveller();
 
 		log.debug("holiday group: "+holidayGroup);
-		ModelAndView modelAndView = new ModelAndView("holiday/read");
+		ModelAndView modelAndView = ( holidayGroup.isMember(traveller) )
+			? new ModelAndView("holiday/readMember")
+			: new ModelAndView("holiday/read");
 		modelAndView.addObject("holidayGroup", holidayGroup);
 		return returnTemplate(modelAndView);
 	}

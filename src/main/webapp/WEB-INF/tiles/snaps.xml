@@ -72,6 +72,9 @@
 
 	<definition name="holiday/read" extends="holidayTemplate">
         <put-attribute name="cargo" value="/WEB-INF/views/holiday/readHoliday.jsp"/>
+    </definition>
+
+    <definition name="holiday/readMember" extends="holiday/read">
         <put-attribute name="port" value="/WEB-INF/views/holiday/readPort.jsp"/>
         <put-attribute name="starboard" value="/WEB-INF/views/holiday/holidayAlbums.jsp"/>
     </definition>

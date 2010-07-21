@@ -32,18 +32,26 @@ public class PhotoAlbumService extends AbstractService implements IPhotoAlbumSer
 				+ "] is adding album from provider ["+provider.name()
 				+ "] to group ["+ holidayGroup.getGroupName()+"] with url: " + url);
 
-		// validate url ?
+		// todo: validate url ?
 
-		PhotoAlbum album = new PhotoAlbum.Builder()
-				.sharingProvider(provider)
-				.url(url)
-				.holidayGroup(holidayGroup)
-				.owner(owner)
-				.build();
+		if( holidayGroup.isMember(owner)){
 
-		photoAlbumRepository.addAlbum(album);
+			PhotoAlbum album = new PhotoAlbum.Builder()
+					.sharingProvider(provider)
+					.url(url)
+					.holidayGroup(holidayGroup)
+					.owner(owner)
+					.build();
 
-		return album;
+			photoAlbumRepository.addAlbum(album);
+
+			return album;
+
+		} else {
+			log.warn("Traveller is NOT a member of this group");
+			throw new RuntimeException("Traveller was NOT a member of this holiday group");
+		}
+
 	}
 
 	@Override

@@ -57,10 +57,12 @@ public class HolidayGroup implements Serializable {
 
 	public boolean isMember(Traveller traveller){
 		boolean travellerIsMember = false;
-		for( HolidayMember holidayMember : members ){
-			if( holidayMember.getTraveller().equals(traveller) ){
-				return true;
-			}
+		if( members != null && !members.isEmpty()){
+			for( HolidayMember holidayMember : members ){
+				if( holidayMember.getTraveller().equals(traveller) ){
+					return true;
+				}
+			}	
 		}
 		return travellerIsMember;
 	}
