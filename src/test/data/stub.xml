@@ -12,22 +12,6 @@
       <value><![CDATA[Ecuador &amp; Galapagos]]></value>
     </row>
   </table>
-  <table name="SECURITYAUTHORITY">
-    <column>AUTHORITY_ID</column>
-    <column>AUTHORITY_ROLE</column>
-    <row>
-      <value>1</value>
-      <value>ROLE_USER</value>
-    </row>
-    <row>
-      <value>2</value>
-      <value>ROLE_SUPER</value>
-    </row>
-    <row>
-      <value>3</value>
-      <value>ROLE_ADMIN</value>
-    </row>
-  </table>
   <table name="SECURITYDETAIL">
     <column>USERNAME</column>
     <column>ENABLED</column>
@@ -53,36 +37,36 @@
       <value>52c53c2ecfe3438af8b702641d65df5edaef5d90</value>
     </row>
   </table>
-  <table name="SECURITYDETAIL_SECURITYAUTHORITY">
-    <column>SECURITYDETAIL_USERNAME</column>
-    <column>AUTHORITIES_AUTHORITY_ID</column>
+  <table name="AUTHORITY">
+    <column>USERNAME</column>
+    <column>AUTHORITIES</column>
     <row>
       <value>testuser</value>
-      <value>1</value>
+      <value>ROLE_USER</value>
     </row>
     <row>
       <value>testuser2</value>
-      <value>1</value>
+      <value>ROLE_USER</value>
     </row>
     <row>
       <value>admin</value>
-      <value>1</value>
+      <value>ROLE_USER</value>
     </row>
     <row>
       <value>admin</value>
-      <value>3</value>
+      <value>ROLE_ADMIN</value>
     </row>
     <row>
       <value>super</value>
-      <value>1</value>
+      <value>ROLE_USER</value>
     </row>
     <row>
       <value>super</value>
-      <value>2</value>
+      <value>ROLE_ADMIN</value>
     </row>
     <row>
       <value>super</value>
-      <value>3</value>
+      <value>ROLE_SUPER</value>
     </row>
   </table>
   <table name="TRAVELLER">

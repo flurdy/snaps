@@ -162,8 +162,8 @@
 					<reload>manual</reload>
 					<webAppConfig>
 						<contextPath>${web.context}</contextPath>
-						<sessionHandler implementation="org.mortbay.jetty.servlet.SessionHandler">
-							<sessionManager implementation="org.mortbay.jetty.servlet.HashSessionManager">
+						<sessionHandler implementation="org.eclipse.jetty.server.session.SessionHandler">
+							<sessionManager implementation="org.eclipse.jetty.server.session.HashSessionManager">
 								<storeDirectory>${basedir}/target/sessions</storeDirectory>
 							</sessionManager>
 						</sessionHandler>
