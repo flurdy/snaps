@@ -5,6 +5,7 @@ import com.flurdy.grid.snaps.domain.HolidayGroup;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.flurdy.grid.snaps.domain.HolidayMember;
 import com.flurdy.grid.snaps.domain.Traveller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,14 +52,14 @@ public class HolidayGroupService extends AbstractService implements IHolidayGrou
 			final Traveller traveller = travellerService.findCurrentTraveller();
 
 			if( holidayGroup.isMember(traveller)){
-				log.debug("Traveller is a member of this group");
+//				log.debug("Traveller is a member of this group");
 				return holidayGroup;
 			} else {
 				log.debug("Traveller is NOT a member of this group");
 				return holidayGroup.getBasicHolidayGroupClone();
 			}
 		} else {
-			log.debug("Holiday not found");			
+			log.debug("Holiday not found: " + groupId);			
 			return null;
 		}
 	}
@@ -66,13 +67,55 @@ public class HolidayGroupService extends AbstractService implements IHolidayGrou
 	@Override
 	public void addHolidayMember(HolidayGroup holidayGroup, Traveller traveller) {
 		if( holidayGroup != null && holidayGroup.getGroupId() > 0 ){
-			holidayGroup = holidayGroupRepository.findHolidayGroup(holidayGroup.getGroupId());
-			traveller = travellerService.findCurrentTraveller();
 
-			holidayGroup.addMember(traveller);
+			final Traveller currentTraveller = travellerService.findCurrentTraveller();
 
-			holidayGroupRepository.updateHolidayGroup(holidayGroup);
+			if( holidayGroup.isMember(currentTraveller)){
 
+				if( holidayGroup.isPendingMember(traveller)){
+					holidayGroup.approveMember(traveller);
+				} else {
+					holidayGroup.addMember(traveller);
+				}
+
+				holidayGroupRepository.updateHolidayGroup(holidayGroup);
+
+			} else {
+				throw new RuntimeException("Traveller is NOT a member of this group");
+			}
+		} else {
+			throw new RuntimeException("Not a valid holiday");
+		}
+	}
+
+	@Override
+	public void addTravellerAsPendingMember(HolidayGroup holidayGroup, Traveller pendingTraveller) {
+		if( holidayGroup != null && holidayGroup.getGroupId() > 0 ){
+
+//			final Traveller currentTraveller = travellerService.findCurrentTraveller();
+
+//			if( holidayGroup.isMember(currentTraveller)){
+				if( !holidayGroup.isMember(pendingTraveller)
+						&& !holidayGroup.isPendingMember(pendingTraveller) ){
+
+					log.debug("Adding traveller as pending member");
+
+					holidayGroup.addPendingMember(pendingTraveller);
+
+					holidayGroupRepository.updateHolidayGroup(holidayGroup);
+
+//					final HolidayGroup holidayGroup2 = holidayGroupRepository.findHolidayGroup( holidayGroup.getGroupId() );
+//					for( HolidayMember holidayMember : holidayGroup2.getMembers()){
+//						log.debug("member:" + holidayMember );
+//						log.debug("traveller:" + holidayMember.getTraveller() );
+//					}
+
+				} else {
+					throw new RuntimeException("Traveller is already a pending/member of this group");
+				}
+//			} else {
+//				throw new RuntimeException("Traveller is NOT a member of this group");
+//			}
 		} else {
 			throw new RuntimeException("Not a valid holiday");
 		}

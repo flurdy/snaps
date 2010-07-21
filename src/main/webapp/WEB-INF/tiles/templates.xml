@@ -19,6 +19,7 @@
 		<put-attribute name="deck" type="string" value=""/>
 		<put-attribute name="starboard" type="string" value=""/>
 		<put-attribute name="cargoJQuery" type="string" value=""/>
+        <put-attribute name="debug" value="/WEB-INF/views/nautical/debug.jsp"/>
 	</definition>
 
 	<definition name="adminTemplate" extends="gridTemplate">

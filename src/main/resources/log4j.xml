@@ -77,15 +77,15 @@
 
 	<logger name="com.flurdy">
 		<level value="debug" />
-		<appender-ref ref="allLog" />
-		<appender-ref ref="appLog" />
 		<appender-ref ref="console" />
 	</logger>
 
+    <!--
 	<logger name="org.springframework">
-		<level value="warn" />
+		<level value="info" />
 		<appender-ref ref="allLog" />
 		<appender-ref ref="springLog" />
+		<appender-ref ref="console" />
 	</logger>
 
 	<logger name="org.springframework.web">
@@ -100,10 +100,17 @@
 	</logger>
 
 	<logger name="org.apache">
-		<level value="warn" />
+		<level value="info" />
 		<appender-ref ref="allLog" />
+		<appender-ref ref="console" />
 	</logger>
-	
+
+	<logger name="org.hibernate">
+		<level value="info" />
+		<appender-ref ref="allLog" />
+		<appender-ref ref="console" />
+	</logger>
+	-->
 	<root>
 		<level value="error" />
 		<appender-ref ref="allLog" />

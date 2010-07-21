@@ -35,6 +35,9 @@ public class HolidayGroupRepository implements IHolidayGroupRepository {
 		try {
 			return (HolidayGroup) query.getSingleResult();
 		} catch (NoResultException e) {
+//			query = entityManager.createNamedQuery("holidayGroup.findById");
+//			query.setParameter("groupId", groupId);
+//			log.debug("hgggg:"+((HolidayGroup) query.getSingleResult()));
 			return null;
 //		} catch (NonUniqueResultException ex) {
 //			throw new TechnicalException(TechnicalError.DATA_ERROR,ex);

@@ -67,7 +67,7 @@ body {  background-color: #cc0000;  color: black; }
 .compartment { padding: 0.2em 1em; }
 body {  }
 #ocean { margin-left: 1em; }
-#ballast { width: 35em; padding: 0.5em 2em 2em 2em; min-height: 14em;  }
+#ballast { width: 25em; padding: 0.5em 2em 2em 2em; min-height: 14em;  }
 
 #port {  width: 1em; min-width: 1em; }
 #starboard {  width: 4em; min-width: 4em;   }

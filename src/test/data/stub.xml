@@ -122,10 +122,12 @@
   </table>
   <table name="HOLIDAYMEMBER">
     <column>MEMBERID</column>
+    <column>APPROVED</column>
     <column>HOLIDAYGROUP_GROUPID</column>
     <column>TRAVELLER_TRAVELLERID</column>    
     <row>
         <value>1</value>
+        <value>true</value>
         <value>1</value>
         <value>1</value>
     </row>

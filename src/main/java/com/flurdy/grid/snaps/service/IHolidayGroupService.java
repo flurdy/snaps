@@ -18,4 +18,7 @@ public interface IHolidayGroupService {
 
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public void addHolidayMember(HolidayGroup holidayGroup, Traveller traveller);
+
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public void addTravellerAsPendingMember(HolidayGroup holidayGroup, Traveller traveller);
 }

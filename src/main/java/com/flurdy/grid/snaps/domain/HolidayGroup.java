@@ -9,7 +9,10 @@ import javax.persistence.*;
 	@NamedQuery(name="holidayGroup.findById",
 			query="select distinct hg from HolidayGroup hg "
 			+ "left join fetch hg.photoAlbums "
-			+ "left join fetch hg.members "		
+			+ "left join fetch hg.members "
+			+ "where hg.groupId = :groupId"),
+	@NamedQuery(name="holidayGroup.findBasicById",
+			query="select distinct hg from HolidayGroup hg "
 			+ "where hg.groupId = :groupId")
 })
 @Entity
@@ -27,7 +30,6 @@ public class HolidayGroup implements Serializable {
 	@OneToMany(mappedBy = "holidayGroup",cascade={CascadeType.ALL},fetch=FetchType.LAZY)
 	private Set<HolidayMember> members;
 
-
 	public HolidayGroup(){
 	}
 
@@ -38,12 +40,14 @@ public class HolidayGroup implements Serializable {
 	private HolidayGroup(Builder builder) {
 		this.groupId = builder.groupId;
 		this.groupName = builder.groupName;
+		this.members = builder.members;
 	}
 
 
 	public static class Builder {
 		private Long groupId;
 		private String groupName;
+		private Set<HolidayMember> members;
 		public Builder(){
 		}
         public Builder groupId(Long groupId){
@@ -54,37 +58,82 @@ public class HolidayGroup implements Serializable {
 			this.groupName = groupName;
 			return this;
 		}
+		public Builder members(Set<HolidayMember> members){
+			this.members = members;
+			return this;
+		}
 		public HolidayGroup build() {
 			return new HolidayGroup(this);
 		}
 	}
 
 
+	public HolidayGroup getBasicHolidayGroupClone(){
+		Set<HolidayMember> members = new HashSet<HolidayMember>();
+		members.addAll(this.members);
+		return new HolidayGroup.Builder()
+					.groupId(groupId.longValue())
+					.groupName(""+groupName)
+					.members(members)
+					.build();
+	}
+
 	public boolean isMember(Traveller traveller){
-		boolean travellerIsMember = false;
 		if( members != null && !members.isEmpty()){
 			for( HolidayMember holidayMember : members ){
 				if( holidayMember.getTraveller().equals(traveller) ){
-					return true;
+					return holidayMember.isApproved();
 				}
-			}	
+			}
 		}
-		return travellerIsMember;
+		return false;
 	}
-
-	public HolidayGroup getBasicHolidayGroupClone(){
-		return new HolidayGroup.Builder()
-					.groupId(groupId.longValue())
-					.groupName(""+groupName).build();
-	}
-
 
 	public void addMember(Traveller traveller) {
 		if( members == null )
 			members = new HashSet<HolidayMember>();
-		members.add(new HolidayMember.Builder().holidayGroup(this).traveller(traveller).build());
+		if( isPendingMember(traveller)){
+			approveMember(traveller);
+		} else if( isMember(traveller)){
+			return;			
+		} else {
+			members.add(new HolidayMember.Builder()
+				.holidayGroup(this)
+				.traveller(traveller)
+				.approved(true)
+				.build());
+		}
 	}
 
+	public boolean isPendingMember(Traveller traveller) {
+		if( members != null && !members.isEmpty()){
+			for( HolidayMember holidayMember : members ){
+				if( holidayMember.getTraveller().equals(traveller) ){
+					return !holidayMember.isApproved();
+				}
+			}
+		}
+		return false;
+	}
+
+
+	public void approveMember(Traveller traveller) {
+		for( HolidayMember holidayMember : members ){
+			if( holidayMember.getTraveller().equals(traveller) ){
+				holidayMember.setApproved(true);
+			}
+		}
+	}
+
+	public void addPendingMember(Traveller pendingTraveller) {
+		if( members == null )
+			members = new HashSet<HolidayMember>();
+		members.add(new HolidayMember.Builder()
+				.holidayGroup(this)
+				.traveller(pendingTraveller)
+				.approved(false)
+				.build());
+	}
 
 	public String getGroupName() {
 		return groupName;

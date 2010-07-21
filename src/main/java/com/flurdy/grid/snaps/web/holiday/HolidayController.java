@@ -6,8 +6,11 @@
 package com.flurdy.grid.snaps.web.holiday;
 
 import com.flurdy.grid.snaps.domain.HolidayGroup;
+import com.flurdy.grid.snaps.domain.HolidayMember;
 import com.flurdy.grid.snaps.domain.Traveller;
 import com.flurdy.grid.snaps.web.AbstractGridController;
+
+import java.util.HashSet;
 import java.util.Set;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
@@ -63,8 +66,22 @@ public class HolidayController extends AbstractGridController {
 
 		ModelAndView modelAndView = ( holidayGroup.isMember(traveller) )
 			? new ModelAndView("holiday/readMember")
-			: new ModelAndView("holiday/read");
+			: new ModelAndView("holiday/readVisitor");
 		modelAndView.addObject("holidayGroup", holidayGroup);
+		if ( holidayGroup.isMember(traveller) ){
+			Set<Traveller> pendingTravellers = new HashSet<Traveller>();
+			for(HolidayMember member : holidayGroup.getMembers() ){
+				if( !member.isApproved()){
+					pendingTravellers.add(member.getTraveller());
+				}
+			}
+			modelAndView.addObject("pendingTravellers", pendingTravellers);
+		}
+		if ( holidayGroup.isPendingMember(traveller) ){
+			log.debug(" pending");
+			modelAndView.addObject("isPendingTraveller", Boolean.TRUE);
+		} else
+			log.debug("Not pending");
 		return returnTemplate(modelAndView);
 	}
 

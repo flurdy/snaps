@@ -16,6 +16,7 @@ public class HolidayMember implements Serializable {
 	@ManyToOne(cascade={CascadeType.ALL},fetch=FetchType.EAGER)
 	private Traveller traveller;
 
+	private boolean approved = false;
 
 	public HolidayMember() {
 	}
@@ -24,12 +25,14 @@ public class HolidayMember implements Serializable {
 	private HolidayMember(Builder builder) {
 		this.traveller = builder.traveller;
 		this.holidayGroup = builder.holidayGroup;
+		this.approved = builder.approved;
 	}
 
 
 	public static class Builder {
 		private HolidayGroup holidayGroup;
 		private Traveller traveller;
+		private boolean approved;
 		public Builder(){
 		}
         public Builder holidayGroup(HolidayGroup holidayGroup){
@@ -40,11 +43,21 @@ public class HolidayMember implements Serializable {
 			this.traveller = traveller;
 			return this;
 		}
+		public Builder approved(boolean approved){
+			this.approved = approved;
+			return this;
+		}
 		public HolidayMember build() {
 			return new HolidayMember(this);
 		}
 	}
 
+	@Override
+	public String toString() {
+		return "HolidayGroup: " + holidayGroup.getGroupId()
+				+ " | Traveller: " + traveller.getTravellerId()
+				+ " approved: " + approved;
+	}
 
 	public Long getMemberId() {
 		return memberId;
@@ -68,5 +81,13 @@ public class HolidayMember implements Serializable {
 
 	public void setTraveller(Traveller traveller) {
 		this.traveller = traveller;
+	}
+
+	public boolean isApproved() {
+		return approved;
+	}
+
+	public void setApproved(boolean approved) {
+		this.approved = approved;
 	}
 }

@@ -74,10 +74,10 @@
 
 	<table>
 		<c:forEach var="authority" items="${securityDetail.authorities}">
-			<form action="${pageContext.request.contextPath}/admin/traveller/security/${securityDetail.username}/authority/${authority.authorityRole}" method="post">
+			<form action="${pageContext.request.contextPath}/admin/traveller/security/${securityDetail.username}/authority/${authority}" method="post">
 				<input type="hidden" name="_method" value="DELETE"/>
 				<tr>
-					<td>${authority.authorityRole}</td>
+					<td>${authority}</td>
 					<td><button type="submit">remove</button></td>
 				</tr>
 			</form>
@@ -90,7 +90,7 @@
 	<table>
 		<c:set var="hasAuthority" scope="request"  value="0" />
 		<c:forEach var="authority" items="${securityDetail.authorities}">
-			<c:if test="${authority.authorityRole == 'ROLE_USER'}">
+			<c:if test="${authority == 'ROLE_USER'}">
 				<c:set var="hasAuthority" scope="request"  value="1" />
 			</c:if>
 		</c:forEach>
@@ -105,7 +105,7 @@
 		</c:if>
 		<c:set var="hasAuthority" scope="request"  value="0" />
 		<c:forEach var="authority" items="${securityDetail.authorities}">
-			<c:if test="${authority.authorityRole == 'ROLE_ADMIN'}">
+			<c:if test="${authority == 'ROLE_ADMIN'}">
 				<c:set var="hasAuthority" scope="request"  value="1" />
 			</c:if>
 		</c:forEach>
@@ -120,7 +120,7 @@
 		</c:if>
 		<c:set var="hasAuthority" scope="request"  value="0" />
 		<c:forEach var="authority" items="${securityDetail.authorities}">
-			<c:if test="${authority.authorityRole == 'ROLE_SUPER'}">
+			<c:if test="${authority == 'ROLE_SUPER'}">
 				<c:set var="hasAuthority" scope="request"  value="1" />
 			</c:if>
 		</c:forEach>
@@ -135,7 +135,7 @@
 		</c:if>
 		<c:set var="hasAuthority" scope="request"  value="0" />
 		<c:forEach var="authority" items="${securityDetail.authorities}">
-			<c:if test="${authority.authorityRole == 'ROLE_MONITOR'}">
+			<c:if test="${authority == 'ROLE_MONITOR'}">
 				<c:set var="hasAuthority" scope="request"  value="1" />
 			</c:if>
 		</c:forEach>

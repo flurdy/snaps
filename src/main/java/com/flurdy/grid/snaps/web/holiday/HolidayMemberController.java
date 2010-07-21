@@ -15,20 +15,54 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class HolidayMemberController extends AbstractGridController {
 
 	@RequestMapping(value="",method= RequestMethod.POST)
-	public String createHolidayHandler( @PathVariable("groupId") long groupId ){
+	public String joinHolidayHandler( @PathVariable("groupId") long groupId ){
 
 		log.debug("requesting to join holiday group");
 
 		final HolidayGroup holidayGroup = holidayGroupService.findHolidayGroup(groupId);
 		final Traveller traveller = travellerService.findCurrentTraveller();
 
-		log.debug("holiday group: "+holidayGroup);
-		log.debug("traveller: "+traveller);
+		if( holidayGroup != null && traveller != null ){
 
+			log.debug("holiday group: "+holidayGroup);
+			log.debug("traveller: "+traveller);
 
-			holidayGroupService.addHolidayMember(holidayGroup,traveller);
+			holidayGroupService.addTravellerAsPendingMember(holidayGroup,traveller);
 			return "redirect:/holiday/"+holidayGroup.getGroupId();
+
+		} else {
+			throw new RuntimeException("Invalid input");
+		}
+	}
+
+
+	@RequestMapping(value="/{travellerId}/approve",method= RequestMethod.POST)
+	public String approveTravellerToJoinHolidayHandler(
+			@PathVariable("groupId") long groupId,
+			@PathVariable("travellerId") long travellerId ){
+
+		log.debug("approving request to join holiday group");
+
+		final HolidayGroup holidayGroup = holidayGroupService.findHolidayGroup(groupId);
 		
+		if( holidayGroup != null ){
+
+			final Traveller traveller = travellerService.findTraveller(travellerId);
+
+			if( traveller != null ){
+
+				log.debug("holiday group: "+holidayGroup);
+				log.debug("traveller: "+traveller);
+
+				holidayGroupService.addHolidayMember(holidayGroup,traveller);
+				return "redirect:/holiday/"+holidayGroup.getGroupId();
+
+			} else {
+				throw new RuntimeException("Invalid input");
+			}
+		} else {
+			throw new RuntimeException("Invalid input");
+		}
 	}
 
 

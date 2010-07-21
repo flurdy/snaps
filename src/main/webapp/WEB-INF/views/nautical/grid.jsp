@@ -15,13 +15,8 @@
 		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/style/grid.css"/>
 		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/style/site.css"/>
 		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/style/cargo.css"/>
-		<style>
-			<c:if test="${pageContext.request.serverName == 'localhost' || fn:startsWith(pageContext.request.serverName,'192.168') }">/* incognito/paranoia.. */
-				/* body { background-color: #ffffff; } */
-				/* #bow { display: none; } */
-				/* #jib, #cargo h2  { display: none; } */
-				/* #bow, #bow a, #jib, #cargo h2  { color: #e0e0e0; }  */
-		</c:if>
+		<tiles:insertAttribute name="debug"/>
+        <style>
 			/* firefox css bug hack */
 			#ocean #ship #stern { display: none; }
 			#ocean #ship #aft { display: none; }

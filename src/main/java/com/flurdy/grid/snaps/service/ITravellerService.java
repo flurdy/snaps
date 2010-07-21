@@ -14,7 +14,7 @@ public interface ITravellerService {
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SUPER')")
 	public List<Traveller> findTravellers();
 
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SUPER')")
+	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_SUPER')")
 	public Traveller findTraveller(long travellerId);
 
 	@PreAuthorize("isAuthenticated()")

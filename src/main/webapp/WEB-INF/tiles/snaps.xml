@@ -12,13 +12,16 @@
 	</definition>
 
 	<definition name="holiday/read" extends="holidayTemplate">
-        <put-attribute name="port" value="/WEB-INF/views/holiday/readPortVisitor.jsp"/>
         <put-attribute name="cargo" value="/WEB-INF/views/holiday/readHoliday.jsp"/>
+    </definition>
+
+	<definition name="holiday/readVisitor" extends="holiday/read">
+        <put-attribute name="port" value="/WEB-INF/views/holiday/readPortVisitor.jsp"/>
     </definition>
 
     <definition name="holiday/readMember" extends="holiday/read">
         <put-attribute name="port" value="/WEB-INF/views/holiday/readPortMember.jsp"/>
-        <put-attribute name="starboard" value="/WEB-INF/views/holiday/holidayAlbums.jsp"/>
+        <put-attribute name="starboard" value="/WEB-INF/views/holiday/holidayStarboard.jsp"/>
     </definition>
 
 	<definition name="holiday/list" extends="holidayTemplate">

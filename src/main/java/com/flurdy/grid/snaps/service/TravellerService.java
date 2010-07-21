@@ -25,11 +25,7 @@ public class TravellerService extends AbstractService implements ITravellerServi
 
 	@Override
 	public Traveller findTraveller(long travellerId) {
-		if ( travellerId  > 0) {
 			return travellerRepository.findTraveller(travellerId);
-		} else {
-			return null;
-		}
 	}
 
 	@Override
