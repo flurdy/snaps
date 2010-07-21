@@ -1,6 +1,7 @@
 package com.flurdy.grid.snaps.domain;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
 
@@ -28,6 +29,10 @@ public class HolidayGroup implements Serializable {
 
 
 	public HolidayGroup(){
+	}
+
+	public HolidayGroup(String groupName){
+		this.groupName = groupName;
 	}
 
 	private HolidayGroup(Builder builder) {
@@ -74,10 +79,12 @@ public class HolidayGroup implements Serializable {
 	}
 
 
-
-	public HolidayGroup(String groupName){
-		this.groupName = groupName;
+	public void addMember(Traveller traveller) {
+		if( members == null )
+			members = new HashSet<HolidayMember>();
+		members.add(new HolidayMember.Builder().holidayGroup(this).traveller(traveller).build());
 	}
+
 
 	public String getGroupName() {
 		return groupName;

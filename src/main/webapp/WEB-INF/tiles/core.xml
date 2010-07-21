@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+"-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+"http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+
+<tiles-definitions>
+
+
+    <definition name="login" extends="gridTemplate">
+        <put-attribute name="pageTitle" type="string" value="login"/>
+        <put-attribute name="cargo" value="/WEB-INF/views/login.jsp"/>
+    </definition>
+
+    <definition name="index" extends="gridTemplate">
+        <put-attribute name="pageTitle" type="string" value=""/>
+        <put-attribute name="cargo" value="/WEB-INF/views/front.jsp"/>
+    </definition>
+
+    <definition name="about" extends="gridTemplate">
+        <put-attribute name="pageTitle" type="string" value="about"/>
+        <put-attribute name="cargo" value="/WEB-INF/views/about.jsp"/>
+    </definition>
+
+    <definition name="join" extends="gridTemplate">
+        <put-attribute name="pageTitle" type="string" value="join"/>
+        <put-attribute name="cargo" value="/WEB-INF/views/join.jsp"/>
+    </definition>
+
+    <definition name="registered" extends="gridTemplate">
+        <put-attribute name="pageTitle" type="string" value="registered"/>
+        <put-attribute name="cargo" value="/WEB-INF/views/registered.jsp"/>
+    </definition>
+
+    <definition name="contact" extends="gridTemplate">
+        <put-attribute name="pageTitle" type="string" value="contact"/>
+        <put-attribute name="cargo" value="/WEB-INF/views/contact.jsp"/>
+    </definition>
+
+
+
+
+
+</tiles-definitions>

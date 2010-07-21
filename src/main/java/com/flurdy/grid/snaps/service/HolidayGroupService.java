@@ -39,19 +39,42 @@ public class HolidayGroupService extends AbstractService implements IHolidayGrou
 		log.info("Adding group:" + holidayGroup
 				+ " by traveller:" + traveller);
 		holidayGroupRepository.addHolidayGroup( holidayGroup );
+		holidayGroup = holidayGroupRepository.findHolidayGroup( holidayGroup.getGroupId() );
+		holidayGroup.addMember(traveller);
+		holidayGroupRepository.updateHolidayGroup( holidayGroup );
 	}
 
 	@Override
 	public HolidayGroup findHolidayGroup(Long groupId) {
 		final HolidayGroup holidayGroup = holidayGroupRepository.findHolidayGroup( groupId );
-		final Traveller traveller = travellerService.findCurrentTraveller();
+		if( holidayGroup != null ){
+			final Traveller traveller = travellerService.findCurrentTraveller();
 
-		if( holidayGroup.isMember(traveller)){
-			log.debug("Traveller is a member of this group");
-			return holidayGroup;
+			if( holidayGroup.isMember(traveller)){
+				log.debug("Traveller is a member of this group");
+				return holidayGroup;
+			} else {
+				log.debug("Traveller is NOT a member of this group");
+				return holidayGroup.getBasicHolidayGroupClone();
+			}
 		} else {
-			log.debug("Traveller is NOT a member of this group");
-			return holidayGroup.getBasicHolidayGroupClone();
+			log.debug("Holiday not found");			
+			return null;
+		}
+	}
+
+	@Override
+	public void addHolidayMember(HolidayGroup holidayGroup, Traveller traveller) {
+		if( holidayGroup != null && holidayGroup.getGroupId() > 0 ){
+			holidayGroup = holidayGroupRepository.findHolidayGroup(holidayGroup.getGroupId());
+			traveller = travellerService.findCurrentTraveller();
+
+			holidayGroup.addMember(traveller);
+
+			holidayGroupRepository.updateHolidayGroup(holidayGroup);
+
+		} else {
+			throw new RuntimeException("Not a valid holiday");
 		}
 	}
 

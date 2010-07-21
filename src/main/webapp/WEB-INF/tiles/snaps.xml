@@ -5,65 +5,6 @@
 
 <tiles-definitions>
 
-	<definition name="gridTemplate" template="/WEB-INF/views/nautical/grid.jsp">
-		<put-attribute name="headerTitle" type="string" value="snaps @ flurdy"/>
-		<put-attribute name="bowTitle" type="string" value="snaps"/>
-		<put-attribute name="version" type="string" value="v.0.2&amp;alpha;"/>
-		<put-attribute name="releaseStage" type="string" value="&amp;alpha;lpha"/>
-		<put-attribute name="dragons">
-			<definition template="/WEB-INF/views/nautical/dragons.jsp">
-				<put-attribute name="analyticsId" value="var pageTracker = _gat._getTracker('123');"/>
-			</definition>
-		</put-attribute>
-		<put-attribute name="port" type="string" value=""/>
-		<put-attribute name="deck" type="string" value=""/>
-		<put-attribute name="starboard" type="string" value=""/>
-		<put-attribute name="cargoJQuery" type="string" value=""/>
-	</definition>
-
-	<definition name="adminTemplate" extends="gridTemplate">
-		<put-attribute name="pageTitle" type="string" value="admin"/>
-	</definition>
-
-	<definition name="holidayTemplate" extends="gridTemplate">
-		<put-attribute name="pageTitle" type="string" value="holiday group"/>
-	</definition>
-
-	<definition name="albumTemplate" extends="holidayTemplate">
-		<put-attribute name="pageTitle" type="string" value="holiday photo album"/>
-	</definition>
-
-
-	<definition name="login" extends="gridTemplate">
-		<put-attribute name="pageTitle" type="string" value="login"/>
-		<put-attribute name="cargo" value="/WEB-INF/views/login.jsp"/>
-	</definition>
-
-	<definition name="index" extends="gridTemplate">
-		<put-attribute name="pageTitle" type="string" value=""/>
-		<put-attribute name="cargo" value="/WEB-INF/views/front.jsp"/>
-	</definition>
-
-	<definition name="about" extends="gridTemplate">
-		<put-attribute name="pageTitle" type="string" value="about"/>
-		<put-attribute name="cargo" value="/WEB-INF/views/about.jsp"/>
-	</definition>
-
-	<definition name="join" extends="gridTemplate">
-		<put-attribute name="pageTitle" type="string" value="join"/>
-		<put-attribute name="cargo" value="/WEB-INF/views/join.jsp"/>
-	</definition>
-
-	<definition name="registered" extends="gridTemplate">
-		<put-attribute name="pageTitle" type="string" value="registered"/>
-		<put-attribute name="cargo" value="/WEB-INF/views/registered.jsp"/>
-	</definition>
-
-	<definition name="contact" extends="gridTemplate">
-		<put-attribute name="pageTitle" type="string" value="contact"/>
-		<put-attribute name="cargo" value="/WEB-INF/views/contact.jsp"/>
-	</definition>
-
 
 
 	<definition name="holiday/create" extends="holidayTemplate">
@@ -71,11 +12,12 @@
 	</definition>
 
 	<definition name="holiday/read" extends="holidayTemplate">
+        <put-attribute name="port" value="/WEB-INF/views/holiday/readPortVisitor.jsp"/>
         <put-attribute name="cargo" value="/WEB-INF/views/holiday/readHoliday.jsp"/>
     </definition>
 
     <definition name="holiday/readMember" extends="holiday/read">
-        <put-attribute name="port" value="/WEB-INF/views/holiday/readPort.jsp"/>
+        <put-attribute name="port" value="/WEB-INF/views/holiday/readPortMember.jsp"/>
         <put-attribute name="starboard" value="/WEB-INF/views/holiday/holidayAlbums.jsp"/>
     </definition>
 
@@ -95,20 +37,6 @@
 	</definition>
 
 
-
-	<definition name="admin/index" extends="adminTemplate">
-		<put-attribute name="cargo" value="/WEB-INF/views/admin/index.jsp"/>
-	</definition>
-
-	<definition name="admin/traveller/list" extends="adminTemplate">
-		<put-attribute name="cargo" value="/WEB-INF/views/admin/traveller/list.jsp"/>
-	</definition>
-
-
-	<definition name="admin/traveller/read" extends="adminTemplate">
-		<put-attribute name="pageTitle" type="string" value="traveller"/>
-		<put-attribute name="cargo" value="/WEB-INF/views/admin/traveller/traveller.jsp"/>
-	</definition>
 
 
 

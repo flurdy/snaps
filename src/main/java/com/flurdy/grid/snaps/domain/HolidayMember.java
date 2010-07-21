@@ -20,7 +20,32 @@ public class HolidayMember implements Serializable {
 	public HolidayMember() {
 	}
 
-	
+
+	private HolidayMember(Builder builder) {
+		this.traveller = builder.traveller;
+		this.holidayGroup = builder.holidayGroup;
+	}
+
+
+	public static class Builder {
+		private HolidayGroup holidayGroup;
+		private Traveller traveller;
+		public Builder(){
+		}
+        public Builder holidayGroup(HolidayGroup holidayGroup){
+            this.holidayGroup = holidayGroup;
+            return this;
+        }
+		public Builder traveller(Traveller traveller){
+			this.traveller = traveller;
+			return this;
+		}
+		public HolidayMember build() {
+			return new HolidayMember(this);
+		}
+	}
+
+
 	public Long getMemberId() {
 		return memberId;
 	}

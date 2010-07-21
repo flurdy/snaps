@@ -10,4 +10,5 @@ public interface IHolidayGroupRepository {
 	public HolidayGroup findHolidayGroup(Long groupId);
 	public Collection<HolidayGroup> findHolidayGroups(String groupName);
 
+	public void updateHolidayGroup(HolidayGroup holidayGroup);
 }

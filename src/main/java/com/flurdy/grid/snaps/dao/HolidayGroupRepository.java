@@ -53,5 +53,11 @@ public class HolidayGroupRepository implements IHolidayGroupRepository {
 
 	}
 
+	@Override
+	public void updateHolidayGroup(HolidayGroup holidayGroup) {
+		assert holidayGroup != null;
+		entityManager.merge(holidayGroup);	
+	}
+
 
 }
