@@ -158,4 +158,9 @@
 		<button method="submit">delete traveller</button>
 	</form>
 
+    <br/>
+    <br/>
+
+    <a href="${pageContext.request.contextPath}/admin/traveller">return to list</a>
+
 </div>

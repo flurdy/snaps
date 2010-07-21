@@ -62,13 +62,16 @@ public class HolidayController extends AbstractGridController {
 	public ModelAndView showHolidayHandler(@PathVariable("groupId") long groupId){
 
 		final HolidayGroup holidayGroup = holidayGroupService.findHolidayGroup(groupId);
-		final Traveller traveller = travellerService.findCurrentTraveller();
+		final Traveller currentTraveller = travellerService.findCurrentTraveller();
 
-		ModelAndView modelAndView = ( holidayGroup.isMember(traveller) )
+		ModelAndView modelAndView = ( holidayGroup.isMember(currentTraveller) )
 			? new ModelAndView("holiday/readMember")
 			: new ModelAndView("holiday/readVisitor");
+
 		modelAndView.addObject("holidayGroup", holidayGroup);
-		if ( holidayGroup.isMember(traveller) ){
+
+		if ( holidayGroup.isMember(currentTraveller) ){
+
 			Set<Traveller> pendingTravellers = new HashSet<Traveller>();
 			for(HolidayMember member : holidayGroup.getMembers() ){
 				if( !member.isApproved()){
@@ -76,12 +79,19 @@ public class HolidayController extends AbstractGridController {
 				}
 			}
 			modelAndView.addObject("pendingTravellers", pendingTravellers);
-		}
-		if ( holidayGroup.isPendingMember(traveller) ){
-			log.debug(" pending");
+
+			Set<Traveller> travellers = new HashSet<Traveller>();
+			for(HolidayMember member : holidayGroup.getMembers() ){
+				if( member.isApproved() && !member.getTraveller().equals(currentTraveller)){
+					travellers.add(member.getTraveller());
+				}
+			}
+			modelAndView.addObject("travellers", travellers);
+
+		} else if ( holidayGroup.isPendingMember(currentTraveller) ){
 			modelAndView.addObject("isPendingTraveller", Boolean.TRUE);
-		} else
-			log.debug("Not pending");
+		}
+
 		return returnTemplate(modelAndView);
 	}
 

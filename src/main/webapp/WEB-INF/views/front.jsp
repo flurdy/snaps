@@ -5,25 +5,32 @@
 </style>
 
 <div class="centreCargo">
-	
-	
-	<form action="holiday/" method="get">
-		<h2>holiday photo group<br/> 
-			<input type="text" name="groupName"/>
-			<button type="submit">find</button>
-		</h2>
-	</form>
+
+    <h2>holidays</h2>
+
+    <form action="holiday/" method="get">
+            <button type="submit">list all holidays</button>
+    </form>
+
 	<br/>
-
-
-
 
 	<hr width="80%"/>
 
-	<br/><br/>
+    <br/>
+
+	<form action="holiday/" method="get">
+			<input type="text" name="groupName"/>
+			<button type="submit">find holiday</button>
+	</form>
+
+	<br/>
+
+	<hr width="80%"/>
+
+	<br/>
 
 	<form action="holiday/new.html">
-		<button type="submit">create new holiday group</button>
+		<button type="submit">create new holiday</button>
 	</form>
 
 
