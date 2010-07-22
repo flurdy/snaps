@@ -1,22 +1,17 @@
 package com.flurdy.grid.snaps.service;
 
-import com.flurdy.grid.snaps.dao.IPhotoAlbumRepository;
-import com.flurdy.grid.snaps.dao.ITravellerRepository;
 import com.flurdy.grid.snaps.domain.HolidayGroup;
 import com.flurdy.grid.snaps.domain.PhotoAlbum;
 import com.flurdy.grid.snaps.domain.PhotoSharingProvider;
 import com.flurdy.grid.snaps.domain.Traveller;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.flurdy.grid.snaps.exception.SnapAccessDeniedException;
+import com.flurdy.grid.snaps.exception.SnapLogicalException;
+import com.flurdy.grid.snaps.exception.SnapLogicalException.SnapLogicalError;
+import com.flurdy.grid.snaps.exception.SnapNotFoundException;
+import com.flurdy.grid.snaps.exception.SnapTechnicalException;
+import com.flurdy.grid.snaps.exception.SnapTechnicalException.SnapTechnicalError;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
-import java.security.Principal;
 
 @Service
 public class PhotoAlbumService extends AbstractService implements IPhotoAlbumService {
@@ -48,8 +43,8 @@ public class PhotoAlbumService extends AbstractService implements IPhotoAlbumSer
 			return album;
 
 		} else {
-			log.warn("Traveller is NOT a member of this group");
-			throw new RuntimeException("Traveller was NOT a member of this holiday group");
+			log.info("not member");
+			throw new SnapAccessDeniedException(SnapAccessDeniedException.SnapAccessError.NOT_MEMBER);
 		}
 
 	}
@@ -58,19 +53,26 @@ public class PhotoAlbumService extends AbstractService implements IPhotoAlbumSer
 	public PhotoAlbum findPhotoAlbum(long albumId, long holidayId){
 
 		final HolidayGroup holidayGroup = holidayGroupRepository.findHolidayGroup( holidayId );
-		final Traveller traveller = travellerService.findCurrentTraveller();
-		if( holidayGroup.isMember(traveller)){
-			final PhotoAlbum photoAlbum = photoAlbumRepository.findAlbum(albumId);
-			if( photoAlbum.getHolidayGroup().equals(holidayGroup)){
-				log.debug("Traveller is a member of this group");
-				return photoAlbum;
+		if( holidayGroup != null ){
+			final Traveller traveller = travellerService.findCurrentTraveller();
+			if( holidayGroup.isMember(traveller)){
+				final PhotoAlbum photoAlbum = photoAlbumRepository.findAlbum(albumId);
+				if( photoAlbum != null ){
+					if( photoAlbum.getHolidayGroup().equals(holidayGroup) ){
+						return photoAlbum;
+					} else {
+						log.info("Photo album was NOT for this holiday group");
+						throw new SnapTechnicalException( SnapTechnicalError.INVALID_INPUT , "Photo album was NOT for this holiday group");
+					}
+				} else {
+					throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.PHOTO_ALBUM);					
+				}
 			} else {
-				log.warn("Album is NOT for this group");
-				throw new RuntimeException("Photo album was NOT a for this holiday group");
+				log.info("not member");
+				throw new SnapAccessDeniedException(SnapAccessDeniedException.SnapAccessError.NOT_MEMBER);
 			}
 		} else {
-			log.warn("Traveller is NOT a member of this group");
-			throw new RuntimeException("Traveller was NOT a member of this holiday group");
+			throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.HOLIDAY);
 		}
 
 	}

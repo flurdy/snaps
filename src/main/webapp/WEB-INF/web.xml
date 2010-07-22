@@ -65,5 +65,28 @@
 	</servlet-mapping>
 
 
+    <error-page>
+        <error-code>404</error-code>
+        <location>/app/error/notFound.html</location>
+    </error-page>
+    <error-page>
+        <error-code>403</error-code>
+        <location>/app/error/accessDenied.html</location>
+    </error-page>
+    <error-page>
+            <error-code>500</error-code>
+            <location>/app/error/serverError.html</location>
+    </error-page>
+
+    <!--
+     <error-page>
+        <error-code>400</error-code>
+        <location>/app/error/badRequest.html</location>
+    </error-page>
+    <error-page>
+        <error-code>406</error-code>
+        <location>/app/error/notAcceptable.html</location>
+    </error-page>
+    -->
 
 </web-app>

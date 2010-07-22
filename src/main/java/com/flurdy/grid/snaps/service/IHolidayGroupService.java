@@ -14,7 +14,7 @@ public interface IHolidayGroupService {
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public void addHolidayGroup(HolidayGroup holidayGroup);
 
-	public HolidayGroup findHolidayGroup(Long groupId);
+	public HolidayGroup findHolidayGroup(long groupId);
 
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public void addHolidayMember(HolidayGroup holidayGroup, Traveller traveller);

@@ -3,6 +3,8 @@ package com.flurdy.grid.snaps.web.admin;
 import com.flurdy.grid.snaps.dao.SecurityRepository;
 import com.flurdy.grid.snaps.domain.SecurityDetail;
 import com.flurdy.grid.snaps.domain.Traveller;
+import com.flurdy.grid.snaps.exception.SnapInvalidClientInputException;
+import com.flurdy.grid.snaps.exception.SnapTechnicalException;
 import com.flurdy.grid.snaps.web.AbstractGridController;
 import java.util.List;
 import org.springframework.stereotype.Controller;
@@ -59,9 +61,10 @@ public class TravellerAdminController extends AbstractGridController {
 			securityService.changeSecurityDetailPassword(username, password);
 
 			return "redirect:/admin";
+
 		} else {
 			log.debug("Password:[" + password + "] != [" + confirmPassword + "]");
-			throw new IllegalArgumentException("Passwords do not match");
+			throw new SnapInvalidClientInputException(SnapInvalidClientInputException.SnapInputError.PASSWORD_MISMATCH);
 		}
 	}
 
@@ -89,8 +92,10 @@ public class TravellerAdminController extends AbstractGridController {
 			securityService.removeAuthority(username, SecurityDetail.findRole(authorityRole));
 
 			return "redirect:/admin/";
+
 		} else {
-			throw new IllegalArgumentException("User [" + username + "] or role [" + authorityRole + "] invalid");
+			throw new SnapTechnicalException(SnapTechnicalException.SnapTechnicalError.INVALID_INPUT,
+					"User [" + username + "] or role [" + authorityRole + "] invalid");
 		}
 	}
 
@@ -107,7 +112,8 @@ public class TravellerAdminController extends AbstractGridController {
 
 			return "redirect:/admin/";
 		} else {
-			throw new IllegalArgumentException("User [" + username + "] or role [" + authorityRole + "] invalid");
+			throw new SnapTechnicalException(SnapTechnicalException.SnapTechnicalError.INVALID_INPUT,
+					"User [" + username + "] or role [" + authorityRole + "] invalid");
 		}
 
 	}

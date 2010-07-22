@@ -7,6 +7,11 @@ import java.util.Set;
 
 import com.flurdy.grid.snaps.domain.HolidayMember;
 import com.flurdy.grid.snaps.domain.Traveller;
+import com.flurdy.grid.snaps.exception.SnapAccessDeniedException;
+import com.flurdy.grid.snaps.exception.SnapLogicalException;
+import com.flurdy.grid.snaps.exception.SnapLogicalException.SnapLogicalError;
+import com.flurdy.grid.snaps.exception.SnapTechnicalException;
+import com.flurdy.grid.snaps.exception.SnapTechnicalException.SnapTechnicalError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,18 +51,17 @@ public class HolidayGroupService extends AbstractService implements IHolidayGrou
 	}
 
 	@Override
-	public HolidayGroup findHolidayGroup(Long groupId) {
+	public HolidayGroup findHolidayGroup(long groupId) {
 		final HolidayGroup holidayGroup = holidayGroupRepository.findHolidayGroup( groupId );
 		if( holidayGroup != null ){
 			final Traveller traveller = travellerService.findCurrentTraveller();
 
 			if( holidayGroup.isMember(traveller)){
-//				log.debug("Traveller is a member of this group");
 				return holidayGroup;
 			} else {
-				log.debug("Traveller is NOT a member of this group");
 				return holidayGroup.getBasicHolidayGroupClone();
 			}
+			
 		} else {
 			log.debug("Holiday not found: " + groupId);			
 			return null;
@@ -81,10 +85,11 @@ public class HolidayGroupService extends AbstractService implements IHolidayGrou
 				holidayGroupRepository.updateHolidayGroup(holidayGroup);
 
 			} else {
-				throw new RuntimeException("Traveller is NOT a member of this group");
+				log.info("not member");
+				throw new SnapAccessDeniedException(SnapAccessDeniedException.SnapAccessError.NOT_MEMBER);
 			}
 		} else {
-			throw new RuntimeException("Not a valid holiday");
+			throw new SnapTechnicalException(SnapTechnicalError.INVALID_INPUT,"Not a valid holiday");
 		}
 	}
 
@@ -92,32 +97,22 @@ public class HolidayGroupService extends AbstractService implements IHolidayGrou
 	public void addTravellerAsPendingMember(HolidayGroup holidayGroup, Traveller pendingTraveller) {
 		if( holidayGroup != null && holidayGroup.getGroupId() > 0 ){
 
-//			final Traveller currentTraveller = travellerService.findCurrentTraveller();
+			if( !holidayGroup.isMember(pendingTraveller)
+					&& !holidayGroup.isPendingMember(pendingTraveller) ){
 
-//			if( holidayGroup.isMember(currentTraveller)){
-				if( !holidayGroup.isMember(pendingTraveller)
-						&& !holidayGroup.isPendingMember(pendingTraveller) ){
+				log.info("Adding traveller [" + pendingTraveller.getSecurityDetail().getUsername()
+						+ "] as pending member of [" + holidayGroup.getGroupId() + "]");
 
-					log.debug("Adding traveller as pending member");
+				holidayGroup.addPendingMember(pendingTraveller);
 
-					holidayGroup.addPendingMember(pendingTraveller);
+				holidayGroupRepository.updateHolidayGroup(holidayGroup);
 
-					holidayGroupRepository.updateHolidayGroup(holidayGroup);
 
-//					final HolidayGroup holidayGroup2 = holidayGroupRepository.findHolidayGroup( holidayGroup.getGroupId() );
-//					for( HolidayMember holidayMember : holidayGroup2.getMembers()){
-//						log.debug("member:" + holidayMember );
-//						log.debug("traveller:" + holidayMember.getTraveller() );
-//					}
-
-				} else {
-					throw new RuntimeException("Traveller is already a pending/member of this group");
-				}
-//			} else {
-//				throw new RuntimeException("Traveller is NOT a member of this group");
-//			}
+			} else {
+				throw new SnapLogicalException(SnapLogicalError.INVALID_STATE, "Traveller is already a pending/member of this group");
+			}
 		} else {
-			throw new RuntimeException("Not a valid holiday");
+			throw new SnapTechnicalException(SnapTechnicalError.INVALID_INPUT,"Not a valid holiday");
 		}
 	}
 

@@ -5,6 +5,7 @@
 
 package com.flurdy.grid.snaps.web;
 
+import com.flurdy.grid.snaps.exception.*;
 import com.flurdy.grid.snaps.service.IAdminService;
 import com.flurdy.grid.snaps.service.IHolidayGroupService;
 import com.flurdy.grid.snaps.service.IPhotoAlbumService;
@@ -14,6 +15,10 @@ import com.flurdy.grid.snaps.service.ITravellerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 public abstract class AbstractGridController {
@@ -39,5 +44,92 @@ public abstract class AbstractGridController {
 		log.debug("returning view: "+modelAndView.getViewName());
 		return modelAndView;
 	}
+
+
+	@ExceptionHandler(SnapAccessDeniedException.class)
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	public ModelAndView handleAccessDeniedException(SnapAccessDeniedException exception) {
+
+		log.debug("error access denied");
+
+		ModelAndView modelAndView = new ModelAndView("error/accessDenied");
+		modelAndView.addObject("exception", exception);
+
+		return returnTemplate(modelAndView);
+	}
+
+
+	@ExceptionHandler(Throwable.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	public ModelAndView handleUncaughtException2(Throwable exception) {
+
+		log.debug("error uncaught");
+
+		ModelAndView modelAndView = new ModelAndView("error/unexpected");
+		modelAndView.addObject("exception", exception);
+		return returnTemplate(modelAndView);
+
+	}
+
+
+	@ExceptionHandler(SnapLogicalException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public ModelAndView handleTechnicalException(SnapLogicalException exception) {
+
+		log.debug("error/logical");
+
+		ModelAndView modelAndView = new ModelAndView("error/logical");
+		modelAndView.addObject("exception", exception);
+
+		return returnTemplate(modelAndView);
+
+	}
+
+
+
+	@ExceptionHandler(SnapTechnicalException.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	public ModelAndView handleTechnicalException(SnapTechnicalException exception) {
+
+		log.debug("error/technical");
+
+		ModelAndView modelAndView = ( exception.getErrorCode() == SnapTechnicalException.SnapTechnicalError.UNEXPECTED )
+				? new ModelAndView("error/unexpected")
+				: new ModelAndView("error/technical");
+		modelAndView.addObject("exception", exception);
+
+		return returnTemplate(modelAndView);
+
+	}
+
+
+
+	@ExceptionHandler(SnapNotFoundException.class)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	public ModelAndView handleNotFoundException(SnapNotFoundException exception) {
+
+		log.debug("error/technical");
+
+		ModelAndView modelAndView = new ModelAndView("error/notFound");
+		modelAndView.addObject("exception", exception);
+
+		return returnTemplate(modelAndView);
+
+	}
+
+
+	@ExceptionHandler(SnapInvalidClientInputException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public ModelAndView handleInvalidInputException(SnapInvalidClientInputException exception) {
+
+		log.debug("error input");
+
+		ModelAndView modelAndView = new ModelAndView("error/logical");
+		modelAndView.addObject("exception", exception);
+
+		return returnTemplate(modelAndView);
+
+	}
+
 
 }

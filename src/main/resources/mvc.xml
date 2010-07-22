@@ -12,14 +12,12 @@
 
 	<context:component-scan base-package="com.flurdy.grid.snaps.web" />
 
-	<!--
-	<mvc:view-controller path="/" view-name="index"/>
-	-->
 
 	<bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles2.TilesConfigurer">
 		<property name="definitions">
 			<list>
 				<value>/WEB-INF/tiles/templates.xml</value>
+				<value>/WEB-INF/tiles/error.xml</value>
 				<value>/WEB-INF/tiles/core.xml</value>
 				<value>/WEB-INF/tiles/admin.xml</value>
 				<value>/WEB-INF/tiles/snaps.xml</value>

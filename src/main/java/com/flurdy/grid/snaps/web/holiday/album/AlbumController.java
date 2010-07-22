@@ -3,6 +3,10 @@ package com.flurdy.grid.snaps.web.holiday.album;
 import com.flurdy.grid.snaps.domain.HolidayGroup;
 import com.flurdy.grid.snaps.domain.PhotoAlbum;
 import com.flurdy.grid.snaps.domain.PhotoSharingProvider;
+import com.flurdy.grid.snaps.exception.SnapInvalidClientInputException;
+import com.flurdy.grid.snaps.exception.SnapLogicalException;
+import com.flurdy.grid.snaps.exception.SnapNotFoundException;
+import com.flurdy.grid.snaps.exception.SnapTechnicalException;
 import com.flurdy.grid.snaps.web.AbstractGridController;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -62,7 +66,7 @@ public class AlbumController extends AbstractGridController {
 				try{
 					provider = PhotoSharingProvider.valueOf(providerName);
 				} catch (IllegalArgumentException exception){
-					throw new IllegalArgumentException("Invalid sharing provider",exception);
+					throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.SHARING_PROVIDER);
 				}
 				if( url != null && url.trim().length()>0){
 
@@ -71,11 +75,11 @@ public class AlbumController extends AbstractGridController {
 					return "redirect:/holiday/"+ holidayGroupId +"/album/" + album.getAlbumId();
 
 				} else
-					throw new IllegalArgumentException("Invalid album url");
-			} else 
-				throw new IllegalArgumentException("Invalid sharing provider");
+					throw new SnapInvalidClientInputException(SnapInvalidClientInputException.SnapInputError.URL);
+			} else
+				throw new SnapTechnicalException( SnapTechnicalException.SnapTechnicalError.INVALID_INPUT , "Invalid sharing provider");
 		} else
-			throw new IllegalArgumentException("Invalid holiday group");
+			throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.HOLIDAY);
 	}
 	
 

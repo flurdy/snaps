@@ -2,6 +2,7 @@ package com.flurdy.grid.snaps.web.holiday;
 
 import com.flurdy.grid.snaps.domain.HolidayGroup;
 import com.flurdy.grid.snaps.domain.Traveller;
+import com.flurdy.grid.snaps.exception.SnapNotFoundException;
 import com.flurdy.grid.snaps.web.AbstractGridController;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -31,7 +32,7 @@ public class HolidayMemberController extends AbstractGridController {
 			return "redirect:/holiday/"+holidayGroup.getGroupId();
 
 		} else {
-			throw new RuntimeException("Invalid input");
+			throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.HOLIDAY);
 		}
 	}
 
@@ -58,10 +59,10 @@ public class HolidayMemberController extends AbstractGridController {
 				return "redirect:/holiday/"+holidayGroup.getGroupId();
 
 			} else {
-				throw new RuntimeException("Invalid input");
+			throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.TRAVELLER);
 			}
 		} else {
-			throw new RuntimeException("Invalid input");
+			throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.HOLIDAY);
 		}
 	}
 

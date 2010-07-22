@@ -8,6 +8,9 @@ package com.flurdy.grid.snaps.web.holiday;
 import com.flurdy.grid.snaps.domain.HolidayGroup;
 import com.flurdy.grid.snaps.domain.HolidayMember;
 import com.flurdy.grid.snaps.domain.Traveller;
+import com.flurdy.grid.snaps.exception.SnapLogicalException;
+import com.flurdy.grid.snaps.exception.SnapLogicalException.SnapLogicalError;
+import com.flurdy.grid.snaps.exception.SnapNotFoundException;
 import com.flurdy.grid.snaps.web.AbstractGridController;
 
 import java.util.HashSet;
@@ -62,37 +65,42 @@ public class HolidayController extends AbstractGridController {
 	public ModelAndView showHolidayHandler(@PathVariable("groupId") long groupId){
 
 		final HolidayGroup holidayGroup = holidayGroupService.findHolidayGroup(groupId);
-		final Traveller currentTraveller = travellerService.findCurrentTraveller();
+		if( holidayGroup != null ){
+			final Traveller currentTraveller = travellerService.findCurrentTraveller();
 
-		ModelAndView modelAndView = ( holidayGroup.isMember(currentTraveller) )
-			? new ModelAndView("holiday/readMember")
-			: new ModelAndView("holiday/readVisitor");
+			ModelAndView modelAndView = ( holidayGroup.isMember(currentTraveller) )
+				? new ModelAndView("holiday/readMember")
+				: new ModelAndView("holiday/readVisitor");
 
-		modelAndView.addObject("holidayGroup", holidayGroup);
+			modelAndView.addObject("holidayGroup", holidayGroup);
 
-		if ( holidayGroup.isMember(currentTraveller) ){
+			if ( holidayGroup.isMember(currentTraveller) ){
 
-			Set<Traveller> pendingTravellers = new HashSet<Traveller>();
-			for(HolidayMember member : holidayGroup.getMembers() ){
-				if( !member.isApproved()){
-					pendingTravellers.add(member.getTraveller());
+				Set<Traveller> pendingTravellers = new HashSet<Traveller>();
+				for(HolidayMember member : holidayGroup.getMembers() ){
+					if( !member.isApproved()){
+						pendingTravellers.add(member.getTraveller());
+					}
 				}
-			}
-			modelAndView.addObject("pendingTravellers", pendingTravellers);
+				modelAndView.addObject("pendingTravellers", pendingTravellers);
 
-			Set<Traveller> travellers = new HashSet<Traveller>();
-			for(HolidayMember member : holidayGroup.getMembers() ){
-				if( member.isApproved() && !member.getTraveller().equals(currentTraveller)){
-					travellers.add(member.getTraveller());
+				Set<Traveller> travellers = new HashSet<Traveller>();
+				for(HolidayMember member : holidayGroup.getMembers() ){
+					if( member.isApproved() && !member.getTraveller().equals(currentTraveller)){
+						travellers.add(member.getTraveller());
+					}
 				}
-			}
-			modelAndView.addObject("travellers", travellers);
+				modelAndView.addObject("travellers", travellers);
 
-		} else if ( holidayGroup.isPendingMember(currentTraveller) ){
-			modelAndView.addObject("isPendingTraveller", Boolean.TRUE);
+			} else if ( holidayGroup.isPendingMember(currentTraveller) ){
+				modelAndView.addObject("isPendingTraveller", Boolean.TRUE);
+			}
+
+			return returnTemplate(modelAndView);
+			
+		} else {
+			throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.HOLIDAY);
 		}
-
-		return returnTemplate(modelAndView);
 	}
 
 

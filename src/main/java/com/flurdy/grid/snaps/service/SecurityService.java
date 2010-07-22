@@ -3,9 +3,10 @@ package com.flurdy.grid.snaps.service;
 import com.flurdy.grid.snaps.domain.SecurityDetail;
 import com.flurdy.grid.snaps.domain.SecurityDetail.AuthorityRole;
 import com.flurdy.grid.snaps.domain.Traveller;
-import java.util.HashSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.flurdy.grid.snaps.exception.SnapInvalidClientInputException;
+import com.flurdy.grid.snaps.exception.SnapTechnicalException;
+import com.flurdy.grid.snaps.exception.SnapTechnicalException.SnapTechnicalError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -50,11 +51,11 @@ public class SecurityService extends AbstractService implements ISecurityService
 				securityRepository.addSecurityDetail(traveller.getSecurityDetail());
 				travellerRepository.addTraveller(traveller);
 			} else {
-				throw new IllegalArgumentException("Username already taken");
+				throw new SnapInvalidClientInputException( SnapInvalidClientInputException.SnapInputError.USERNAME_TAKEN );
 			}
-		} else
-			throw new NullPointerException();
-
+		} else {
+			throw new SnapTechnicalException( SnapTechnicalError.INVALID_INPUT, new NullPointerException() );
+		}
 	}
 
 	private synchronized void applyDefaultAuthorities(SecurityDetail securityDetail) {

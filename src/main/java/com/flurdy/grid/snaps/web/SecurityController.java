@@ -6,6 +6,7 @@
 package com.flurdy.grid.snaps.web;
 
 import com.flurdy.grid.snaps.domain.Traveller;
+import com.flurdy.grid.snaps.exception.SnapInvalidClientInputException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -45,7 +46,7 @@ public class SecurityController extends AbstractGridController {
 			securityService.registerTraveller(traveller);
 		return "redirect:/registration";
 		} else
-			throw new IllegalStateException("Passwords do not match");
+			throw new SnapInvalidClientInputException(SnapInvalidClientInputException.SnapInputError.PASSWORD_MISMATCH);
 		
 	}
 
