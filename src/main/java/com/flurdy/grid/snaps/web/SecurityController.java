@@ -46,7 +46,7 @@ public class SecurityController extends AbstractGridController {
 			securityService.registerTraveller(traveller);
 		return "redirect:/registration";
 		} else
-			throw new SnapInvalidClientInputException(SnapInvalidClientInputException.SnapInputError.PASSWORD_MISMATCH);
+			throw new SnapInvalidClientInputException(SnapInvalidClientInputException.InputError.PASSWORD_MISMATCH);
 		
 	}
 

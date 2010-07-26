@@ -4,12 +4,7 @@ import com.flurdy.grid.snaps.domain.HolidayGroup;
 import com.flurdy.grid.snaps.domain.PhotoAlbum;
 import com.flurdy.grid.snaps.domain.PhotoSharingProvider;
 import com.flurdy.grid.snaps.domain.Traveller;
-import com.flurdy.grid.snaps.exception.SnapAccessDeniedException;
-import com.flurdy.grid.snaps.exception.SnapLogicalException;
-import com.flurdy.grid.snaps.exception.SnapLogicalException.SnapLogicalError;
-import com.flurdy.grid.snaps.exception.SnapNotFoundException;
-import com.flurdy.grid.snaps.exception.SnapTechnicalException;
-import com.flurdy.grid.snaps.exception.SnapTechnicalException.SnapTechnicalError;
+import com.flurdy.grid.snaps.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -62,7 +57,7 @@ public class PhotoAlbumService extends AbstractService implements IPhotoAlbumSer
 						return photoAlbum;
 					} else {
 						log.info("Photo album was NOT for this holiday group");
-						throw new SnapTechnicalException( SnapTechnicalError.INVALID_INPUT , "Photo album was NOT for this holiday group");
+						throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.PHOTO_ALBUM);
 					}
 				} else {
 					throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.PHOTO_ALBUM);					

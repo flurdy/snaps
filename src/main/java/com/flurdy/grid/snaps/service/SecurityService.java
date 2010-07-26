@@ -51,7 +51,7 @@ public class SecurityService extends AbstractService implements ISecurityService
 				securityRepository.addSecurityDetail(traveller.getSecurityDetail());
 				travellerRepository.addTraveller(traveller);
 			} else {
-				throw new SnapInvalidClientInputException( SnapInvalidClientInputException.SnapInputError.USERNAME_TAKEN );
+				throw new SnapInvalidClientInputException( SnapInvalidClientInputException.InputError.USERNAME_TAKEN );
 			}
 		} else {
 			throw new SnapTechnicalException( SnapTechnicalError.INVALID_INPUT, new NullPointerException() );
@@ -60,7 +60,7 @@ public class SecurityService extends AbstractService implements ISecurityService
 
 	private synchronized void applyDefaultAuthorities(SecurityDetail securityDetail) {
 		for(int i=0;i<defaultAuthorityRoles.length;i++){
-			securityDetail.getAuthorities().add(defaultAuthorityRoles[i]);
+			securityDetail.addAuthority(defaultAuthorityRoles[i]);
 		}
 	}
 

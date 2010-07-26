@@ -59,17 +59,16 @@ public abstract class AbstractGridController {
 	}
 
 
-	@ExceptionHandler(Throwable.class)
-	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-	public ModelAndView handleUncaughtException2(Throwable exception) {
-
-		log.debug("error uncaught");
-
-		ModelAndView modelAndView = new ModelAndView("error/unexpected");
-		modelAndView.addObject("exception", exception);
-		return returnTemplate(modelAndView);
-
-	}
+//	@ExceptionHandler(Throwable.class)
+//	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+//	public ModelAndView handleUncaughtException2(Throwable exception) {
+//
+//		log.error("An uncaught exception was thrown",exception);
+//
+//		ModelAndView modelAndView = new ModelAndView("error/unexpected");
+//		modelAndView.addObject("exception", exception);
+//		return returnTemplate(modelAndView);
+//	}
 
 
 	@ExceptionHandler(SnapLogicalException.class)

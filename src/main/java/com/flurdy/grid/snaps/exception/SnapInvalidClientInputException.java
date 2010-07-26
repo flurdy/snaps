@@ -1,14 +1,11 @@
 package com.flurdy.grid.snaps.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
 
 //@ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
 //@ResponseStatus(HttpStatus.BAD_REQUEST)
 public class SnapInvalidClientInputException extends SnapLogicalException {
 
-	public enum SnapInputError {
+	public enum InputError {
 		PASSWORD_MISMATCH("Passwords does not match"),
 		PASSWORD_LENGTH("Password not long enough"),
 		URL("URL not valid"),
@@ -16,7 +13,7 @@ public class SnapInvalidClientInputException extends SnapLogicalException {
 
 		private String description;
 
-		private SnapInputError(String description){
+		private InputError(String description){
 			this.description = description;
 		}
 
@@ -25,15 +22,15 @@ public class SnapInvalidClientInputException extends SnapLogicalException {
 		}
 	}
 
-	private SnapInputError snapInputError;
+	private InputError inputError;
 
-	public SnapInvalidClientInputException(SnapInputError snapInputError){
+	public SnapInvalidClientInputException(InputError snapInputError){
 		super(SnapLogicalError.INVALID_INPUT,snapInputError.getDescription());
-		this.snapInputError = snapInputError;
+		this.inputError = snapInputError;
 	}
 
-	public SnapInputError getSnapInputError(){
-		return this.snapInputError;
+	public InputError getInputError(){
+		return this.inputError;
 	}
 
 }

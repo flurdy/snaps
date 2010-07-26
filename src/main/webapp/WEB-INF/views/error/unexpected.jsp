@@ -9,10 +9,10 @@
 
     <h4>the server encountered an error!</h4>
 
-    <p>that is not good at all.</p>
+    <p>that is not good at all...</p>
 
     <p>
-        it most likely is something odd you did, we did or that bloke over there did.
+        it most likely is something odd you did,<br/> we did or that bloke over there did.
     </p>
 
     <br />
@@ -28,24 +28,25 @@
 
     <p>
         however this was an error not expected by the application,<br />
-        and should be <a href="http://flurdy.com/contact/index.html">reported</a> to the developers.
+        and should be <a href="http://flurdy.com/contact/index.html">reported</a> to the developers,<br/>
+        especially if it reoccurs?
     </p>
 
-    <br />
+    <hr width="70%" />
 
 
     <c:if test="${not empty exception}">
 
+        <!--
+        
         <p>
-            <b>${exception.message}</b>
+            <b>${exception}</b>
         </p>
 
-        <hr width="70%"/>
+        -->
 
     </c:if>
 
-
-    <hr width="70%" />
 
     <p><a href="index.html">return to the front page</a>.</p>
 

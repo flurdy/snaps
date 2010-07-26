@@ -4,14 +4,15 @@ import com.flurdy.grid.snaps.domain.HolidayGroup;
 import com.flurdy.grid.snaps.domain.PhotoAlbum;
 import com.flurdy.grid.snaps.domain.PhotoSharingProvider;
 import com.flurdy.grid.snaps.exception.SnapInvalidClientInputException;
-import com.flurdy.grid.snaps.exception.SnapLogicalException;
 import com.flurdy.grid.snaps.exception.SnapNotFoundException;
 import com.flurdy.grid.snaps.exception.SnapTechnicalException;
 import com.flurdy.grid.snaps.web.AbstractGridController;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -33,20 +34,32 @@ public class AlbumController extends AbstractGridController {
 
 
 	@RequestMapping(value="/{albumId}",method=RequestMethod.GET)
-	public ModelAndView showAlbumHandler(
+	@ResponseStatus(HttpStatus.GONE)
+	public String showAlbumHandler(
 			  @PathVariable("holidayGroupId") long holidayGroupId,
 			  @PathVariable("albumId") long albumId
 	){
 		log.debug("showing album");
-		HolidayGroup holidayGroup = holidayGroupService.findHolidayGroup(holidayGroupId);
-		log.debug("holiday group: "+holidayGroup);
-		PhotoAlbum photoAlbum = photoAlbumService.findPhotoAlbum(albumId,holidayGroupId);
-		log.debug("album: "+photoAlbum);
-		
-		ModelAndView modelAndView = new ModelAndView("holiday/album/read");
-		modelAndView.addObject("holidayGroup", holidayGroup);
-		modelAndView.addObject("photoAlbum", photoAlbum);
-		return returnTemplate(modelAndView);
+		final HolidayGroup holidayGroup = holidayGroupService.findHolidayGroup(holidayGroupId);
+		if( holidayGroup != null ){
+			log.debug("holiday group: "+holidayGroup);
+			final PhotoAlbum photoAlbum = photoAlbumService.findPhotoAlbum(albumId,holidayGroupId);
+			if( photoAlbum != null ){
+				log.debug("album: "+photoAlbum);
+//
+//				ModelAndView modelAndView = new ModelAndView("holiday/album/read");
+//				modelAndView.addObject("holidayGroup", holidayGroup);
+//				modelAndView.addObject("photoAlbum", photoAlbum);
+//				return returnTemplate(modelAndView);
+
+				return "redirect:/holiday/"+ holidayGroupId;
+
+			} else {
+				throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.PHOTO_ALBUM);
+			}
+		} else {
+			throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.HOLIDAY);
+		}
 	}
  
  
@@ -72,10 +85,10 @@ public class AlbumController extends AbstractGridController {
 
 					PhotoAlbum album = photoAlbumService.addAlbum(holidayGroup, provider, url);
 
-					return "redirect:/holiday/"+ holidayGroupId +"/album/" + album.getAlbumId();
+					return "redirect:/holiday/"+ holidayGroupId; // +"/album/" + album.getAlbumId();
 
 				} else
-					throw new SnapInvalidClientInputException(SnapInvalidClientInputException.SnapInputError.URL);
+					throw new SnapInvalidClientInputException(SnapInvalidClientInputException.InputError.URL);
 			} else
 				throw new SnapTechnicalException( SnapTechnicalException.SnapTechnicalError.INVALID_INPUT , "Invalid sharing provider");
 		} else

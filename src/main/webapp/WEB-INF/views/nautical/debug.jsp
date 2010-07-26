@@ -2,7 +2,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
             <style>
-<c:if test="${pageContext.request.serverName == 'localhost' || fn:startsWith(pageContext.request.serverName,'192.168') }">
+<c:if test="${pageContext.request.serverName == 'localhost'
+    || fn:startsWith(pageContext.request.serverName,'192.168')
+    || fn:startsWith(pageContext.request.serverName,'djalma') }">
                 /* incognito/paranoia.. */
 				body { background-color: #ffffff; }
 				#bow { display: none; }

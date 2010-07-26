@@ -36,4 +36,7 @@ public class SnapAccessDeniedException extends SnapLogicalException {
 		this.accessError = accessError;
 	}
 
+	public SnapAccessError getAccessError() {
+		return accessError;
+	}
 }

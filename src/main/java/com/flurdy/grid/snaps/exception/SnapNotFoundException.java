@@ -35,7 +35,7 @@ public class SnapNotFoundException extends SnapLogicalException {
 		this.resourceNotFound = resourceNotFound;
 	}
 
-	public SnapResourceNotFound getSnapResourceNotFound(){
+	public SnapResourceNotFound getResourceNotFound(){
 		return this.resourceNotFound;
 	}
 

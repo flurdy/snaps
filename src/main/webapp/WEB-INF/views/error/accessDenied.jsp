@@ -19,7 +19,7 @@
     <c:if test="${not empty exception}">
 
         <p>
-            <b>${exception.accessError}</b> 
+            <b>${exception.accessError.description}</b> 
         </p>
 
     <hr width="70%"/>
@@ -30,11 +30,12 @@
         <a href="${pageContext.request.contextPath}/">return to the front page</a>.
     </p>
 
+    <!--
     <p>
         if you are sure you should have access to this page,<br/>
         then <a href="http://flurdy.com/contact/index.html">contact	us</a>.
     </p>
-
+    -->
 
 
 </div>

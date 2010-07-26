@@ -1,6 +1,5 @@
 package com.flurdy.grid.snaps.web.admin;
 
-import com.flurdy.grid.snaps.dao.SecurityRepository;
 import com.flurdy.grid.snaps.domain.SecurityDetail;
 import com.flurdy.grid.snaps.domain.Traveller;
 import com.flurdy.grid.snaps.exception.SnapInvalidClientInputException;
@@ -64,7 +63,7 @@ public class TravellerAdminController extends AbstractGridController {
 
 		} else {
 			log.debug("Password:[" + password + "] != [" + confirmPassword + "]");
-			throw new SnapInvalidClientInputException(SnapInvalidClientInputException.SnapInputError.PASSWORD_MISMATCH);
+			throw new SnapInvalidClientInputException(SnapInvalidClientInputException.InputError.PASSWORD_MISMATCH);
 		}
 	}
 
