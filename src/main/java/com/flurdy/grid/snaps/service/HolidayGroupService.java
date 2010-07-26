@@ -44,14 +44,24 @@ public class HolidayGroupService extends AbstractService implements IHolidayGrou
 		final Traveller traveller = travellerService.findCurrentTraveller();
 		log.info("Adding group:" + holidayGroup
 				+ " by traveller:" + traveller);
-		holidayGroupRepository.addHolidayGroup( holidayGroup );
-		holidayGroup = holidayGroupRepository.findHolidayGroup( holidayGroup.getGroupId() );
-		holidayGroup.addMember(traveller);
-		holidayGroupRepository.updateHolidayGroup( holidayGroup );
+
+		if( holidayGroup != null && holidayGroup.isValid() ){
+						
+			holidayGroupRepository.addHolidayGroup( holidayGroup );
+			holidayGroup = holidayGroupRepository.findHolidayGroup( holidayGroup.getGroupId() );
+			holidayGroup.addMember(traveller);
+			holidayGroupRepository.updateHolidayGroup( holidayGroup );
+
+		} else {
+			throw new SnapTechnicalException(SnapTechnicalError.INVALID_INPUT,"Not a valid holiday");
+		}
 	}
 
 	@Override
 	public HolidayGroup findHolidayGroup(long groupId) {
+
+		assert groupId > 0;
+
 		final HolidayGroup holidayGroup = holidayGroupRepository.findHolidayGroup( groupId );
 		if( holidayGroup != null ){
 			final Traveller traveller = travellerService.findCurrentTraveller();

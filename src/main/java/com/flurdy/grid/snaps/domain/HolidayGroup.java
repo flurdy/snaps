@@ -79,10 +79,12 @@ public class HolidayGroup implements Serializable {
 	}
 
 	public boolean isMember(Traveller traveller){
-		if( members != null && !members.isEmpty()){
-			for( HolidayMember holidayMember : members ){
-				if( holidayMember.getTraveller().equals(traveller) ){
-					return holidayMember.isApproved();
+		if( traveller != null ){
+			if( members != null && !members.isEmpty()){
+				for( HolidayMember holidayMember : members ){
+					if( holidayMember.getTraveller().equals(traveller) ){
+						return holidayMember.isApproved();
+					}	
 				}
 			}
 		}
@@ -134,6 +136,13 @@ public class HolidayGroup implements Serializable {
 				.approved(false)
 				.build());
 	}
+
+
+	public boolean isValid() {
+		return (this.groupName != null && this.groupName.trim().length() > 3 ); 
+	}
+
+	
 
 	public String getGroupName() {
 		return groupName;

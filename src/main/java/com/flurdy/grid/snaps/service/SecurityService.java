@@ -5,6 +5,7 @@ import com.flurdy.grid.snaps.domain.SecurityDetail.AuthorityRole;
 import com.flurdy.grid.snaps.domain.Traveller;
 
 import com.flurdy.grid.snaps.exception.SnapInvalidClientInputException;
+import com.flurdy.grid.snaps.exception.SnapLogicalException;
 import com.flurdy.grid.snaps.exception.SnapTechnicalException;
 import com.flurdy.grid.snaps.exception.SnapTechnicalException.SnapTechnicalError;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -178,12 +179,18 @@ public class SecurityService extends AbstractService implements ISecurityService
 	@Override
 	public String findLoggedInUsername() {
 
-		assert (SecurityContextHolder.getContext()!=null &&
-					SecurityContextHolder.getContext().getAuthentication() != null &&
-					SecurityContextHolder.getContext().getAuthentication().getPrincipal() != null &&
-					SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof User );
-		
-		return ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+		assert SecurityContextHolder.getContext()!=null;
+
+		if( SecurityContextHolder.getContext().getAuthentication() != null ){
+
+			assert SecurityContextHolder.getContext().getAuthentication().getPrincipal() != null;
+			assert SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof User;
+
+			return ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+
+		} else {
+			throw new SnapLogicalException(SnapLogicalException.SnapLogicalError.INVALID_STATE,"No one is logged in");
+		}
 	}
 
 
