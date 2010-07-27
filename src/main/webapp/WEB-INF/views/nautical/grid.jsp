@@ -55,7 +55,7 @@
 									</sec:authorize>
 									<sec:authorize ifAllGranted="ROLE_USER">
 										<sec:authentication property="principal.username" />
-										| <a href="${pageContext.request.contextPath}/j_spring_security_logout">logout</a>
+										| <a href="${pageContext.request.contextPath}/logout.do">logout</a>
 									</sec:authorize>
 								</div>
 								<div id="bow" class="compartment">

@@ -42,5 +42,7 @@ public interface ISecurityService {
 	@PreAuthorize("isAuthenticated()")
 	public String findLoggedInUsername();
 
-
+	@PreAuthorize("isAnonymous()")
+	public void resetPassword(String usernameOrEmail);
+	
 }

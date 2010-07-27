@@ -1,4 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <div class="centreCargo">
 	
@@ -18,6 +19,18 @@
 			</tr>
 		</table>
 	</form>
+
+    <c:if test="${!empty param.login_error}">
+    <div>
+         <h4>login failed</h4>
+        <p>please try again?</p>
+
+        <a href="${pageContext.request.contextPath}/password/reset">
+            reset password
+         </a>
+
+    </div>
+    </c:if>
 
 </div>
 

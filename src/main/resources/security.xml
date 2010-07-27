@@ -29,8 +29,9 @@
 		<!-- <intercept-url pattern="/holiday/?*"			access="permitAll" /> -->
 		<!-- <intercept-url pattern="/**"					access="isAuthenticated()" /> -->
 		<!-- <intercept-url pattern="/**" filters="none" /> -->
-        <form-login login-page="/login.html" />
-        <logout logout-success-url="/" />
+        <form-login login-page="/login.html" authentication-failure-url="/login.html?login_error=1" />
+        <logout logout-success-url="/" logout-url="/logout.do" />
+        <access-denied-handler error-page="/error/accessDenied.html"/>
     </http>
 
     <authentication-manager>

@@ -32,8 +32,8 @@ public class HolidayController extends AbstractGridController {
 
 	@RequestMapping(value="",method=RequestMethod.GET)
 	public ModelAndView findOrListHolidaysHandler(String groupName){
-		log.debug("finding holiday group");
-		log.debug("starting with: "+groupName);
+//		log.debug("finding holiday group");
+//		log.debug("starting with: "+groupName);
 		
 		Set<HolidayGroup> holidayGroups = holidayGroupService.searchForHolidayGroups(groupName);
 

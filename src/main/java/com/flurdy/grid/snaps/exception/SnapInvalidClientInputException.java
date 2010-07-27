@@ -9,7 +9,8 @@ public class SnapInvalidClientInputException extends SnapLogicalException {
 		PASSWORD_MISMATCH("Passwords does not match"),
 		PASSWORD_LENGTH("Password not long enough"),
 		URL("URL not valid"),
-		USERNAME_TAKEN("Username already taken");
+		USERNAME_TAKEN("Username already taken"),
+		UNSPECIFIED("Input invalid");
 
 		private String description;
 

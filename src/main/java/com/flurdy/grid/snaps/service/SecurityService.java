@@ -9,11 +9,16 @@ import com.flurdy.grid.snaps.exception.SnapLogicalException;
 import com.flurdy.grid.snaps.exception.SnapNotFoundException;
 import com.flurdy.grid.snaps.exception.SnapTechnicalException;
 import com.flurdy.grid.snaps.exception.SnapTechnicalException.SnapTechnicalError;
+import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
 
 @Service
 public class SecurityService extends AbstractService implements ISecurityService {
@@ -27,6 +32,9 @@ public class SecurityService extends AbstractService implements ISecurityService
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+
+	@Autowired
+	private IEmailService emailService;
 
 	
 	@Override
@@ -113,15 +121,6 @@ public class SecurityService extends AbstractService implements ISecurityService
 	}
 
 	
-//	private SecurityAuthority createAndAddAuthority(AuthorityRole role){
-//		SecurityAuthority authority = securityRepository.findAuthority(role);
-//		if( authority == null ){
-//			securityRepository.addAuthority(new SecurityAuthority( role ));
-//			authority = securityRepository.findAuthority( role );
-//		}
-//		return authority;
-//	}
-
 	
 	private void createDefaultSuperUser() {
 
@@ -211,6 +210,51 @@ public class SecurityService extends AbstractService implements ISecurityService
 		}
 	}
 
+	private void resetPassword(final Traveller traveller){
+		log.info("Resetting password for: " + traveller);
+
+		final String randomPassword = RandomStringUtils.randomAlphanumeric(8);
+		traveller.getSecurityDetail().setPassword(randomPassword);
+
+		applyEncryptedPassword(traveller.getSecurityDetail());
+
+		securityRepository.updateSecurityDetail(traveller.getSecurityDetail());
+
+		emailService.sendPassword(traveller,randomPassword);
+
+	}
+
+
+	@Override
+	public void resetPassword(final String usernameOrEmail) {
+
+		assert usernameOrEmail != null && usernameOrEmail.trim().length()>3;
+
+		log.info("Trying to reset password for: " + usernameOrEmail);
+
+		Set<SecurityDetail> possibleCandidates = new HashSet<SecurityDetail>();
+
+		if( usernameOrEmail.contains("@") ){
+			SecurityDetail securityDetail = securityRepository.findSecurityDetailByEmail(usernameOrEmail);
+			if (securityDetail != null ){
+				possibleCandidates.add(securityDetail);
+			}
+		}
+
+		SecurityDetail securityDetail = securityRepository.findSecurityDetail(usernameOrEmail);
+		if (securityDetail != null ){
+			possibleCandidates.add(securityDetail);
+		}
+
+		if (possibleCandidates.size() == 1){
+			resetPassword( travellerRepository.findTraveller(possibleCandidates.iterator().next().getUsername()) );
+		} else if( possibleCandidates.isEmpty()){
+			throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.SECURITY_DETAILS);
+		} else {			
+			throw new SnapLogicalException(SnapLogicalException.SnapLogicalError.INVALID_STATE,"Too many candidates matched");
+		}
+
+	}
 
 	@Override
 	public void enableSecurityDetail(String username) {

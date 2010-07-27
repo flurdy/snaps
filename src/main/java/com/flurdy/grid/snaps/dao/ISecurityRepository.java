@@ -14,4 +14,5 @@ public interface ISecurityRepository {
 
 	public void updateSecurityDetail(SecurityDetail securityDetail);
 
+	public SecurityDetail findSecurityDetailByEmail(String usernameOrEmail);
 }
