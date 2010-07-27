@@ -1,6 +1,7 @@
 package com.flurdy.grid.snaps.domain;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
 
@@ -12,6 +13,12 @@ import javax.persistence.*;
     @NamedQuery(name = "traveller.findById",
 		query = "select distinct trav from Traveller trav " +
 		"left join fetch trav.securityDetail " +
+		"where trav.travellerId = :travellerId"),
+    @NamedQuery(name = "traveller.findFullById",
+		query = "select distinct trav from Traveller trav " +
+		"left join fetch trav.securityDetail " +
+		"left join fetch trav.photoAlbums " +
+		"left join fetch trav.holidayMemberships " +
 		"where trav.travellerId = :travellerId"),
     @NamedQuery(name = "traveller.findByUsername",
 		query = "select distinct trav from Traveller trav " +
@@ -32,13 +39,14 @@ public class Traveller implements Serializable {
 	@Column(nullable=false)
 	private String email;
 
-	@OneToOne
-	private SecurityDetail securityDetail;
-
 	@OneToMany(mappedBy = "owner",cascade={CascadeType.ALL},fetch=FetchType.LAZY)
 		private Set<PhotoAlbum> photoAlbums;
 
-	@OneToMany(mappedBy = "traveller",cascade={CascadeType.ALL},fetch=FetchType.LAZY)
+	@OneToOne(cascade = {CascadeType.ALL }, fetch = FetchType.EAGER, orphanRemoval = true)
+	private SecurityDetail securityDetail;
+
+	@OneToMany(mappedBy = "traveller",cascade = {CascadeType.ALL },fetch=FetchType.LAZY, orphanRemoval = true)
+//	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private Set<HolidayMember> holidayMemberships;
 
 
@@ -58,6 +66,29 @@ public class Traveller implements Serializable {
 						.authorities(builder.authorities).build();
 		this.fullname = builder.fullname;
 		this.email = builder.email;
+	}
+
+	public Traveller clone(){
+		Set<String> authorities = new HashSet<String>();
+		for(SecurityDetail.AuthorityRole authority : securityDetail.getAuthorities() ){
+			authorities.add(authority.name());
+		}
+		return new Builder()
+				.fullname(fullname)
+				.email(email)
+				.travellerId(travellerId)
+				.username(securityDetail.getUsername())
+				.password(securityDetail.getPassword())
+				.enabled(securityDetail.isEnabled())
+				.authorities(authorities)
+				.build();
+	}
+
+	public boolean isValid() {
+		return fullname != null && fullname.trim().length()>3
+				&& email != null && email.trim().length()>6
+				&& email.matches("^[^@]+@[^@]+\\....?$")
+				&& securityDetail != null && securityDetail.isValid();
 	}
 
 
@@ -136,7 +167,9 @@ public class Traveller implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Fullname: " + fullname
+		return
+			"| Id: " + travellerId
+			+ "| Fullname: " + fullname
 			+ "| Email: " + email
 			+ "| " + securityDetail;
 	}

@@ -2,6 +2,9 @@ package com.flurdy.grid.snaps.service;
 
 import com.flurdy.grid.snaps.dao.ITravellerRepository;
 import com.flurdy.grid.snaps.domain.Traveller;
+import com.flurdy.grid.snaps.exception.SnapLogicalException;
+import com.flurdy.grid.snaps.exception.SnapNotFoundException;
+import com.flurdy.grid.snaps.exception.SnapTechnicalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,25 +21,42 @@ public class AdminService implements IAdminService {
 	@Override
 	public void updateTraveller(Traveller traveller) {
 
-		// TODO validate traveller
+		if( traveller != null ){
+			if( traveller.isValid() ){
 
-		Traveller realTraveller = travellerRepository.findTraveller(traveller.getTravellerId());
+				Traveller realTraveller = travellerRepository.findTraveller(traveller.getTravellerId());
+				if( realTraveller != null ){
 
-		realTraveller.setFullname(traveller.getFullname());
-		realTraveller.setEmail(traveller.getEmail());
+					realTraveller.setFullname(traveller.getFullname());
+					realTraveller.setEmail(traveller.getEmail());
 
-		travellerRepository.updateTraveller(realTraveller);
+					travellerRepository.updateTraveller(realTraveller);
 
+				} else {
+					throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.TRAVELLER);
+				}
+			} else {
+				throw new SnapLogicalException(SnapLogicalException.SnapLogicalError.INVALID_INPUT);
+			}
+		} else {
+			throw new SnapTechnicalException(SnapTechnicalException.SnapTechnicalError.INVALID_INPUT,"Traveller is null");
+		}
 	}
 
 	@Override
 	public void deleteTraveller(long travellerId) {
 
+		assert travellerId > 0;
+
 		Traveller traveller = travellerRepository.findTraveller(travellerId);
 
-		log.info("Deleting traveller"+ traveller);
+		if( traveller != null ){
+			log.info("Deleting traveller"+ traveller);
 
-		travellerRepository.deleteTraveller(traveller);
+			travellerRepository.deleteTraveller(traveller);
+		} else {
+			throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.TRAVELLER);
+		}
 
 
 	}

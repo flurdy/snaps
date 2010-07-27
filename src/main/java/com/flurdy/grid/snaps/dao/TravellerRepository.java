@@ -1,8 +1,11 @@
 package com.flurdy.grid.snaps.dao;
 
+import com.flurdy.grid.snaps.domain.HolidayMember;
+import com.flurdy.grid.snaps.domain.PhotoAlbum;
 import com.flurdy.grid.snaps.domain.SecurityDetail;
 import com.flurdy.grid.snaps.domain.Traveller;
 import java.util.List;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import org.springframework.stereotype.Repository;
@@ -58,25 +61,41 @@ public class TravellerRepository extends AbstractRepository implements ITravelle
 		assert traveller.getTravellerId() != null;
 		assert traveller.getTravellerId() > 0;
 
-//		traveller = findTraveller(traveller.getTravellerId());
+		Query query = entityManager.createNamedQuery("traveller.findFullById");
+		query.setParameter("travellerId", traveller.getTravellerId());
+		traveller = (Traveller) query.getSingleResult();
 
 		assert traveller != null;
 		assert traveller.getTravellerId() != null;
 		assert traveller.getTravellerId() > 0;
 
-//		SecurityDetail securityDetail = entityManager.getReference(SecurityDetail.class, traveller.getSecurityDetail().getUsername());
+		if( traveller.getPhotoAlbums() != null ){
+			for(PhotoAlbum photoAlbum : traveller.getPhotoAlbums() ){
+				entityManager.remove(photoAlbum);
+			}
+		}
+		traveller.setPhotoAlbums(null);
 
-//		Traveller realTraveller = entityManager.find(Traveller.class, traveller.getTravellerId());
+		if( traveller.getHolidayMemberships() != null ){
+			for(HolidayMember holidayMember : traveller.getHolidayMemberships() ){
+				entityManager.remove(holidayMember);
+			}
+		}
+		traveller.setHolidayMemberships(null);
 
-//		traveller = entityManager.getReference(Traveller.class, traveller.getTravellerId());
+		SecurityDetail securityDetail = entityManager.getReference(SecurityDetail.class, traveller.getSecurityDetail().getUsername());
 
-//		log.debug("REmoving:"+traveller);
-//		entityManager.remove(securityDetail);
-//		entityManager.merge(traveller);
-		traveller = entityManager.getReference(Traveller.class, traveller.getTravellerId());
+		traveller.setSecurityDetail(null);
+
+		entityManager.remove( securityDetail );
+
+		entityManager.merge(traveller);
+
 		entityManager.remove(traveller);
-
+		
 		entityManager.flush();
+
+
 	}
 
 	@Override

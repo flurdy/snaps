@@ -70,6 +70,11 @@ public class SecurityDetail implements Serializable {
 		}
 	}
 
+	public boolean isValid() {
+		return username != null && username.trim().length() > 3
+				&& password != null && password.trim().length() > 3;
+	}
+
 
 	public static AuthorityRole findRole(String role){
 		for (AuthorityRole possibleRole : AuthorityRole.values() ) {

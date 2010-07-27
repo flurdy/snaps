@@ -13,22 +13,24 @@ import java.util.List;
 @Transactional
 public class TravellerServiceTest extends AbstractServiceTest {
 
+	private Long defaultTravellerId = null;
+
 	@Before
 	public void setUp(){
 		Mockito.when(securityService.findLoggedInUsername()).thenReturn(DEFAULT_USERNAME);
-		addDefaultUser();
+		defaultTravellerId = addDefaultUser();
 	}
 	
 
 	@Test
 	public void testFindTraveller(){
 
-//		Assert.assertNotNull( defaultTravellerId );
-//		Assert.assertTrue( defaultTravellerId > 0 )
-		
-		Traveller traveller = travellerService.findTraveller(1);
+		assert defaultTravellerId > 0;
+
+		Traveller traveller = travellerService.findTraveller(defaultTravellerId);
 
 		Assert.assertNotNull( traveller );
+		Assert.assertEquals( traveller.getFullname(), DEFAULT_FULLNAME );
 	}
 
 

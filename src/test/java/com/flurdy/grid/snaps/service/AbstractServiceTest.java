@@ -1,6 +1,7 @@
 package com.flurdy.grid.snaps.service;
 
 import com.flurdy.grid.snaps.domain.Traveller;
+import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
@@ -19,6 +20,9 @@ public abstract class AbstractServiceTest  extends AbstractTransactionalJUnit4Sp
     protected IHolidayGroupService holidayGroupService;
 
 	@Resource
+    protected IPhotoAlbumService photoAlbumService;
+
+	@Resource
     protected ISecurityService securityService;
 
 	@Resource
@@ -26,6 +30,9 @@ public abstract class AbstractServiceTest  extends AbstractTransactionalJUnit4Sp
 
 	@Resource
     protected ITravellerService travellerService;
+
+	@Resource
+    protected IAdminService adminService;
 
 //	protected Long defaultTravellerId = null;
 
@@ -35,8 +42,15 @@ public abstract class AbstractServiceTest  extends AbstractTransactionalJUnit4Sp
 	protected static final String DEFAULT_PASSWORD = "testuser";
 	protected static final String DEFAULT_FULLNAME = "testuser";
 	protected static final String DEFAULT_EMAIL = "testuser@example.com";
-	
-	protected void addDefaultUser(){
+	protected static final String DEFAULT_USERNAME2 = "testuser2";
+	protected static final String DEFAULT_PASSWORD2 = "testuser2";
+	protected static final String DEFAULT_FULLNAME2 = "testuser2";
+	protected static final String DEFAULT_EMAIL2 = "testuser2@example.com";
+
+	protected static final String DEFAULT_HOLIDAY_NAME = "Test Holiday";
+	protected static final String DEFAULT_HOLIDAY2_NAME = "Test 2nd Holiday";
+
+	protected Long addDefaultUser(){
 		Traveller traveller = new Traveller.Builder()
 					.username(DEFAULT_USERNAME)
 					.fullname(DEFAULT_FULLNAME)
@@ -44,8 +58,17 @@ public abstract class AbstractServiceTest  extends AbstractTransactionalJUnit4Sp
 					.email(DEFAULT_EMAIL).build();
 
 		realSecurityService.registerTraveller(traveller);
+		return traveller.getTravellerId();
+	}
 
-//		defaultTravellerId = traveller.getTravellerId();
+	protected void addDefaultUser2(){
+		Traveller traveller = new Traveller.Builder()
+					.username(DEFAULT_USERNAME2)
+					.fullname(DEFAULT_FULLNAME2)
+					.password(DEFAULT_PASSWORD2)
+					.email(DEFAULT_EMAIL2).build();
+
+		realSecurityService.registerTraveller(traveller);
 	}
 
 }

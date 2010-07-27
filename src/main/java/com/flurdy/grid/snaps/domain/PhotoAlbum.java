@@ -50,7 +50,13 @@ public class PhotoAlbum implements Serializable{
 	}
 
 
-	
+	public boolean isValid() {
+		return sharingProvider != null && PhotoSharingProvider.valueOf(sharingProvider) != null
+				&& url != null && url.trim().length() > 0
+				&& ( url.startsWith("http://") || url.startsWith("https://") );
+	}
+
+
 	public static class Builder {
 		private String url;
 		private HolidayGroup holidayGroup;

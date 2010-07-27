@@ -20,19 +20,20 @@ import javax.annotation.Resource;
 @Transactional
 public class HolidayGroupServiceTest extends AbstractServiceTest {
 
-	private static final String DEFAULT_HOLIDAY_NAME = "Test Holiday";
-	private static final String DEFAULT_HOLIDAY2_NAME = "Test 2nd Holiday";
-
 	private Long defaultHolidayGroupId = null;
 	private Long defaultHoliday2GroupId = null;
 
+	private static final String DEFAULT_HOLIDAY3_NAME = "Christmas in the Alps";
+
 	
 	@Before
-	public void setUp(){		
+	public void setUp(){
+		addDefaultUser2();
+		Mockito.when(securityService.findLoggedInUsername()).thenReturn(DEFAULT_USERNAME2);
+		addNonMemberHoliday();
 		Mockito.when(securityService.findLoggedInUsername()).thenReturn(DEFAULT_USERNAME);
 		addDefaultUser();
 		addDefaultHoliday();
-		addNonMemberHoliday();
 	}
 
 	private void addDefaultHoliday(){
@@ -96,16 +97,29 @@ public class HolidayGroupServiceTest extends AbstractServiceTest {
 
 		HolidayGroup holidayGroup = holidayGroupService.findHolidayGroup(defaultHoliday2GroupId);
 
+		Assert.assertNotNull(holidayGroup);
+
 	}
 
 	@Test
 	public void testAddHoliday(){
 
 		HolidayGroup holidayGroup = new HolidayGroup.Builder()
-					.groupName(DEFAULT_HOLIDAY_NAME)
+					.groupName(DEFAULT_HOLIDAY3_NAME)
 					.build();
 		holidayGroupService.addHolidayGroup(holidayGroup);
-		defaultHolidayGroupId = holidayGroup.getGroupId();
+
+		Assert.assertNotNull(holidayGroup.getGroupId());
+
+		holidayGroup = holidayGroupService.findHolidayGroup(holidayGroup.getGroupId());
+
+		Assert.assertNotNull(holidayGroup);
+
+		Assert.assertEquals( holidayGroup.getGroupName(), DEFAULT_HOLIDAY3_NAME);
+
+		Assert.assertTrue( holidayGroup.getMembers().size() == 1 );
+		Assert.assertEquals( holidayGroup.getMembers().iterator().next().getTraveller().getSecurityDetail().getUsername() , DEFAULT_USERNAME );
+
 	}
 
 

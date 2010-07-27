@@ -6,6 +6,7 @@ import com.flurdy.grid.snaps.domain.Traveller;
 
 import com.flurdy.grid.snaps.exception.SnapInvalidClientInputException;
 import com.flurdy.grid.snaps.exception.SnapLogicalException;
+import com.flurdy.grid.snaps.exception.SnapNotFoundException;
 import com.flurdy.grid.snaps.exception.SnapTechnicalException;
 import com.flurdy.grid.snaps.exception.SnapTechnicalException.SnapTechnicalError;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -146,19 +147,29 @@ public class SecurityService extends AbstractService implements ISecurityService
 	@Override
 	public void changeSecurityDetailPassword(String username, String password) {
 
-		// TODO validate
+		assert username != null;
+		assert password != null;
 		
 		log.info("Changing password for: " + username);
 
 		SecurityDetail securityDetail = securityRepository.findSecurityDetail(username);
 
-		assert securityDetail != null;
-		if( password !=null && password.trim().length()>0)
-			securityDetail.setPassword(password);
+		if (securityDetail != null ){
 
-		applyEncryptedPassword(securityDetail);
 
-		securityRepository.updateSecurityDetail(securityDetail);
+			if( password.trim().length() > 3){
+
+				securityDetail.setPassword(password);
+
+				applyEncryptedPassword(securityDetail);
+
+				securityRepository.updateSecurityDetail(securityDetail);
+			} else {
+				throw new SnapInvalidClientInputException(SnapInvalidClientInputException.InputError.PASSWORD_LENGTH);
+			}
+		} else {
+			throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.SECURITY_DETAILS);
+		}
 	}
 
 
@@ -169,11 +180,15 @@ public class SecurityService extends AbstractService implements ISecurityService
 		log.info("Disabling user: " + username);
 
 		SecurityDetail securityDetail = securityRepository.findSecurityDetail(username);
-		assert securityDetail != null;
+		if (securityDetail != null ){
 
-		securityDetail.setEnabled(false);
+			securityDetail.setEnabled(false);
 
-		securityRepository.updateSecurityDetail(securityDetail);
+			securityRepository.updateSecurityDetail(securityDetail);
+			
+		} else {
+			throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.SECURITY_DETAILS);
+		}
 	}
 
 	@Override
@@ -200,32 +215,40 @@ public class SecurityService extends AbstractService implements ISecurityService
 		log.info("Enabling user: " + username);
 
 		SecurityDetail securityDetail = securityRepository.findSecurityDetail(username);
-		assert securityDetail != null;
+		if (securityDetail != null ){
 
-		securityDetail.setEnabled(true);
+			securityDetail.setEnabled(true);
 
-		securityRepository.updateSecurityDetail(securityDetail);
+			securityRepository.updateSecurityDetail(securityDetail);
+			
+		} else {
+			throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.SECURITY_DETAILS);
+		}
+
 	}
 
 
 	@Override
 	public void removeAuthority(String username, AuthorityRole authority) {
 
-		// TODO validate
+		assert username != null;
+		assert authority != null;
 
 		log.info("Removing authority ["+authority+"] from: " + username);
 
 		SecurityDetail securityDetail = securityRepository.findSecurityDetail(username);
-//		SecurityAuthority realAuthority = securityRepository.findAuthority(authority.getAuthorityRole());
 
-		log.debug("Auths:"+securityDetail.getAuthorities().size());
-		
-		securityDetail.removeAuthority(authority);
+		if (securityDetail != null ){
+			log.debug("Auths:"+securityDetail.getAuthorities().size());
 
-		log.debug("Auths:"+securityDetail.getAuthorities().size());
+			securityDetail.removeAuthority(authority);
 
-		securityRepository.updateSecurityDetail(securityDetail);
+			log.debug("Auths:"+securityDetail.getAuthorities().size());
 
+			securityRepository.updateSecurityDetail(securityDetail);
+		} else {
+			throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.SECURITY_DETAILS);
+		}
 	}
 
 	
@@ -236,20 +259,25 @@ public class SecurityService extends AbstractService implements ISecurityService
 		// TODO validate
 
 		assert username != null && username.length()>0;
+		assert authority != null;
 		
 		log.info("Adding authority ["+authority+"] from: " + username);
 		
 
 		SecurityDetail securityDetail = securityRepository.findSecurityDetail(username);
-//		SecurityAuthority realAuthority = securityRepository.findAuthority(authority.getAuthorityRole());
 
-		log.debug("Auths:"+securityDetail.getAuthorities().size());
+		if (securityDetail != null ){
 
-		securityDetail.addAuthority(authority);
+			log.debug("Auths:"+securityDetail.getAuthorities().size());
 
-		log.debug("Auths:"+securityDetail.getAuthorities().size());
+			securityDetail.addAuthority(authority);
 
-		securityRepository.updateSecurityDetail(securityDetail);
+			log.debug("Auths:"+securityDetail.getAuthorities().size());
+
+			securityRepository.updateSecurityDetail(securityDetail);
+		} else {
+			throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.SECURITY_DETAILS);
+		}
 	}
 
 

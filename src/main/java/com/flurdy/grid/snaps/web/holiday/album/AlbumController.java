@@ -43,7 +43,7 @@ public class AlbumController extends AbstractGridController {
 		final HolidayGroup holidayGroup = holidayGroupService.findHolidayGroup(holidayGroupId);
 		if( holidayGroup != null ){
 			log.debug("holiday group: "+holidayGroup);
-			final PhotoAlbum photoAlbum = photoAlbumService.findPhotoAlbum(albumId,holidayGroupId);
+			final PhotoAlbum photoAlbum = photoAlbumService.findPhotoAlbum( holidayGroupId, albumId );
 			if( photoAlbum != null ){
 				log.debug("album: "+photoAlbum);
 //

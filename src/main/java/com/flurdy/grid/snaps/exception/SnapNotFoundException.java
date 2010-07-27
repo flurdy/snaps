@@ -11,7 +11,8 @@ public class SnapNotFoundException extends SnapLogicalException {
 		HOLIDAY("Holiday not found"),
 		PHOTO_ALBUM("Photo album not found"),
 		TRAVELLER("Traveller not found"),
-		SHARING_PROVIDER("Sharing provider not found");
+		SHARING_PROVIDER("Sharing provider not found"),
+		SECURITY_DETAILS("Security details not found");
 
 		private String description;
 

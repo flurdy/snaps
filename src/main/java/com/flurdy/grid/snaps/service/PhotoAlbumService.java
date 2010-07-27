@@ -16,7 +16,11 @@ public class PhotoAlbumService extends AbstractService implements IPhotoAlbumSer
 	@Override
 	public PhotoAlbum addAlbum(HolidayGroup holidayGroup, PhotoSharingProvider provider, String url) {
 
-		final Traveller owner = travellerService.findCurrentTraveller(); 		
+		final Traveller owner = travellerService.findCurrentTraveller();
+
+		assert holidayGroup != null;
+		assert provider != null;
+		assert url != null;
 
 		log.info("Traveller [" + owner.getSecurityDetail().getUsername()
 				+ "] is adding album from provider ["+provider.name()
@@ -33,9 +37,15 @@ public class PhotoAlbumService extends AbstractService implements IPhotoAlbumSer
 					.owner(owner)
 					.build();
 
-			photoAlbumRepository.addAlbum(album);
+			if( album.isValid() ){
 
-			return album;
+				photoAlbumRepository.addAlbum(album);
+
+				return album;
+
+			} else {
+				throw new SnapLogicalException(SnapLogicalException.SnapLogicalError.INVALID_INPUT);
+			}
 
 		} else {
 			log.info("not member");
@@ -45,7 +55,10 @@ public class PhotoAlbumService extends AbstractService implements IPhotoAlbumSer
 	}
 
 	@Override
-	public PhotoAlbum findPhotoAlbum(long albumId, long holidayId){
+	public PhotoAlbum findPhotoAlbum( long holidayId, long albumId ){
+
+		assert holidayId > 0;
+		assert albumId > 0;
 
 		final HolidayGroup holidayGroup = holidayGroupRepository.findHolidayGroup( holidayId );
 		if( holidayGroup != null ){
@@ -60,7 +73,9 @@ public class PhotoAlbumService extends AbstractService implements IPhotoAlbumSer
 						throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.PHOTO_ALBUM);
 					}
 				} else {
-					throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.PHOTO_ALBUM);					
+					log.info("Photo album not found");
+					return null;
+//					throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.PHOTO_ALBUM);
 				}
 			} else {
 				log.info("not member");
