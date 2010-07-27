@@ -43,17 +43,20 @@ public class SecurityService extends AbstractService implements ISecurityService
 		if (traveller != null) {
 			log.debug("Registering traveller: "+traveller);
 
-			// TODO validate input
+			if(traveller.isValid()){
 
-			if( securityRepository.findSecurityDetail(
-						traveller.getSecurityDetail().getUsername()) == null ){
+				if( securityRepository.findSecurityDetail(
+							traveller.getSecurityDetail().getUsername()) == null ){
 
-				applyDefaultAuthorities(traveller.getSecurityDetail());
-				applyEncryptedPassword(traveller.getSecurityDetail());
-				securityRepository.addSecurityDetail(traveller.getSecurityDetail());
-				travellerRepository.addTraveller(traveller);
+					applyDefaultAuthorities(traveller.getSecurityDetail());
+					applyEncryptedPassword(traveller.getSecurityDetail());
+					securityRepository.addSecurityDetail(traveller.getSecurityDetail());
+					travellerRepository.addTraveller(traveller);
+				} else {
+					throw new SnapInvalidClientInputException( SnapInvalidClientInputException.InputError.USERNAME_TAKEN );
+				}
 			} else {
-				throw new SnapInvalidClientInputException( SnapInvalidClientInputException.InputError.USERNAME_TAKEN );
+				throw new SnapTechnicalException( SnapTechnicalError.INVALID_INPUT, "Traveller invalid" );
 			}
 		} else {
 			throw new SnapTechnicalException( SnapTechnicalError.INVALID_INPUT, new NullPointerException() );
@@ -122,7 +125,7 @@ public class SecurityService extends AbstractService implements ISecurityService
 	
 	private void createDefaultSuperUser() {
 
-		log.info("Creating default super user");
+		log.warn("Creating default super user");
 
 		Traveller traveller = new Traveller.Builder()
 					.username(DEFAULT_SUPER_USERNAME)
@@ -239,11 +242,11 @@ public class SecurityService extends AbstractService implements ISecurityService
 		SecurityDetail securityDetail = securityRepository.findSecurityDetail(username);
 
 		if (securityDetail != null ){
-			log.debug("Auths:"+securityDetail.getAuthorities().size());
+//			log.debug("Auths:"+securityDetail.getAuthorities().size());
 
 			securityDetail.removeAuthority(authority);
 
-			log.debug("Auths:"+securityDetail.getAuthorities().size());
+//			log.debug("Auths:"+securityDetail.getAuthorities().size());
 
 			securityRepository.updateSecurityDetail(securityDetail);
 		} else {
@@ -256,8 +259,6 @@ public class SecurityService extends AbstractService implements ISecurityService
 	@Override
 	public void addAuthority(String username, AuthorityRole authority) {
 
-		// TODO validate
-
 		assert username != null && username.length()>0;
 		assert authority != null;
 		
@@ -268,11 +269,11 @@ public class SecurityService extends AbstractService implements ISecurityService
 
 		if (securityDetail != null ){
 
-			log.debug("Auths:"+securityDetail.getAuthorities().size());
+//			log.debug("Auths:"+securityDetail.getAuthorities().size());
 
 			securityDetail.addAuthority(authority);
 
-			log.debug("Auths:"+securityDetail.getAuthorities().size());
+//			log.debug("Auths:"+securityDetail.getAuthorities().size());
 
 			securityRepository.updateSecurityDetail(securityDetail);
 		} else {
