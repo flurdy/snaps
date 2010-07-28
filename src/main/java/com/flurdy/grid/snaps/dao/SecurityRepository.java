@@ -2,7 +2,10 @@ package com.flurdy.grid.snaps.dao;
 
 import com.flurdy.grid.snaps.domain.SecurityDetail;
 import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
+
+import com.flurdy.grid.snaps.exception.SnapTechnicalException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,6 +64,23 @@ public class SecurityRepository extends AbstractRepository implements ISecurityR
         assert securityDetail.getUsername() != null;
 		entityManager.merge(securityDetail);
 		entityManager.flush();
+	}
+
+	@Override
+	public SecurityDetail findSecurityDetailByEmail(String email) {
+
+        assert email != null;
+        assert email.length()>0;
+
+		Query query = entityManager.createNamedQuery("securitydetail.findSecurityDetailByEmail");
+		query.setParameter("email", email);
+		try{
+			return (SecurityDetail) query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		} catch (NonUniqueResultException ex) {
+			throw new SnapTechnicalException(SnapTechnicalException.SnapTechnicalError.DATA_ERROR,"Too many matches of email");
+		}
 	}
 
 }

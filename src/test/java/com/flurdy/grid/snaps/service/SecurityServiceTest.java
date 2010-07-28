@@ -1,19 +1,25 @@
 package com.flurdy.grid.snaps.service;
 
+import com.flurdy.grid.snaps.dao.ISecurityRepository;
 import com.flurdy.grid.snaps.domain.SecurityDetail;
 import com.flurdy.grid.snaps.domain.Traveller;
 import com.flurdy.grid.snaps.exception.SnapInvalidClientInputException;
 import com.flurdy.grid.snaps.exception.SnapLogicalException;
 import com.flurdy.grid.snaps.exception.SnapNotFoundException;
 import org.junit.Assert;
+import org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.Mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
+import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.Iterator;
 
 @Transactional
@@ -21,6 +27,12 @@ public class SecurityServiceTest extends AbstractServiceTest {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+
+	@Resource
+	private PasswordEncoder mockPasswordEncoder;
+
+	@Autowired
+	private ISecurityRepository securityRepository;
 
 	private static final String TRAVELLER_USERNAME = "travelling testuser";
 	private static final String TRAVELLER_PASSWORD = "travelling testuser";
@@ -31,6 +43,9 @@ public class SecurityServiceTest extends AbstractServiceTest {
 
 	@Before
 	public void setUp(){
+		ReflectionTestUtils.setField(realSecurityService, "passwordEncoder", passwordEncoder );
+		Mockito.when(mockPasswordEncoder.encodePassword(Mockito.anyString(), Mockito.eq(DEFAULT_USERNAME))).thenReturn("RANDOM");
+//		Mockito.when(passwordEncoder.encodePassword(Mockito.anyString(),Mockito.anyString())).thenCallRealMethod();
 //		Mockito.when(securityService.findLoggedInUsername()).thenReturn(DEFAULT_USERNAME2);
 		addDefaultUser2();
 //		Mockito.when(securityService.findLoggedInUsername()).thenReturn(DEFAULT_USERNAME);
@@ -256,12 +271,10 @@ public class SecurityServiceTest extends AbstractServiceTest {
 	@Test(expected = SnapLogicalException.class)
 	public void testEnableNonExistentSecurityDetail(){
 
-
 		SecurityDetail securityDetail = realSecurityService.findLogin("asdasdsa");
 		Assert.assertNull( securityDetail );
 
 		realSecurityService.enableSecurityDetail("asdasdsa");
-
 	}
 
 
@@ -328,7 +341,6 @@ public class SecurityServiceTest extends AbstractServiceTest {
 	@Test
 	public void  testChangePassword(){
 
-
 		SecurityDetail securityDetail = realSecurityService.findLogin(DEFAULT_USERNAME);
 		Assert.assertNotNull( securityDetail );
 		Assert.assertEquals(securityDetail.getPassword(),
@@ -350,6 +362,7 @@ public class SecurityServiceTest extends AbstractServiceTest {
 
 	}
 
+
 	@Test(expected = SnapInvalidClientInputException.class)
 	public void  testChangeInvalidPassword(){
 
@@ -357,6 +370,82 @@ public class SecurityServiceTest extends AbstractServiceTest {
 
 	}
 
+
+
+	@Test
+	public void testResetPasswordByEmail(){
+
+		final String originalPassword = passwordEncoder.encodePassword(DEFAULT_PASSWORD,DEFAULT_USERNAME);
+		SecurityDetail securityDetail = securityRepository.findSecurityDetailByEmail(DEFAULT_EMAIL);
+		Assert.assertNotNull( securityDetail ); 
+		Assert.assertEquals( securityDetail.getPassword(), originalPassword );
+
+		ReflectionTestUtils.setField(realSecurityService, "passwordEncoder", mockPasswordEncoder );
+
+
+
+		realSecurityService.resetPassword(DEFAULT_EMAIL);
+		securityDetail = securityRepository.findSecurityDetailByEmail(DEFAULT_EMAIL);
+		Assert.assertEquals( securityDetail.getPassword(), "RANDOM" );
+
+		ReflectionTestUtils.setField(realSecurityService, "passwordEncoder", passwordEncoder );
+	}
+
+
+	@Test
+	public void testResetPasswordByUsername(){
+
+		final String originalPassword = passwordEncoder.encodePassword(DEFAULT_PASSWORD,DEFAULT_USERNAME);
+		SecurityDetail securityDetail = securityRepository.findSecurityDetail(DEFAULT_USERNAME);
+		Assert.assertNotNull( securityDetail );
+		Assert.assertEquals( securityDetail.getPassword(), originalPassword );
+
+		ReflectionTestUtils.setField(realSecurityService, "passwordEncoder", mockPasswordEncoder );
+
+//		Mockito.when(mockPasswordEncoder.encodePassword(Mockito.anyString(),DEFAULT_USERNAME)).thenReturn("RANDOM");
+
+		realSecurityService.resetPassword(DEFAULT_USERNAME);
+
+		 securityDetail = securityRepository.findSecurityDetail(DEFAULT_USERNAME);
+		Assert.assertEquals( securityDetail.getPassword(), "RANDOM" );
+
+		ReflectionTestUtils.setField(realSecurityService, "passwordEncoder", passwordEncoder );
+	}
+
+
+	@Test(expected = SnapNotFoundException.class)
+	public void testResetPasswordByNonExistentEmail(){
+		realSecurityService.resetPassword("avava@asass.com");
+	}
+
+
+	@Test(expected = SnapNotFoundException.class)
+	public void testResetPasswordByNonexistentUsername(){
+		realSecurityService.resetPassword("avava");
+	}
+
+
+	@Test(expected = SnapLogicalException.class)
+	public void testResetPasswordWhereUsernameAndEmailMatch(){
+		
+		Traveller traveller = new Traveller.Builder()
+					.username("testusermatch")
+					.fullname(DEFAULT_FULLNAME)
+					.password(DEFAULT_PASSWORD)
+					.email("testusermatch@example.org").build();
+
+		realSecurityService.registerTraveller(traveller);
+
+		traveller = new Traveller.Builder()
+					.username("testusermatch@example.org")
+					.fullname(DEFAULT_FULLNAME)
+					.password(DEFAULT_PASSWORD)
+					.email("anothertestusermatch@example.org").build();
+
+		realSecurityService.registerTraveller(traveller);
+
+		realSecurityService.resetPassword("testusermatch@example.org");
+	}
 
 	/*
 	public void enforceAristocracy();

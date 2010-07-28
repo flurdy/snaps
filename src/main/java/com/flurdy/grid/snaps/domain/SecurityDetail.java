@@ -9,7 +9,13 @@ import javax.persistence.*;
 @NamedQueries({
 	@NamedQuery(name="securitydetail.findSecurityDetailByUsername",
 			query="select distinct sd from SecurityDetail sd " +
-				"left join fetch sd.authorities where sd.username = :username ")
+				"left join fetch sd.authorities " +
+				"where sd.username = :username "),
+	@NamedQuery(name="securitydetail.findSecurityDetailByEmail",
+			query="select sd from SecurityDetail sd, Traveller trav " +
+				"left join fetch sd.authorities " +
+				"where trav.securityDetail = sd " +
+				"and trav.email = :email ")
 })
 @Entity
 public class SecurityDetail implements Serializable {
