@@ -38,12 +38,12 @@
 
 
     <definition name="password/reset/form" extends="gridTemplate">
-        <put-attribute name="pageTitle" type="string" value="password"/>
+        <put-attribute name="pageTitle" type="string" value="login"/>
         <put-attribute name="cargo" value="/WEB-INF/views/password-reset.jsp"/>
     </definition>
 
     <definition name="password/reset/confirm" extends="gridTemplate">
-        <put-attribute name="pageTitle" type="string" value="password"/>
+        <put-attribute name="pageTitle" type="string" value="login"/>
         <put-attribute name="cargo" value="/WEB-INF/views/password-confirm.jsp"/>
     </definition>
     

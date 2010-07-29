@@ -4,10 +4,12 @@
 	
 	<h4>password reset</h4>
 
-    <p>an email has been sent with you new reset password</p>
+    <p>
+        an email has been sent with you new reset password,<br/>
+        please allow time for this to arrive.
+    </p>
 
     <p>
-        please allow time for this to arrive.<br/>
         if you have not received an email within an hour,<br/>
         please try and reset it again?
      </p>

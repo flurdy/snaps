@@ -2,7 +2,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <div class="centreCargo">
-	
+
+	<h4>password reset</h4>	
 	
 	<form action="${pageContext.request.contextPath}/password/reset" method="post">
 		<table>

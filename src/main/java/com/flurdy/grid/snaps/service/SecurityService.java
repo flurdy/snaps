@@ -58,7 +58,7 @@ public class SecurityService extends AbstractService implements ISecurityService
 
 					applyDefaultAuthorities(traveller.getSecurityDetail());
 					applyEncryptedPassword(traveller.getSecurityDetail());
-					securityRepository.addSecurityDetail(traveller.getSecurityDetail());
+//					securityRepository.addSecurityDetail(traveller.getSecurityDetail());
 					travellerRepository.addTraveller(traveller);
 				} else {
 					throw new SnapInvalidClientInputException( SnapInvalidClientInputException.InputError.USERNAME_TAKEN );

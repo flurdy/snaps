@@ -20,6 +20,10 @@ public class TravellerRepository extends AbstractRepository implements ITravelle
 
 		assert traveller != null;
 
+//		SecurityDetail securityDetail = traveller.getSecurityDetail();
+
+//		entityManager.persist(sec);
+
 		entityManager.persist(traveller);
 
 	}

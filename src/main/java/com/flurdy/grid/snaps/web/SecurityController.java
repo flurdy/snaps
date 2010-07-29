@@ -78,7 +78,7 @@ public class SecurityController extends AbstractGridController {
 	}
 
 
-    @RequestMapping(value="/passwordy/reset",method=RequestMethod.POST)
+    @RequestMapping(value="/password/reset",method=RequestMethod.POST)
 	public String resetPasswordHandler(String usernameOrEmail){
 
 		log.debug("reseting password");

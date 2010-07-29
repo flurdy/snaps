@@ -121,7 +121,8 @@ public abstract class AbstractGridController {
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public ModelAndView handleInvalidInputException(SnapInvalidClientInputException exception) {
 
-		log.debug("error input");
+		log.debug("Invalid input by client: ",exception);
+
 
 		ModelAndView modelAndView = new ModelAndView("error/logical");
 		modelAndView.addObject("exception", exception);

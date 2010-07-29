@@ -56,6 +56,7 @@ public class SecurityRepository extends AbstractRepository implements ISecurityR
 	public void addSecurityDetail(SecurityDetail securityDetail) {
 		assert securityDetail != null;
 		entityManager.persist(securityDetail);
+		entityManager.flush();
 	}
 
 	@Override
