@@ -87,7 +87,7 @@ public class Traveller implements Serializable {
 	public boolean isValid() {
 		return fullname != null && fullname.trim().length()>3
 				&& email != null && email.trim().length()>6
-				&& email.matches("^[^@]+@[^@]+\\....?$")
+				&& email.matches("^[^@]+@[^@]+\\.[^@\\.]{2,12}$")
 				&& securityDetail != null && securityDetail.isValid();
 	}
 

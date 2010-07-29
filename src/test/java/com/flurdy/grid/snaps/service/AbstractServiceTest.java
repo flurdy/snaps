@@ -34,6 +34,9 @@ public abstract class AbstractServiceTest  extends AbstractTransactionalJUnit4Sp
 	@Resource
     protected IAdminService adminService;
 
+	@Resource
+    protected IEmailService emailService;
+
 //	protected Long defaultTravellerId = null;
 
 

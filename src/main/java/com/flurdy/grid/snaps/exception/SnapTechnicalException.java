@@ -10,7 +10,8 @@ public class SnapTechnicalException extends SnapException {
 	public enum SnapTechnicalError {
 		UNEXPECTED("An unexpected exception"),
 		INVALID_INPUT("The input was not valid"),
-		DATA_ERROR("Data in database was unexpected");
+		DATA_ERROR("Data in database was unexpected"),
+		EMAIL("Sending email failed");
 
 		private String description;
 
