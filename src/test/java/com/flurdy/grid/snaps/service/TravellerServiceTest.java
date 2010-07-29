@@ -17,6 +17,7 @@ public class TravellerServiceTest extends AbstractServiceTest {
 
 	@Before
 	public void setUp(){
+		super.setUp();
 		Mockito.when(securityService.findLoggedInUsername()).thenReturn(DEFAULT_USERNAME);
 		defaultTravellerId = addDefaultUser();
 	}

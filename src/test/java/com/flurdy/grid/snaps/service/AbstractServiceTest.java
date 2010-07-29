@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
@@ -37,6 +38,7 @@ public abstract class AbstractServiceTest  extends AbstractTransactionalJUnit4Sp
 	@Resource
     protected IEmailService emailService;
 
+
 //	protected Long defaultTravellerId = null;
 
 
@@ -52,6 +54,11 @@ public abstract class AbstractServiceTest  extends AbstractTransactionalJUnit4Sp
 
 	protected static final String DEFAULT_HOLIDAY_NAME = "Test Holiday";
 	protected static final String DEFAULT_HOLIDAY2_NAME = "Test 2nd Holiday";
+
+	protected void setUp(){		
+		ReflectionTestUtils.setField(realSecurityService, "emailService", emailService);
+		Mockito.when(securityService.findLoggedInUsername()).thenReturn(DEFAULT_USERNAME);
+	}
 
 	protected Long addDefaultUser(){
 		Traveller traveller = new Traveller.Builder()

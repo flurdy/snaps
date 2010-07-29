@@ -59,21 +59,34 @@ public class SecurityDetail implements Serializable {
 	}
 
 	public void addAuthority(AuthorityRole authority) {
-		if( authorities == null )
+		if( authorities == null ){
 			authorities = new HashSet<String>();
-		authorities.add(authority.toString());
-		// todo check for duplicity
+		}
+		if( !hasAuthority(authority)){
+			authorities.add(authority.toString());
+		}
 	}
 
 	public void removeAuthority(AuthorityRole authorityRole) {
-		if( authorities == null || authorities.isEmpty() ){
-			return;
-		}
-		for(String authority : authorities){
-			if( authority.equals(authorityRole.name())){
-				authorities.remove(authority);
+		if( authorities != null && !authorities.isEmpty() && hasAuthority(authorityRole) ){
+			for(String authority : authorities){
+				if( authority.equals(authorityRole.name())){
+					authorities.remove(authority);
+					return;
+				}	
 			}
 		}
+	}
+
+	public boolean hasAuthority(AuthorityRole authorityRole) {
+		if( authorities != null && !authorities.isEmpty()){
+			for(String authority : authorities){
+				if( authority.equals(authorityRole.name())){
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	public boolean isValid() {

@@ -28,6 +28,7 @@ public class HolidayGroupServiceTest extends AbstractServiceTest {
 	
 	@Before
 	public void setUp(){
+		super.setUp();
 		addDefaultUser2();
 		Mockito.when(securityService.findLoggedInUsername()).thenReturn(DEFAULT_USERNAME2);
 		addNonMemberHoliday();

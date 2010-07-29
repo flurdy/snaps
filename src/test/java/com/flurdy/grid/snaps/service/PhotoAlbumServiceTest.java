@@ -26,6 +26,7 @@ public class PhotoAlbumServiceTest extends AbstractServiceTest {
 
 	@Before
 	public void SetUp(){
+		super.setUp();
 		addDefaultUser2();
 		Mockito.when(securityService.findLoggedInUsername()).thenReturn(DEFAULT_USERNAME2);
 		addNonMemberHoliday();

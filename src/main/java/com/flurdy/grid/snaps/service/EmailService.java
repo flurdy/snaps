@@ -1,6 +1,8 @@
 package com.flurdy.grid.snaps.service;
 
+import com.flurdy.grid.snaps.domain.SecurityDetail;
 import com.flurdy.grid.snaps.domain.Traveller;
+import com.flurdy.grid.snaps.exception.SnapLogicalException;
 import com.flurdy.grid.snaps.exception.SnapTechnicalException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -9,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.util.Map;
+import java.util.*;
 
 //@Service
 public class EmailService extends AbstractService implements IEmailService {
@@ -19,6 +21,8 @@ public class EmailService extends AbstractService implements IEmailService {
 
 	private String passwordTextTemplate;
 	private String passwordTextSubject;
+	private String registrationNotificationTextTemplate;
+	private String registrationNotificationTextSubject;
 	private String fromAddress;
 
 	private String snapsURL;
@@ -63,6 +67,101 @@ public class EmailService extends AbstractService implements IEmailService {
 			throw new SnapTechnicalException(SnapTechnicalException.SnapTechnicalError.INVALID_INPUT,"Traveller is invalid");
 		}
 
+	}
+
+	@Override
+	public void notifyNewRegistration(Traveller traveller) {
+
+		assert traveller != null;
+
+		if( traveller.isValid()){
+
+			Set<Traveller> peopleToBeNotified = findPeopleToBeNotifiedOfRegistrations();
+
+			if( peopleToBeNotified.isEmpty() ){
+				throw new SnapLogicalException(SnapLogicalException.SnapLogicalError.INVALID_STATE,"No people can be notified!");
+			}	
+			while( !peopleToBeNotified.isEmpty() ){ // oooh never ending looooooooop
+				Set<Traveller> nextRecipients = findNextRecipients(peopleToBeNotified);
+				for(Traveller recipient : nextRecipients ){
+					peopleToBeNotified.remove(recipient);
+				}
+				sendRegistrationNotification(traveller,nextRecipients);
+			}
+		} else {
+			throw new SnapTechnicalException(SnapTechnicalException.SnapTechnicalError.INVALID_INPUT,"Traveller is invalid");
+		}
+	}
+
+	private void sendRegistrationNotification(Traveller newRegistration,Set<Traveller> recipients) {
+		log.debug("Sending registration notification");
+
+		assert !recipients.isEmpty();
+
+		try {
+
+			log.debug("Sending registration notification");
+
+			MimeMessage message = mailSender.createMimeMessage();
+			MimeMessageHelper messageHelper = new MimeMessageHelper(message,false,"UTF-8");
+			messageHelper.setValidateAddresses(true);
+			messageHelper.setSubject(registrationNotificationTextSubject);
+			messageHelper.setFrom(fromAddress);
+			for(Traveller traveller : recipients){
+				messageHelper.addTo(traveller.getEmail()); // bcc?
+			}			
+
+			final String emailText = registrationNotificationTextTemplate
+						.replaceAll("\\[\\[snapsURL\\]\\]",snapsURL)
+						.replaceAll("\\[\\[username\\]\\]",newRegistration.getSecurityDetail().getUsername())
+						.replaceAll("\\[\\[fullname\\]\\]",newRegistration.getFullname())
+						.replaceAll("\\[\\[email\\]\\]",newRegistration.getEmail());
+
+			messageHelper.setText(emailText);
+
+			mailSender.send(message); // Possible future refactor is to queue and async the send call
+
+		} catch (MessagingException e) {
+			throw new SnapTechnicalException(SnapTechnicalException.SnapTechnicalError.EMAIL,e);
+		}
+
+	}
+
+	private Set<Traveller> findNextRecipients(Set<Traveller> peopleToBeNotified) {
+		log.debug("Finding next recipients to be notified");
+		Set<Traveller> nextRecipients = new HashSet<Traveller>();
+		int batchSize = 5;
+		for(Iterator<Traveller> iterator = peopleToBeNotified.iterator(); iterator.hasNext() && batchSize>0; batchSize--){
+			log.debug("Batch:"+batchSize);
+			nextRecipients.add(iterator.next());
+		}
+		return nextRecipients;
+	}
+
+	private Set<Traveller> findPeopleToBeNotifiedOfRegistrations() {
+		log.debug("Looking for people to be notified");
+		Set<Traveller> peopleToBeNotified = new HashSet<Traveller>();
+		List<Traveller> allTravellers = travellerRepository.findAllTravellers();
+		log.debug("travellers:"+allTravellers.size());
+		for(Traveller traveller : allTravellers){
+			log.debug("Checking:"+traveller);
+			if( traveller.getSecurityDetail().hasAuthority( SecurityDetail.AuthorityRole.ROLE_ADMIN )
+					|| traveller.getSecurityDetail().hasAuthority( SecurityDetail.AuthorityRole.ROLE_SUPER) ){
+				peopleToBeNotified.add(traveller);
+			} else
+
+			log.debug("non admin");
+		}
+		return peopleToBeNotified;
+	}
+
+
+	public void setRegistrationNotificationTextTemplate(String registrationNotificationTextTemplate) {
+		this.registrationNotificationTextTemplate = registrationNotificationTextTemplate;
+	}
+
+	public void setRegistrationNotificationTextSubject(String registrationNotificationTextSubject) {
+		this.registrationNotificationTextSubject = registrationNotificationTextSubject;
 	}
 
 	public void setPasswordTextTemplate(String passwordTextTemplate) {

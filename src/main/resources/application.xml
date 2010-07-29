@@ -57,6 +57,32 @@
 
             ]]></value>
         </property>
+        <property name="registrationNotificationTextSubject" value="Snaps registration notification"/>
+        <property name="registrationNotificationTextTemplate">
+            <value><![CDATA[
+                Hi,
+
+                A new traveller has registered for snaps!
+
+                Registration details:
+
+                    fullname:   [[fullname]]
+                    username:   [[username]]
+                    email:      [[email]]
+
+
+                The traveller is now welcome at [[snapsURL]]
+
+                ----
+
+                This was an automated email sent on behalf of snaps, a photo aggregator.
+                For more information on snaps visit http://code.flurdy.com/grid/snaps
+
+                ----
+
+
+            ]]></value>
+        </property>
     </bean>
 
 </beans>

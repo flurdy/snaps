@@ -43,12 +43,12 @@ public class SecurityServiceTest extends AbstractServiceTest {
 
 	@Before
 	public void setUp(){
+		super.setUp();
 		ReflectionTestUtils.setField(realSecurityService, "passwordEncoder", passwordEncoder );
 		Mockito.when(mockPasswordEncoder.encodePassword(Mockito.anyString(), Mockito.eq(DEFAULT_USERNAME))).thenReturn("RANDOM");
-//		Mockito.when(passwordEncoder.encodePassword(Mockito.anyString(),Mockito.anyString())).thenCallRealMethod();
-//		Mockito.when(securityService.findLoggedInUsername()).thenReturn(DEFAULT_USERNAME2);
+		Mockito.doNothing().when(emailService).sendPassword(Mockito.<Traveller>anyObject(),Mockito.anyString());
+		Mockito.doNothing().when(emailService).notifyNewRegistration(Mockito.<Traveller>anyObject());
 		addDefaultUser2();
-//		Mockito.when(securityService.findLoggedInUsername()).thenReturn(DEFAULT_USERNAME);
 		defaultTravellerId = addDefaultUser();
 		assert defaultTravellerId > 0;
 	}

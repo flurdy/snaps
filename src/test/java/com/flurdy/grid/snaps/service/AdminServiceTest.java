@@ -20,6 +20,7 @@ public class AdminServiceTest extends AbstractServiceTest {
 
 	@Before
 	public void setUp(){
+		super.setUp();
 		Mockito.when(securityService.findLoggedInUsername()).thenReturn(DEFAULT_USERNAME2);
 		addDefaultUser2();
 		Mockito.when(securityService.findLoggedInUsername()).thenReturn(DEFAULT_USERNAME);

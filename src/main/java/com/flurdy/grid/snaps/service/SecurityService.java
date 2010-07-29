@@ -60,6 +60,9 @@ public class SecurityService extends AbstractService implements ISecurityService
 					applyEncryptedPassword(traveller.getSecurityDetail());
 //					securityRepository.addSecurityDetail(traveller.getSecurityDetail());
 					travellerRepository.addTraveller(traveller);
+										
+					emailService.notifyNewRegistration(traveller);
+
 				} else {
 					throw new SnapInvalidClientInputException( SnapInvalidClientInputException.InputError.USERNAME_TAKEN );
 				}

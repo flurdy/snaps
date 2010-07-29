@@ -7,5 +7,7 @@ public interface IEmailService {
 
 
 	public void sendPassword(Traveller traveller, String password);
+
+	public void notifyNewRegistration(Traveller traveller);
 	
 }
