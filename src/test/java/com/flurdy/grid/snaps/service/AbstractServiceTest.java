@@ -1,15 +1,18 @@
 package com.flurdy.grid.snaps.service;
 
 import com.flurdy.grid.snaps.domain.Traveller;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.mail.internet.MimeMessage;
 
 
 @ContextConfiguration(locations = {"classpath:test-database.xml", "classpath:test-application.xml"})
@@ -38,6 +41,8 @@ public abstract class AbstractServiceTest  extends AbstractTransactionalJUnit4Sp
 	@Resource
     protected IEmailService emailService;
 
+	@Mock
+	protected JavaMailSender mailSender;
 
 //	protected Long defaultTravellerId = null;
 
@@ -55,9 +60,12 @@ public abstract class AbstractServiceTest  extends AbstractTransactionalJUnit4Sp
 	protected static final String DEFAULT_HOLIDAY_NAME = "Test Holiday";
 	protected static final String DEFAULT_HOLIDAY2_NAME = "Test 2nd Holiday";
 
-	protected void setUp(){		
+	protected void setUp(){
 		ReflectionTestUtils.setField(realSecurityService, "emailService", emailService);
+//		ReflectionTestUtils.setField(emailService, "mailSender", mailSender);
 		Mockito.when(securityService.findLoggedInUsername()).thenReturn(DEFAULT_USERNAME);
+		Mockito.when(mailSender.createMimeMessage()).thenCallRealMethod();
+		Mockito.doNothing().when(mailSender).send(Mockito.<MimeMessage>anyObject());
 	}
 
 	protected Long addDefaultUser(){

@@ -11,7 +11,8 @@ public class SnapLogicalException extends SnapException {
 		INVALID_INPUT("The input was not valid"),
 		INVALID_STATE("The current state was not expected"),
 		NOT_FOUND("The resource could not be found"),
-		ACCESS_DENIED("Access denied for this resource");
+		ACCESS_DENIED("Access denied for this resource"),
+		EMAIL_DISABLED("Sending of emails is currently disabled");
 
 		private String description;
 

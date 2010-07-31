@@ -50,7 +50,7 @@ public abstract class AbstractGridController {
 	@ResponseStatus(HttpStatus.FORBIDDEN)
 	public ModelAndView handleAccessDeniedException(SnapAccessDeniedException exception) {
 
-		log.debug("error access denied");
+		log.debug("error access denied",exception);
 
 		ModelAndView modelAndView = new ModelAndView("error/accessDenied");
 		modelAndView.addObject("exception", exception);
@@ -90,7 +90,7 @@ public abstract class AbstractGridController {
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	public ModelAndView handleTechnicalException(SnapTechnicalException exception) {
 
-		log.debug("error/technical");
+		log.debug("error/technical",exception);
 
 		ModelAndView modelAndView = ( exception.getErrorCode() == SnapTechnicalException.SnapTechnicalError.UNEXPECTED )
 				? new ModelAndView("error/unexpected")

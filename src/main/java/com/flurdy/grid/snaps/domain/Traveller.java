@@ -9,6 +9,7 @@ import javax.persistence.*;
     @NamedQuery(name = "traveller.findAll",
 		query = "select trav from Traveller trav " +
 		"left join fetch trav.securityDetail " +
+		"left join fetch trav.securityDetail.authorities " +
 		"order by trav.fullname"),
     @NamedQuery(name = "traveller.findById",
 		query = "select distinct trav from Traveller trav " +

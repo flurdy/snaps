@@ -24,6 +24,9 @@ public class EmailService extends AbstractService implements IEmailService {
 	private String registrationNotificationTextTemplate;
 	private String registrationNotificationTextSubject;
 	private String fromAddress;
+	private boolean sendRegistrationNotification = true;
+	private boolean sendEmails = true;
+
 
 	private String snapsURL;
 
@@ -32,64 +35,80 @@ public class EmailService extends AbstractService implements IEmailService {
 
 		assert traveller != null;
 		assert password != null;
+		assert passwordTextSubject != null;
+		assert passwordTextTemplate != null;
 
-		if( traveller.isValid()){
-			if( password.trim().length() > 3){
-				try {
+		if( sendEmails ){
+			if( traveller.isValid()){
+				if( ! isEmailAnExampleOne(traveller) ){
+					if( password.trim().length() > 3){
+						try {
 
-					log.info("Sending reset password to "+traveller);
+							log.info("Sending reset password to "+traveller);
 
-					MimeMessage message = mailSender.createMimeMessage();
-					MimeMessageHelper messageHelper = new MimeMessageHelper(message,false,"UTF-8");
-					messageHelper.setValidateAddresses(true);
-					messageHelper.setSubject(passwordTextSubject);
-					messageHelper.setFrom(fromAddress);
-					messageHelper.setTo(traveller.getEmail());
+							MimeMessage message = mailSender.createMimeMessage();
+							MimeMessageHelper messageHelper = new MimeMessageHelper(message,false,"UTF-8");
+							messageHelper.setValidateAddresses(true);
+							messageHelper.setSubject(passwordTextSubject);
+							messageHelper.setFrom(fromAddress);
+							messageHelper.setTo(traveller.getEmail());
 
-					final String passwordText = passwordTextTemplate
-								.replaceAll("\\[\\[snapsURL\\]\\]",snapsURL)
-		//						.replaceAll("\\[\\[username\\]\\]",traveller.getSecurityDetail().getUsername())
-								.replaceAll("\\[\\[fullname\\]\\]",traveller.getFullname())
-								.replaceAll("\\[\\[email\\]\\]",traveller.getEmail())
-								.replaceAll("\\[\\[password\\]\\]",password);
+							final String passwordText = passwordTextTemplate
+										.replaceAll("\\[\\[snapsURL\\]\\]",snapsURL)
+				//						.replaceAll("\\[\\[username\\]\\]",traveller.getSecurityDetail().getUsername())
+										.replaceAll("\\[\\[fullname\\]\\]",traveller.getFullname())
+										.replaceAll("\\[\\[email\\]\\]",traveller.getEmail())
+										.replaceAll("\\[\\[password\\]\\]",password);
 
-					messageHelper.setText(passwordText);
+							messageHelper.setText(passwordText);
 
-					mailSender.send(message); // Possible future refactor is to queue and async the send call
+							mailSender.send(message); // Possible future refactor is to queue and async the send call
 
-				} catch (MessagingException e) {
-					throw new SnapTechnicalException(SnapTechnicalException.SnapTechnicalError.EMAIL,e);
+						} catch (MessagingException e) {
+							throw new SnapTechnicalException(SnapTechnicalException.SnapTechnicalError.EMAIL,e);
+						}
+					} else {
+						throw new SnapTechnicalException(SnapTechnicalException.SnapTechnicalError.INVALID_INPUT,"Password is invalid");
+					}
+				} else {
+					log.info("Traveller has an example email so no email will be sent");
 				}
 			} else {
-				throw new SnapTechnicalException(SnapTechnicalException.SnapTechnicalError.INVALID_INPUT,"Password is invalid");
+				throw new SnapTechnicalException(SnapTechnicalException.SnapTechnicalError.INVALID_INPUT,"Traveller is invalid");
 			}
 		} else {
-			throw new SnapTechnicalException(SnapTechnicalException.SnapTechnicalError.INVALID_INPUT,"Traveller is invalid");
+			log.debug("Sending emails is disabled");
+			throw new SnapLogicalException(SnapLogicalException.SnapLogicalError.EMAIL_DISABLED);
 		}
-
 	}
 
 	@Override
 	public void notifyNewRegistration(Traveller traveller) {
 
 		assert traveller != null;
+		assert registrationNotificationTextSubject != null;
+		assert registrationNotificationTextTemplate != null;
 
-		if( traveller.isValid()){
+		if( sendRegistrationNotification && sendEmails ){
+			if( traveller.isValid()){
 
-			Set<Traveller> peopleToBeNotified = findPeopleToBeNotifiedOfRegistrations();
+				Set<Traveller> peopleToBeNotified = findPeopleToBeNotifiedOfRegistrations();
 
-			if( peopleToBeNotified.isEmpty() ){
-				throw new SnapLogicalException(SnapLogicalException.SnapLogicalError.INVALID_STATE,"No people can be notified!");
-			}	
-			while( !peopleToBeNotified.isEmpty() ){ // oooh never ending looooooooop
-				Set<Traveller> nextRecipients = findNextRecipients(peopleToBeNotified);
-				for(Traveller recipient : nextRecipients ){
-					peopleToBeNotified.remove(recipient);
+				if( peopleToBeNotified.isEmpty() ){
+					throw new SnapLogicalException(SnapLogicalException.SnapLogicalError.INVALID_STATE,"No people can be notified!");
 				}
-				sendRegistrationNotification(traveller,nextRecipients);
+				while( !peopleToBeNotified.isEmpty() ){ // oooh never ending looooooooop
+					Set<Traveller> nextRecipients = findNextRecipients(peopleToBeNotified);
+					for(Traveller recipient : nextRecipients ){
+						peopleToBeNotified.remove(recipient);
+					}
+					sendRegistrationNotification(traveller,nextRecipients);
+				}
+			} else {
+				throw new SnapTechnicalException(SnapTechnicalException.SnapTechnicalError.INVALID_INPUT,"Traveller is invalid");
 			}
 		} else {
-			throw new SnapTechnicalException(SnapTechnicalException.SnapTechnicalError.INVALID_INPUT,"Traveller is invalid");
+			log.debug("Notification of registrations is disabled");
 		}
 	}
 
@@ -108,7 +127,11 @@ public class EmailService extends AbstractService implements IEmailService {
 			messageHelper.setSubject(registrationNotificationTextSubject);
 			messageHelper.setFrom(fromAddress);
 			for(Traveller traveller : recipients){
-				messageHelper.addTo(traveller.getEmail()); // bcc?
+				if( ! isEmailAnExampleOne(traveller)){
+					messageHelper.addTo(traveller.getEmail()); // bcc?
+				}else {
+					log.info("Traveller has an example email so no email will be sent");
+				}
 			}			
 
 			final String emailText = registrationNotificationTextTemplate
@@ -119,8 +142,9 @@ public class EmailService extends AbstractService implements IEmailService {
 
 			messageHelper.setText(emailText);
 
-			mailSender.send(message); // Possible future refactor is to queue and async the send call
-
+			if( message.getAllRecipients().length>0){
+				mailSender.send(message); // Possible future refactor is to queue and async the send call
+			}
 		} catch (MessagingException e) {
 			throw new SnapTechnicalException(SnapTechnicalException.SnapTechnicalError.EMAIL,e);
 		}
@@ -155,6 +179,13 @@ public class EmailService extends AbstractService implements IEmailService {
 		return peopleToBeNotified;
 	}
 
+	private boolean isEmailAnExampleOne(Traveller traveller){
+		if( traveller.getEmail().matches("@example\\....$")){
+			return true;
+		}
+		return false;
+	}
+
 
 	public void setRegistrationNotificationTextTemplate(String registrationNotificationTextTemplate) {
 		this.registrationNotificationTextTemplate = registrationNotificationTextTemplate;
@@ -178,5 +209,13 @@ public class EmailService extends AbstractService implements IEmailService {
 
 	public void setSnapsURL(String snapsURL) {
 		this.snapsURL = snapsURL;
+	}
+
+	public void setSendRegistrationNotification(boolean sendRegistrationNotification) {
+		this.sendRegistrationNotification = sendRegistrationNotification;
+	}
+
+	public void setSendEmails(boolean sendEmails) {
+		this.sendEmails = sendEmails;
 	}
 }

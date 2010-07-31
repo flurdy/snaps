@@ -22,10 +22,13 @@
         <property name="host" value="localhost"/>
     </bean>
 
-      <bean id="emailService" class="com.flurdy.grid.snaps.service.EmailService">
-        <property name="snapsURL" value="${snapsURL}"/>
-        <property name="fromAddress" value="noreply@snaps.flurdy.com"/>
-        <property name="passwordTextSubject" value="Snaps login assistance"/>
+      <bean id="emailService" class="com.flurdy.grid.snaps.service.EmailService"
+            p:sendEmails="${email.send}"
+            p:sendRegistrationNotification="${email.notification}" 
+            p:snapsURL="${snapsURL}"
+            p:fromAddress="noreply@snaps.flurdy.com"
+            p:passwordTextSubject="Snaps login assistance"
+            p:registrationNotificationTextSubject="Snaps registration notification">
         <property name="passwordTextTemplate">
             <value><![CDATA[
                 Hi [[fullname]],
@@ -57,7 +60,6 @@
 
             ]]></value>
         </property>
-        <property name="registrationNotificationTextSubject" value="Snaps registration notification"/>
         <property name="registrationNotificationTextTemplate">
             <value><![CDATA[
                 Hi,

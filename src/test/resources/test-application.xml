@@ -22,67 +22,69 @@
     <bean id="photoAlbumService" class="com.flurdy.grid.snaps.service.PhotoAlbumService" />
     <bean id="travellerService" class="com.flurdy.grid.snaps.service.TravellerService" />
     <bean id="adminService" class="com.flurdy.grid.snaps.service.AdminService" />
+    <!--
     <bean id="emailService" name="emailService" class="org.mockito.Mockito" factory-method="mock"  >
         <constructor-arg value="com.flurdy.grid.snaps.service.EmailService"/>
      </bean>
-    <bean id="realEmailService" class="com.flurdy.grid.snaps.service.EmailService">
-        <property name="snapsURL" value="http://grid.flurdy.com/snaps"/>
-        <property name="fromAddress" value="noreply@snaps.flurdy.com"/>
-        <property name="passwordTextSubject" value="Snaps login assistance"/>
+    -->
+    <bean id="emailService" class="com.flurdy.grid.snaps.service.EmailService"
+            p:sendEmails="true"
+            p:sendRegistrationNotification="true"
+            p:snapsURL="http://localhost:8886/snaps"
+            p:fromAddress="noreply@localhost"
+            p:passwordTextSubject="Snaps login assistance"
+            p:registrationNotificationTextSubject="Snaps registration notification">
         <property name="passwordTextTemplate">
             <value><![CDATA[
-                Hi [[fullname]],
+    Hi [[fullname]],
 
-                Your password has been reset as requested.
+    Your password has been reset as requested.
 
-                Please login to snaps via [[snapsURL]]
-
-
-                with this password: [[password]]
+    Please login to snaps via [[snapsURL]]
 
 
-                - - - -
+    with this password: [[password]]
 
-                This was an automated email sent on behalf of snaps, a photo aggregator.
-                For more information on snaps visit http://code.flurdy.com/grid/snaps
 
-                - - - -
+    - - - -
 
-                If you did not request this reset, please do not worry.
-                The password was generated randomly by the system
-                and has not been shown to anyone else apart from you in this email.
+    This was an automated email sent on behalf of snaps, a photo aggregator.
+    For more information on snaps visit http://code.flurdy.com/grid/snaps
 
-                However please do let us know via http://flurdy.com/contact/
-                so that we can investigate and monitor.
+    - - - -
 
-                - - - -
+    If you did not request this reset, please do not worry.
+    The password was generated randomly by the system
+    and has not been shown to anyone else apart from you in this email.
 
+    However please do let us know via http://flurdy.com/contact/
+    so that we can investigate and monitor.
+
+    - - - -
 
             ]]></value>
         </property>
-        <property name="registrationNotificationTextSubject" value="Snaps registration notification"/>
         <property name="registrationNotificationTextTemplate">
             <value><![CDATA[
-                Hi,
+    Hi,
 
-                A new traveller has registered for snaps!
+    A new traveller has registered for snaps!
 
-                Registration details:
+    Registration details:
 
-                    fullname:   [[fullname]]
-                    username:   [[username]]
-                    email:      [[email]]
+        fullname:   [[fullname]]
+        username:   [[username]]
+        email:      [[email]]
 
 
-                The traveller is now welcome at [[snapsURL]]
+    The traveller is now welcome at [[snapsURL]]
 
-                - - - -
+    - - - -
 
-                This was an automated email sent on behalf of snaps, a photo aggregator.
-                For more information on snaps visit http://code.flurdy.com/grid/snaps
+    This was an automated email sent on behalf of snaps, a photo aggregator.
+    For more information on snaps visit http://code.flurdy.com/grid/snaps
 
-                - - - -
-
+    - - - -
 
             ]]></value>
         </property>
@@ -95,9 +97,16 @@
     </bean>
     <bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder"/>
 
+    <!--
+    <bean id="mailSender" name="mailSender" class="org.mockito.Mockito" factory-method="mock"  >
+        <constructor-arg value="org.springframework.mail.javamail.JavaMailSenderImpl"/>
+    </bean>
+
+    -->
     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
         <property name="host" value="localhost"/>
     </bean>
+    
 
 
 </beans>
