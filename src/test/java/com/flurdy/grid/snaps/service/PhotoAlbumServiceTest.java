@@ -26,16 +26,16 @@ public class PhotoAlbumServiceTest extends AbstractServiceTest {
 
 	@Before
 	public void SetUp(){
-		super.setUp();
-		addDefaultUser2();
-		Mockito.when(securityService.findLoggedInUsername()).thenReturn(DEFAULT_USERNAME2);
-		addNonMemberHoliday();
-		Mockito.when(securityService.findLoggedInUsername()).thenReturn(DEFAULT_USERNAME);
-		addDefaultUser();
-		addDefaultHoliday();
-		addDefaultAlbum();
+//		super.setUp();
+//		addDefaultUser2();
+//		Mockito.when(securityService.findLoggedInUsername()).thenReturn(DEFAULT_USERNAME2);
+//		addNonMemberHoliday();
+//		Mockito.when(securityService.findLoggedInUsername()).thenReturn(DEFAULT_USERNAME);
+//		addDefaultUser();
+//		addDefaultHoliday();
+//		addDefaultAlbum();
 	}
-
+/*
 	private void addDefaultHoliday(){
 		final HolidayGroup holidayGroup = new HolidayGroup.Builder()
 					.groupName(DEFAULT_HOLIDAY_NAME)
@@ -148,6 +148,6 @@ public class PhotoAlbumServiceTest extends AbstractServiceTest {
 
 
 
-
+*/
 
 }

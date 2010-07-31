@@ -70,9 +70,10 @@ public class HolidayGroup implements Serializable {
 
 	public HolidayGroup getBasicHolidayGroupClone(){
 		Set<HolidayMember> members = new HashSet<HolidayMember>();
-		members.addAll(this.members);
+		if( this.members != null)
+			members.addAll(this.members);
 		return new HolidayGroup.Builder()
-					.groupId(groupId.longValue())
+					.groupId(groupId)
 					.groupName(""+groupName)
 					.members(members)
 					.build();

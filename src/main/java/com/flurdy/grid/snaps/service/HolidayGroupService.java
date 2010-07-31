@@ -50,8 +50,8 @@ public class HolidayGroupService extends AbstractService implements IHolidayGrou
 
 		if( holidayGroup != null && holidayGroup.isValid() ){
 						
-			holidayGroupRepository.addHolidayGroup( holidayGroup );
-			holidayGroup = holidayGroupRepository.findHolidayGroup( holidayGroup.getGroupId() );
+			long holidayId = holidayGroupRepository.addHolidayGroup( holidayGroup );
+			holidayGroup = holidayGroupRepository.findHolidayGroup( holidayId );
 			holidayGroup.addMember(traveller);
 			holidayGroupRepository.updateHolidayGroup( holidayGroup );
 

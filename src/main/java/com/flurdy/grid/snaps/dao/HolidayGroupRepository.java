@@ -22,9 +22,10 @@ public class HolidayGroupRepository implements IHolidayGroupRepository {
     protected EntityManager entityManager;
 
 	@Override
-	public void addHolidayGroup(HolidayGroup holidayGroup) {
+	public Long addHolidayGroup(HolidayGroup holidayGroup) {
 		assert holidayGroup != null;
-		entityManager.persist(holidayGroup);		
+		entityManager.persist(holidayGroup);
+		return holidayGroup.getGroupId();
 	}
 
 	@Override

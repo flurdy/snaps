@@ -5,7 +5,7 @@ import java.util.Collection;
 
 public interface IHolidayGroupRepository {
 
-	public void addHolidayGroup(HolidayGroup holidayGroup);
+	public Long addHolidayGroup(HolidayGroup holidayGroup);
 
 	public HolidayGroup findHolidayGroup(Long groupId);
 	public Collection<HolidayGroup> findHolidayGroups(String groupName);

@@ -1,11 +1,14 @@
 package com.flurdy.grid.snaps.service;
 
+import com.flurdy.grid.snaps.dao.ITravellerRepository;
 import com.flurdy.grid.snaps.domain.HolidayGroup;
 import com.flurdy.grid.snaps.domain.Traveller;
 import com.flurdy.grid.snaps.exception.SnapTechnicalException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,20 +17,30 @@ import java.util.List;
 @Transactional
 public class TravellerServiceTest extends AbstractServiceTest {
 
-	private long defaultTravellerId;
+	@Mock
+	private ITravellerRepository travellerRepository;
 
-	@Before
-	public void setUp(){
-		super.setUp();
-//		Mockito.when(securityService.findLoggedInUsername()).thenReturn(DEFAULT_USERNAME);
-		defaultTravellerId = addDefaultUser();
-	}
+	@InjectMocks
+	private ITravellerService travellerService = new TravellerService();
+
+
 	
+
+
+//	private long defaultTravellerId;
+//
+//	@Before
+//	public void setUp(){
+//		super.setUp();
+////		Mockito.when(securityService.findLoggedInUsername()).thenReturn(DEFAULT_USERNAME);
+//		defaultTravellerId = addDefaultUser();
+//	}
+//
 
 	@Test
 	public void testFindTraveller(){
 
-		assert defaultTravellerId > 0;
+//		assert defaultTravellerId > 0;
 
 		Traveller traveller = travellerService.findTraveller(defaultTravellerId);
 
@@ -35,7 +48,7 @@ public class TravellerServiceTest extends AbstractServiceTest {
 		Assert.assertEquals( traveller.getFullname(), DEFAULT_FULLNAME );
 	}
 
-
+/*
 
 	@Test(expected = SnapTechnicalException.class)
 	public void testFindInvalidTraveller(){
@@ -61,5 +74,5 @@ public class TravellerServiceTest extends AbstractServiceTest {
 		List<Traveller> travellers = travellerService.findTravellers();
 		Assert.assertTrue( travellers.size() == 1 );
 	}
-
+*/
 }

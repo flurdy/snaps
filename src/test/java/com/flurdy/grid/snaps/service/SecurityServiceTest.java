@@ -24,7 +24,7 @@ import java.util.Iterator;
 
 @Transactional
 public class SecurityServiceTest extends AbstractServiceTest {
-
+/*
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
@@ -447,8 +447,8 @@ public class SecurityServiceTest extends AbstractServiceTest {
 		realSecurityService.resetPassword("testusermatch@example.org");
 	}
 
-	/*
-	public void enforceAristocracy();
-	*/
 
+//	public void enforceAristocracy();
+	
+*/
 }

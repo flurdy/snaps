@@ -142,7 +142,7 @@ public class Traveller implements Serializable {
 		if( object != null && object instanceof Traveller){
 			Traveller traveller = (Traveller) object;
 
-			if( travellerId.equals(traveller.getTravellerId())
+			if( (travellerId == traveller.getTravellerId())
 					&& fullname.equals(traveller.getFullname())
 					&& email.equals(traveller.getEmail()) ){
 				if( (securityDetail != null && traveller.getSecurityDetail() != null
@@ -156,6 +156,8 @@ public class Traveller implements Serializable {
 
 		return false;
 	}
+
+
 
 	@Override
 	public int hashCode() {

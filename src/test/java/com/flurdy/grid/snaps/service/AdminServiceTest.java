@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public class AdminServiceTest extends AbstractServiceTest {
-
+/*
 	private static final String TRAVELLER_FULLNAME = "New testuser";
 	private static final String TRAVELLER_EMAIL = "new.testuser@example.com";
 
@@ -159,5 +159,5 @@ public class AdminServiceTest extends AbstractServiceTest {
 	}
 
 
-
+*/
 }
