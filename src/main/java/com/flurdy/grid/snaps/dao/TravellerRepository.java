@@ -26,6 +26,14 @@ public class TravellerRepository extends AbstractRepository implements ITravelle
 
 		entityManager.persist(traveller);
 
+		assert traveller.getTravellerId() > 0;
+
+		traveller = findTraveller(traveller.getTravellerId());
+
+		assert traveller != null;
+		assert traveller.getSecurityDetail() != null;
+		assert traveller.getSecurityDetail().getUsername() != null;
+
 	}
 
 	@Override

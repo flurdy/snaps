@@ -42,6 +42,9 @@ public class HolidayGroupService extends AbstractService implements IHolidayGrou
 	@Override
 	public void addHolidayGroup(HolidayGroup holidayGroup) {
 		final Traveller traveller = travellerService.findCurrentTraveller();
+
+		assert traveller != null;
+
 		log.info("Adding group:" + holidayGroup
 				+ " by traveller:" + traveller);
 
@@ -66,12 +69,16 @@ public class HolidayGroupService extends AbstractService implements IHolidayGrou
 		if( holidayGroup != null ){
 			final Traveller traveller = travellerService.findCurrentTraveller();
 
-			if( holidayGroup.isMember(traveller)){
-				return holidayGroup;
+			if( traveller != null ){
+
+				if( holidayGroup.isMember(traveller)){
+					return holidayGroup;
+				} else {
+					return holidayGroup.getBasicHolidayGroupClone();
+				}
 			} else {
-				return holidayGroup.getBasicHolidayGroupClone();
+				throw new SnapTechnicalException(SnapTechnicalError.UNEXPECTED,"Current traveller unavailable");
 			}
-			
 		} else {
 			log.debug("Holiday not found: " + groupId);			
 			return null;

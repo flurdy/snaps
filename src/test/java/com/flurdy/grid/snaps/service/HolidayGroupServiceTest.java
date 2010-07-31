@@ -1,6 +1,8 @@
 package com.flurdy.grid.snaps.service;
 
+import com.flurdy.grid.snaps.dao.IHolidayGroupRepository;
 import com.flurdy.grid.snaps.domain.HolidayGroup;
+import com.flurdy.grid.snaps.domain.HolidayMember;
 import com.flurdy.grid.snaps.domain.Traveller;
 import com.flurdy.grid.snaps.exception.SnapNotFoundException;
 import com.flurdy.grid.snaps.exception.SnapTechnicalException;
@@ -8,9 +10,13 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,22 +24,46 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 
 @Transactional
-public class HolidayGroupServiceTest extends AbstractServiceTest {
+@ContextConfiguration(locations = {"classpath:test-database.xml", "classpath:test-domain.xml", "classpath:test-email.xml"})
+public class HolidayGroupServiceTest  extends AbstractServiceTest {
+
+
+	protected final Logger log = LoggerFactory.getLogger(this.getClass());
+
 
 	private Long defaultHolidayGroupId = null;
 	private Long defaultHoliday2GroupId = null;
 
 	private static final String DEFAULT_HOLIDAY3_NAME = "Christmas in the Alps";
 
+	@Autowired
+	@Mock
+	private IEmailService emailService;
+
+	@Autowired
+	@Mock
+	private IHolidayGroupRepository holidayGroupRepository;
+
+	@Mock
+	private ITravellerService travellerService;
+
+	@InjectMocks
+	private IHolidayGroupService holidayGroupService;
+
 	
 	@Before
 	public void setUp(){
+		MockitoAnnotations.initMocks(this);
+
+
+
+		
 		super.setUp();
-		addDefaultUser2();
-		Mockito.when(securityService.findLoggedInUsername()).thenReturn(DEFAULT_USERNAME2);
+		long user2Id = addDefaultUser2();
+		assert user2Id > 0;
 		addNonMemberHoliday();
-		Mockito.when(securityService.findLoggedInUsername()).thenReturn(DEFAULT_USERNAME);
-		addDefaultUser();
+		long user1Id = addDefaultUser();
+		assert user1Id > 0;
 		addDefaultHoliday();
 	}
 
@@ -41,16 +71,27 @@ public class HolidayGroupServiceTest extends AbstractServiceTest {
 		final HolidayGroup holidayGroup = new HolidayGroup.Builder()
 					.groupName(DEFAULT_HOLIDAY_NAME)
 					.build();
+//		Mockito.reset(securityService);
+		Mockito.when(securityService.findLoggedInUsername()).thenReturn(DEFAULT_USERNAME);
 		holidayGroupService.addHolidayGroup(holidayGroup);
 		defaultHolidayGroupId = holidayGroup.getGroupId();
 	}
 
 	private void addNonMemberHoliday(){
-		final HolidayGroup holidayGroup = new HolidayGroup.Builder()
-					.groupName(DEFAULT_HOLIDAY2_NAME)
-					.build();
+		HolidayGroup holidayGroup = new HolidayGroup.Builder().groupName(DEFAULT_HOLIDAY2_NAME).build();
+//		Mockito.reset(securityService);
+		Mockito.when(securityService.findLoggedInUsername())
+				.thenReturn(DEFAULT_USERNAME2).thenReturn(DEFAULT_USERNAME2).thenReturn(DEFAULT_USERNAME);
 		holidayGroupService.addHolidayGroup(holidayGroup);
+		Assert.assertTrue(holidayGroup.getGroupId()>0);
+
 		defaultHoliday2GroupId = holidayGroup.getGroupId();
+		holidayGroup = holidayGroupService.findHolidayGroup(defaultHoliday2GroupId);
+
+		Assert.assertTrue(holidayGroup.getMembers().size()==1);
+		HolidayMember holidayMember = holidayGroup.getMembers().iterator().next();
+		Assert.assertNotNull(holidayMember.getTraveller());
+		Assert.assertEquals(holidayMember.getTraveller().getSecurityDetail().getUsername(),DEFAULT_USERNAME2);
 	}
 
 
@@ -119,7 +160,9 @@ public class HolidayGroupServiceTest extends AbstractServiceTest {
 		Assert.assertEquals( holidayGroup.getGroupName(), DEFAULT_HOLIDAY3_NAME);
 
 		Assert.assertTrue( holidayGroup.getMembers().size() == 1 );
-		Assert.assertEquals( holidayGroup.getMembers().iterator().next().getTraveller().getSecurityDetail().getUsername() , DEFAULT_USERNAME );
+		HolidayMember holidayMember = holidayGroup.getMembers().iterator().next();
+		Assert.assertNotNull(holidayMember.getTraveller());
+		Assert.assertEquals( holidayMember.getTraveller().getSecurityDetail().getUsername() , DEFAULT_USERNAME );
 
 	}
 

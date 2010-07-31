@@ -2,6 +2,7 @@ package com.flurdy.grid.snaps.service;
 
 import com.flurdy.grid.snaps.domain.HolidayGroup;
 import com.flurdy.grid.snaps.domain.Traveller;
+import com.flurdy.grid.snaps.exception.SnapTechnicalException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,12 +14,12 @@ import java.util.List;
 @Transactional
 public class TravellerServiceTest extends AbstractServiceTest {
 
-	private Long defaultTravellerId = null;
+	private long defaultTravellerId;
 
 	@Before
 	public void setUp(){
 		super.setUp();
-		Mockito.when(securityService.findLoggedInUsername()).thenReturn(DEFAULT_USERNAME);
+//		Mockito.when(securityService.findLoggedInUsername()).thenReturn(DEFAULT_USERNAME);
 		defaultTravellerId = addDefaultUser();
 	}
 	
@@ -36,7 +37,7 @@ public class TravellerServiceTest extends AbstractServiceTest {
 
 
 
-	@Test(expected = AssertionError.class)
+	@Test(expected = SnapTechnicalException.class)
 	public void testFindInvalidTraveller(){
 
 		Traveller traveller = travellerService.findTraveller(-1);
