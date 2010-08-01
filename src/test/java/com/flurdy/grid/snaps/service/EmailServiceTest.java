@@ -1,5 +1,8 @@
 package com.flurdy.grid.snaps.service;
 
+import com.flurdy.grid.snaps.dao.IHolidayGroupRepository;
+import com.flurdy.grid.snaps.dao.IPhotoAlbumRepository;
+import com.flurdy.grid.snaps.dao.ISecurityRepository;
 import com.flurdy.grid.snaps.dao.ITravellerRepository;
 import com.flurdy.grid.snaps.domain.SecurityDetail;
 import com.flurdy.grid.snaps.domain.Traveller;
@@ -26,10 +29,11 @@ import org.springframework.test.util.ReflectionTestUtils;
 import javax.annotation.Resource;
 import javax.mail.internet.MimeMessage;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 //@RunWith(SpringJUnit4ClassRunner.class)
-//@ContextConfiguration(locations = {"classpath:test-database.xml", "classpath:test-application.xml"})
+//@ContextConfiguration(locations = {"classpath:test-email.xml"})
 public class EmailServiceTest extends AbstractServiceTest {
 
 	private final transient Logger log = LoggerFactory.getLogger(this.getClass());
@@ -44,65 +48,100 @@ public class EmailServiceTest extends AbstractServiceTest {
 	private static final String TEST_EMAIL = "ivar+snaps@localhost.localdomain";
 
 	@Mock
-	@Autowired
 	private JavaMailSenderImpl mailSender;
 
 	@Mock
-	@Autowired
+	private ISecurityRepository securityRepository;
+
+	@Mock
 	private ITravellerRepository travellerRepository;
 
 	@InjectMocks
-	@Autowired
-	private IEmailService emailService;
+//	@Autowired
+	private IEmailService emailService = new EmailService();
 
-	private boolean sendEmail = false;
+//	private boolean sendEmail = false;
 
-	private List<Traveller> travellers = new ArrayList<Traveller>();
+	private final String passwordTextTemplate =
+			"SnapsURL [[snapsURL]] Fullname [[fullname]] Email [[email]] Password [[password]]";
+	private final String passwordTextSubject = "Snaps login assistance";
+	private final String registrationNotificationTextTemplate =
+			"SnapsURL [[snapsURL]] Fullname [[fullname]] Email [[email]] Username [[usernam]]";
+	private final String registrationNotificationTextSubject = "Snaps registration notification";
+	private final String fromAddress = "noreply@localhost";
+	private final boolean sendRegistrationNotification = true;
+	private final boolean sendEmails = true;
+	private final String snapsURL = "http://localhost:8886/snaps";
+
+
+	private Traveller generateAdminTraveller(){
+		Traveller admin = new Traveller.Builder()
+			.username(ADMIN_USERNAME)
+			.fullname(ADMIN_FULLNAME)
+			.password(ADMIN_PASSWORD)
+			.email(ADMIN_EMAIL)
+			.authorities(new HashSet<String>(){{ add("ROLE_USER"); add("ROLE_ADMIN"); }})
+			.build();
+		return admin;
+	}
+
+	private Traveller generateTraveller(){
+		Traveller admin = new Traveller.Builder()
+			.username(TEST_USERNAME)
+			.fullname(TEST_FULLNAME)
+			.password(TEST_PASSWORD)
+			.email(TEST_EMAIL)
+			.authorities(new HashSet<String>(){{ add("ROLE_USER");  }})
+			.build();
+		return admin;
+	}
+
+	private List<Traveller> generateAllTravellers(){
+		List<Traveller> travellers = new ArrayList<Traveller>();
+
+		travellers.add(generateAdminTraveller());
+
+		return travellers;
+	}
+
+	private List<Traveller> generateNoAdminTravellers(){
+		List<Traveller> travellers = new ArrayList<Traveller>();
+
+		travellers.add(generateTraveller());
+
+		return travellers;
+	}
 
 	@Before
 	public void setUp(){
-//		Mockito.doCallRealMethod().when(emailService).setPasswordTextSubject(Mockito.anyString());
-//		Mockito.doCallRealMethod().when(emailService).setRegistrationNotificationTextSubject(Mockito.anyString());
-//		Mockito.doCallRealMethod().when(emailService).setFromAddress(Mockito.anyString());
-//		Mockito.doCallRealMethod().when(emailService).setPasswordTextTemplate(Mockito.anyString());
-//		Mockito.doCallRealMethod().when(emailService).setRegistrationNotificationTextTemplate(Mockito.anyString());
-//		Mockito.doCallRealMethod().when(emailService).setSendEmails(Mockito.anyBoolean());
 		MockitoAnnotations.initMocks(this);
-
-//		super.setUp();
-
-		Mockito.when(mailSender.createMimeMessage()).thenCallRealMethod();
-		Mockito.doNothing().when(mailSender).send(Mockito.<MimeMessage>anyObject());
-
-		Traveller admin = new Traveller.Builder()
-					.username(ADMIN_USERNAME)
-					.fullname(ADMIN_FULLNAME)
-					.password(ADMIN_PASSWORD)
-					.email(ADMIN_EMAIL).build();
-		admin.getSecurityDetail().addAuthority(SecurityDetail.AuthorityRole.ROLE_USER);
-		admin.getSecurityDetail().addAuthority(SecurityDetail.AuthorityRole.ROLE_ADMIN);
-		travellers.add(admin);
-		Mockito.when(travellerRepository.findAllTravellers()).thenReturn(travellers);
-//		Mockito.doCallRealMethod().when(emailService).sendPassword(Mockito.<Traveller>anyObject(),Mockito.anyString());
-//		Mockito.doCallRealMethod().when(emailService).notifyNewRegistration(Mockito.<Traveller>anyObject());
+		emailService.setPasswordTextTemplate(passwordTextTemplate);
+		emailService.setPasswordTextSubject(passwordTextSubject);
+		emailService.setRegistrationNotificationTextTemplate(registrationNotificationTextTemplate);
+		emailService.setRegistrationNotificationTextSubject(registrationNotificationTextSubject);
+		emailService.setFromAddress(fromAddress);
+		emailService.setSendRegistrationNotification(sendRegistrationNotification);
+		emailService.setSendEmails(sendEmails);
+		emailService.setSnapsURL(snapsURL);
+		
+//		Mockito.when(travellerRepository.findAllTravellers()).thenReturn(generateAllTravellers());
 
 	}
 
 	@Test
 	public void testEmailPassword(){
-		Traveller traveller = new Traveller.Builder()
-					.username(TEST_USERNAME)
-					.fullname(TEST_FULLNAME)
-					.password(TEST_PASSWORD)
-					.email(TEST_EMAIL).build();
-		traveller.getSecurityDetail().addAuthority(SecurityDetail.AuthorityRole.ROLE_USER);
-		traveller.getSecurityDetail().addAuthority(SecurityDetail.AuthorityRole.ROLE_ADMIN);
+		Mockito.when(mailSender.createMimeMessage()).thenCallRealMethod();
 
-		if( sendEmail ){
-			Mockito.doCallRealMethod().doNothing().when(mailSender).send(Mockito.<MimeMessage>anyObject());
-		}
+//		if( sendEmail ){
+//			Mockito.doCallRealMethod().doNothing().when(mailSender).send(Mockito.<MimeMessage>anyObject());
+//		}
 
-		emailService.sendPassword(traveller,"testEmailPassword");
+		emailService.sendPassword(generateTraveller(),"testEmailPassword");
+
+		Mockito.verify(mailSender, Mockito.times(1)).createMimeMessage();
+		Mockito.verify(mailSender, Mockito.times(1)).send(Mockito.<MimeMessage>anyObject());
+//		Mockito.verifyNoMoreInteractions(mailSender);
+		Mockito.verifyZeroInteractions(securityRepository,travellerRepository);
 
 	}
 
@@ -158,54 +197,32 @@ public class EmailServiceTest extends AbstractServiceTest {
 
 	@Test
 	public void testNotifyNewRegistration(){
-		Traveller traveller = new Traveller.Builder()
-					.username(TEST_USERNAME)
-					.fullname(TEST_FULLNAME)
-					.password(TEST_PASSWORD)
-					.email(TEST_EMAIL).build();
-		traveller.getSecurityDetail().addAuthority(SecurityDetail.AuthorityRole.ROLE_USER);
-//		traveller.getSecurityDetail().addAuthority(SecurityDetail.AuthorityRole.ROLE_ADMIN);
-//		Assert.assertNotNull(traveller.getSecurityDetail().getAuthorities().contains(SecurityDetail.AuthorityRole.ROLE_USER));
-//		Assert.assertNotNull(traveller.getSecurityDetail().getAuthorities().contains(SecurityDetail.AuthorityRole.ROLE_ADMIN));
-//		Assert.assertTrue(traveller.getSecurityDetail().hasAuthority(SecurityDetail.AuthorityRole.ROLE_USER));
-//		Assert.assertTrue(traveller.getSecurityDetail().hasAuthority(SecurityDetail.AuthorityRole.ROLE_ADMIN));
-		if( sendEmail ){
-			Mockito.doNothing().when(mailSender).send(Mockito.<MimeMessage>anyObject());
-			Mockito.doCallRealMethod().doNothing().when(mailSender).send(Mockito.<MimeMessage>anyObject());
-		}
-		emailService.notifyNewRegistration(traveller);
+//		if( sendEmail ){
+//			Mockito.doNothing().when(mailSender).send(Mockito.<MimeMessage>anyObject());
+//			Mockito.doCallRealMethod().doNothing().when(mailSender).send(Mockito.<MimeMessage>anyObject());
+//		}
+
+		Mockito.when(travellerRepository.findAllTravellers()).thenReturn(generateAllTravellers());
+		Mockito.when(mailSender.createMimeMessage()).thenCallRealMethod();
+
+		emailService.notifyNewRegistration(generateTraveller());
+
+		Mockito.verify(travellerRepository, Mockito.times(1)).findAllTravellers();
+		Mockito.verify(mailSender, Mockito.times(1)).createMimeMessage();
+		Mockito.verify(mailSender, Mockito.times(1)).send(Mockito.<MimeMessage>anyObject());
+		Mockito.verifyNoMoreInteractions(travellerRepository);
+		Mockito.verifyZeroInteractions(securityRepository);
 	}
 
 
 	@Test(expected = SnapLogicalException.class)
 	public void testNotifyNewRegistrationNoAdmins(){
-		Traveller traveller = new Traveller.Builder()
-					.username(TEST_USERNAME)
-					.fullname(TEST_FULLNAME)
-					.password(TEST_PASSWORD)
-					.email(TEST_EMAIL).build();		
-		traveller.getSecurityDetail().addAuthority(SecurityDetail.AuthorityRole.ROLE_USER);
-//		Assert.assertNotNull(traveller.getSecurityDetail().getAuthorities().contains(SecurityDetail.AuthorityRole.ROLE_USER));
-//		Assert.assertNotNull(traveller.getSecurityDetail().getAuthorities().contains(SecurityDetail.AuthorityRole.ROLE_ADMIN));
-//		Assert.assertTrue(traveller.getSecurityDetail().hasAuthority(SecurityDetail.AuthorityRole.ROLE_USER));
-//		Assert.assertTrue(traveller.getSecurityDetail().hasAuthority(SecurityDetail.AuthorityRole.ROLE_ADMIN));
-//		realSecurityService.removeAuthority(TEST_USERNAME, SecurityDetail.AuthorityRole.ROLE_ADMIN );
-//		traveller = travellerService.findTraveller(defaultTravellerId);
-//		Assert.assertNotNull(traveller.getSecurityDetail().getAuthorities().contains(SecurityDetail.AuthorityRole.ROLE_USER));
-//		Assert.assertFalse(traveller.getSecurityDetail().getAuthorities().contains(SecurityDetail.AuthorityRole.ROLE_ADMIN));
-//		Assert.assertTrue(traveller.getSecurityDetail().hasAuthority(SecurityDetail.AuthorityRole.ROLE_USER));
-//		Assert.assertFalse(traveller.getSecurityDetail().hasAuthority(SecurityDetail.AuthorityRole.ROLE_ADMIN));
 
-		Traveller admin = new Traveller.Builder()
-					.username(ADMIN_USERNAME)
-					.fullname(ADMIN_FULLNAME)
-					.password(ADMIN_PASSWORD)
-					.email(ADMIN_EMAIL).build();
-		admin.getSecurityDetail().addAuthority(SecurityDetail.AuthorityRole.ROLE_USER);
-		List<Traveller> noAdmins = new ArrayList<Traveller>();
-		travellers.add(admin);
-		Mockito.when(travellerRepository.findAllTravellers()).thenReturn(noAdmins).thenReturn(travellers);
-		emailService.notifyNewRegistration(traveller);
+		Mockito.when(travellerRepository.findAllTravellers())
+				.thenReturn(new ArrayList<Traveller>());
+
+		emailService.notifyNewRegistration(generateTraveller());
+
 	}
 
 
@@ -215,7 +232,7 @@ public class EmailServiceTest extends AbstractServiceTest {
 	}
 
 
-	public void setSendEmail(boolean sendEmail) {
-		this.sendEmail = sendEmail;
-	}
+//	public void setSendEmail(boolean sendEmail) {
+//		this.sendEmail = sendEmail;
+//	}
 }

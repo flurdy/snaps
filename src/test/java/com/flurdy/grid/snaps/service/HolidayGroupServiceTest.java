@@ -76,44 +76,6 @@ public class HolidayGroupServiceTest  extends AbstractServiceTest {
 		return holiday;				
 	}
 
-//
-//
-//		super.setUp();
-//		long user2Id = addDefaultUser2();
-//		assert user2Id > 0;
-//		addNonMemberHoliday();
-//		long user1Id = addDefaultUser();
-//		assert user1Id > 0;
-//		addDefaultHoliday();
-
-
-//	private void addDefaultHoliday(){
-//		final HolidayGroup holidayGroup = new HolidayGroup.Builder()
-//					.groupName(DEFAULT_HOLIDAY_NAME)
-//					.build();
-////		Mockito.reset(securityService);
-//		Mockito.when(securityService.findLoggedInUsername()).thenReturn(DEFAULT_USERNAME);
-//		holidayGroupService.addHolidayGroup(holidayGroup);
-//		defaultHolidayGroupId = holidayGroup.getGroupId();
-//	}
-
-//	private void addNonMemberHoliday(){
-//		HolidayGroup holidayGroup = new HolidayGroup.Builder().groupName(DEFAULT_HOLIDAY2_NAME).build();
-////		Mockito.reset(securityService);
-//		Mockito.when(securityService.findLoggedInUsername())
-//				.thenReturn(DEFAULT_USERNAME2).thenReturn(DEFAULT_USERNAME2).thenReturn(DEFAULT_USERNAME);
-//		holidayGroupService.addHolidayGroup(holidayGroup);
-//		Assert.assertTrue(holidayGroup.getGroupId()>0);
-//
-//		defaultHoliday2GroupId = holidayGroup.getGroupId();
-//		holidayGroup = holidayGroupService.findHolidayGroup(defaultHoliday2GroupId);
-//
-//		Assert.assertTrue(holidayGroup.getMembers().size()==1);
-//		HolidayMember holidayMember = holidayGroup.getMembers().iterator().next();
-//		Assert.assertNotNull(holidayMember.getTraveller());
-//		Assert.assertEquals(holidayMember.getTraveller().getSecurityDetail().getUsername(),DEFAULT_USERNAME2);
-//	}
-
 
 
 	@Test

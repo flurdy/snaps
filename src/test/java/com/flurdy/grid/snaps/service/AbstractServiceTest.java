@@ -1,5 +1,7 @@
 package com.flurdy.grid.snaps.service;
 
+import com.flurdy.grid.snaps.domain.HolidayGroup;
+import com.flurdy.grid.snaps.domain.HolidayMember;
 import com.flurdy.grid.snaps.domain.SecurityDetail;
 import com.flurdy.grid.snaps.domain.Traveller;
 import org.mockito.InjectMocks;
@@ -92,7 +94,24 @@ public abstract class AbstractServiceTest  extends AbstractTransactionalJUnit4Sp
 					.email(DEFAULT_EMAIL).build();
 	}
 
-	protected Traveller generateDefaultRegisterdTraveller(){
+	protected HolidayGroup generateDefaultHoliday(){
+		final HolidayGroup defaultHoliday = new HolidayGroup.Builder()
+					.groupName(DEFAULT_HOLIDAY_NAME)
+					.members(new HashSet<HolidayMember>())
+					.build();
+		defaultHoliday.addMember(generateDefaultRegisteredTraveller());
+		return defaultHoliday;
+	}
+
+	protected HolidayGroup generateNonMemberHoliday(){
+		final HolidayGroup defaultHoliday = new HolidayGroup.Builder()
+					.groupName(DEFAULT_HOLIDAY2_NAME)
+					.members(new HashSet<HolidayMember>())
+					.build();
+		return defaultHoliday;
+	}
+
+	protected Traveller generateDefaultRegisteredTraveller(){
 		return new Traveller.Builder()
 			.username(DEFAULT_USERNAME)
 			.fullname(DEFAULT_FULLNAME)

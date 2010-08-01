@@ -5,7 +5,6 @@ import com.flurdy.grid.snaps.domain.Traveller;
 import com.flurdy.grid.snaps.exception.SnapLogicalException;
 import com.flurdy.grid.snaps.exception.SnapNotFoundException;
 import com.flurdy.grid.snaps.exception.SnapTechnicalException;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -39,7 +38,7 @@ public class AdminServiceTest extends AbstractServiceTest {
 	@Test
 	public void testUpdateTraveller(){
 
-		Mockito.when(travellerRepository.findTraveller(new Long(1))).thenReturn(generateDefaultRegisterdTraveller());
+		Mockito.when(travellerRepository.findTraveller(new Long(1))).thenReturn(generateDefaultRegisteredTraveller());
 
 		Traveller traveller = new Traveller.Builder()
 				.fullname(TRAVELLER_FULLNAME)
@@ -128,7 +127,7 @@ public class AdminServiceTest extends AbstractServiceTest {
 	@Test
 	public void testDeleteTraveller(){
 
-		Mockito.when(travellerRepository.findTraveller(new Long(1))).thenReturn(generateDefaultRegisterdTraveller());
+		Mockito.when(travellerRepository.findTraveller(new Long(1))).thenReturn(generateDefaultRegisteredTraveller());
 
 		adminService.deleteTraveller(new Long(1));
 
@@ -143,7 +142,7 @@ public class AdminServiceTest extends AbstractServiceTest {
 	public void testDeleteTravellerTwice(){
 
 		Mockito.when(travellerRepository.findTraveller(new Long(1)))
-				.thenReturn(generateDefaultRegisterdTraveller())
+				.thenReturn(generateDefaultRegisteredTraveller())
 				.thenReturn(null);
 
 
