@@ -28,6 +28,9 @@ public class SecurityServiceIntegrationTest extends AbstractServiceIntegrationTe
 	@Mock
 	private PasswordEncoder passwordEncoder;
 
+	@Mock
+	private ITravellerService travellerService;
+
 	@InjectMocks
 	@Autowired
 	private ISecurityRepository securityRepository;
@@ -35,6 +38,10 @@ public class SecurityServiceIntegrationTest extends AbstractServiceIntegrationTe
 	@InjectMocks
 	@Autowired
 	private ISecurityService securityService;
+
+	@InjectMocks
+	@Autowired
+	private ITravellerService realTravellerService;
 
 	private static final String TRAVELLER_USERNAME = "travelling testuser";
 	private static final String TRAVELLER_PASSWORD = "travelling testuser";
@@ -54,9 +61,9 @@ public class SecurityServiceIntegrationTest extends AbstractServiceIntegrationTe
 		securityService.registerTraveller(traveller);
 		long defaultTravellerId = traveller.getTravellerId();
 		Assert.assertTrue( defaultTravellerId > 0 );
-		Mockito.verify(emailService).notifyNewRegistration(Mockito.<Traveller>anyObject());
-		Mockito.verify(passwordEncoder).encodePassword(Mockito.anyString(),Mockito.<Object>anyObject());
-		Mockito.verifyNoMoreInteractions(emailService,passwordEncoder);
+//		Mockito.verify(emailService).notifyNewRegistration(Mockito.<Traveller>anyObject());
+//		Mockito.verify(passwordEncoder).encodePassword(Mockito.anyString(),Mockito.<Object>anyObject());
+//		Mockito.verifyNoMoreInteractions(emailService,passwordEncoder);
 		return defaultTravellerId;
 	}
 
@@ -68,16 +75,20 @@ public class SecurityServiceIntegrationTest extends AbstractServiceIntegrationTe
 		Assert.assertTrue( travellerId > 0 );
 		Mockito.verify(emailService).notifyNewRegistration(Mockito.<Traveller>anyObject());
 		Mockito.verify(passwordEncoder).encodePassword(Mockito.anyString(),Mockito.<Object>anyObject());
-		Mockito.verifyNoMoreInteractions(emailService,passwordEncoder);
+		Mockito.verifyNoMoreInteractions(emailService,passwordEncoder,travellerService);
 		return travellerId;
 	}
 
-	private void registerAdminTravellerAndEscalateToAdmin(){
+	private Long registerAdminTravellerAndEscalateToAdmin(){
 
-		registerAdminTraveller();
-		securityService.addAuthority(ADMIN_USERNAME, SecurityDetail.AuthorityRole.ROLE_ADMIN );
+		long adminId = registerAdminTraveller();
+//		securityService.addAuthority(ADMIN_USERNAME, SecurityDetail.AuthorityRole.ROLE_ADMIN );		
+		SecurityDetail securityDetail = securityService.findLogin(ADMIN_USERNAME);
+		securityDetail.addAuthority(SecurityDetail.AuthorityRole.ROLE_ADMIN);
+		securityRepository.updateSecurityDetail(securityDetail);
 
 		Mockito.verifyNoMoreInteractions(emailService,passwordEncoder);
+		return adminId;
 	}
 
 	@Test
@@ -85,12 +96,16 @@ public class SecurityServiceIntegrationTest extends AbstractServiceIntegrationTe
 
 		long defaultTravellerId = registerDefaultTraveller();
 
+		Mockito.verify(emailService).notifyNewRegistration(Mockito.<Traveller>anyObject());
+		Mockito.verify(passwordEncoder).encodePassword(Mockito.anyString(),Mockito.anyObject());
+		Mockito.verifyNoMoreInteractions(emailService,passwordEncoder);
+
 		SecurityDetail securityDetail = securityService.findLogin(DEFAULT_USERNAME);
 
 		Assert.assertNotNull( securityDetail );
 		Assert.assertEquals( securityDetail.getUsername(), DEFAULT_USERNAME );
 
-		Mockito.verifyZeroInteractions(emailService,passwordEncoder);
+		Mockito.verifyZeroInteractions(emailService,passwordEncoder,travellerService);
 
 	}
 
@@ -114,14 +129,23 @@ public class SecurityServiceIntegrationTest extends AbstractServiceIntegrationTe
 
 		Mockito.verify(emailService).notifyNewRegistration(Mockito.<Traveller>anyObject());
 		Mockito.verify(passwordEncoder).encodePassword(Mockito.anyString(),Mockito.anyObject());
-		Mockito.verifyNoMoreInteractions(emailService,passwordEncoder);
+		Mockito.verifyNoMoreInteractions(emailService,passwordEncoder,travellerService);
 	}
 
 
 	@Test
 	public void testAddAuthority(){
 
+		long adminId = registerAdminTravellerAndEscalateToAdmin();
+
+		Mockito.when(travellerService.findCurrentTraveller())
+				.thenReturn(realTravellerService.findTraveller(adminId));
+
 		registerDefaultTraveller();
+
+		Mockito.verify(emailService, Mockito.times(2)).notifyNewRegistration(Mockito.<Traveller>anyObject());
+		Mockito.verify(passwordEncoder, Mockito.times(2)).encodePassword(Mockito.anyString(),Mockito.<Object>anyObject());
+		Mockito.verifyNoMoreInteractions(emailService,passwordEncoder);
 
 		SecurityDetail securityDetail = securityService.findLogin(DEFAULT_USERNAME);
 
@@ -145,6 +169,8 @@ public class SecurityServiceIntegrationTest extends AbstractServiceIntegrationTe
 			|| ( role2 == SecurityDetail.AuthorityRole.ROLE_USER && role1 == SecurityDetail.AuthorityRole.ROLE_ADMIN ) );
 
 
+		Mockito.verify(travellerService).findCurrentTraveller();
+		Mockito.verifyNoMoreInteractions(travellerService);
 		Mockito.verifyZeroInteractions(emailService,passwordEncoder);
 
 	}
@@ -153,7 +179,10 @@ public class SecurityServiceIntegrationTest extends AbstractServiceIntegrationTe
 	@Test
 	public void testRemoveAuthority(){
 
-		registerAdminTravellerAndEscalateToAdmin();
+		long adminId = registerAdminTravellerAndEscalateToAdmin();
+
+		Mockito.when(travellerService.findCurrentTraveller())
+				.thenReturn(realTravellerService.findTraveller(adminId));
 
 		SecurityDetail securityDetail = securityService.findLogin(ADMIN_USERNAME);
 
@@ -176,6 +205,8 @@ public class SecurityServiceIntegrationTest extends AbstractServiceIntegrationTe
 		Assert.assertTrue( securityDetail.getAuthorities().size() == 1 );
 		Assert.assertEquals( securityDetail.getAuthorities().iterator().next() , SecurityDetail.AuthorityRole.ROLE_USER );
 
+		Mockito.verify(travellerService).findCurrentTraveller();
+		Mockito.verifyNoMoreInteractions(travellerService);
 		Mockito.verifyZeroInteractions(emailService,passwordEncoder);
 	}
 
@@ -186,6 +217,10 @@ public class SecurityServiceIntegrationTest extends AbstractServiceIntegrationTe
 
 
 		registerDefaultTraveller();
+
+		Mockito.verify(emailService).notifyNewRegistration(Mockito.<Traveller>anyObject());
+		Mockito.verify(passwordEncoder).encodePassword(Mockito.anyString(),Mockito.anyObject());
+		Mockito.verifyNoMoreInteractions(emailService,passwordEncoder);
 
 		securityService.disableSecurityDetail(DEFAULT_USERNAME);
 
@@ -200,7 +235,7 @@ public class SecurityServiceIntegrationTest extends AbstractServiceIntegrationTe
 		Assert.assertTrue( securityDetail.isEnabled() );
 
 
-		Mockito.verifyZeroInteractions(emailService,passwordEncoder);
+		Mockito.verifyZeroInteractions(emailService,passwordEncoder,travellerService);
 	}
 
 
@@ -208,6 +243,10 @@ public class SecurityServiceIntegrationTest extends AbstractServiceIntegrationTe
 	public void testDisableSecurityDetail(){
 
 		registerDefaultTraveller();
+
+		Mockito.verify(emailService).notifyNewRegistration(Mockito.<Traveller>anyObject());
+		Mockito.verify(passwordEncoder).encodePassword(Mockito.anyString(),Mockito.anyObject());
+		Mockito.verifyNoMoreInteractions(emailService,passwordEncoder);
 
 		SecurityDetail securityDetail = securityService.findLogin(DEFAULT_USERNAME);
 
@@ -220,7 +259,7 @@ public class SecurityServiceIntegrationTest extends AbstractServiceIntegrationTe
 		Assert.assertNotNull( securityDetail );
 		Assert.assertTrue( !securityDetail.isEnabled() );
 
-		Mockito.verifyZeroInteractions(emailService,passwordEncoder);
+		Mockito.verifyZeroInteractions(emailService,passwordEncoder,travellerService);
 	}
 
 
@@ -230,6 +269,9 @@ public class SecurityServiceIntegrationTest extends AbstractServiceIntegrationTe
 	public void  testChangePassword(){
 
 		registerDefaultTraveller();
+
+		Mockito.verify(emailService).notifyNewRegistration(Mockito.<Traveller>anyObject());
+		Mockito.verifyNoMoreInteractions(emailService);
 
 		SecurityDetail securityDetail = securityService.findLogin(DEFAULT_USERNAME);
 
@@ -247,7 +289,7 @@ public class SecurityServiceIntegrationTest extends AbstractServiceIntegrationTe
 
 		Mockito.verify(passwordEncoder, Mockito.times(4)).encodePassword(Mockito.anyString(),Mockito.anyObject());
 		Mockito.verifyNoMoreInteractions(passwordEncoder);
-		Mockito.verifyZeroInteractions(emailService);
+		Mockito.verifyZeroInteractions(emailService,travellerService);
 
 	}
 
@@ -258,6 +300,9 @@ public class SecurityServiceIntegrationTest extends AbstractServiceIntegrationTe
 
 		registerDefaultTraveller();		
 
+		Mockito.verify(emailService).notifyNewRegistration(Mockito.<Traveller>anyObject());
+		Mockito.verifyNoMoreInteractions(emailService);
+		
 		SecurityDetail securityDetail = securityRepository.findSecurityDetail(DEFAULT_USERNAME);
 
 		Assert.assertNotNull( securityDetail );
@@ -271,7 +316,7 @@ public class SecurityServiceIntegrationTest extends AbstractServiceIntegrationTe
 
 		Mockito.verify(passwordEncoder, Mockito.times(2)).encodePassword(Mockito.anyString(),Mockito.anyObject());
 		Mockito.verify(emailService,  Mockito.times(1)).sendPassword(Mockito.<Traveller>anyObject(),Mockito.anyString());
-		Mockito.verifyNoMoreInteractions(passwordEncoder,emailService);
+		Mockito.verifyNoMoreInteractions(passwordEncoder,emailService,travellerService);
 	}
 
 

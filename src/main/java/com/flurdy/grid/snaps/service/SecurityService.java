@@ -4,10 +4,7 @@ import com.flurdy.grid.snaps.domain.SecurityDetail;
 import com.flurdy.grid.snaps.domain.SecurityDetail.AuthorityRole;
 import com.flurdy.grid.snaps.domain.Traveller;
 
-import com.flurdy.grid.snaps.exception.SnapInvalidClientInputException;
-import com.flurdy.grid.snaps.exception.SnapLogicalException;
-import com.flurdy.grid.snaps.exception.SnapNotFoundException;
-import com.flurdy.grid.snaps.exception.SnapTechnicalException;
+import com.flurdy.grid.snaps.exception.*;
 import com.flurdy.grid.snaps.exception.SnapTechnicalException.SnapTechnicalError;
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +32,9 @@ public class SecurityService extends AbstractService implements ISecurityService
 
 	@Autowired
 	private IEmailService emailService;
+
+	@Autowired
+	private ITravellerService travellerService;
 
 	
 	@Override
@@ -292,20 +292,29 @@ public class SecurityService extends AbstractService implements ISecurityService
 		assert username != null;
 		assert authority != null;
 
-		log.info("Removing authority ["+authority+"] from: " + username);
+		final Traveller admin = travellerService.findCurrentTraveller();
 
-		SecurityDetail securityDetail = securityRepository.findSecurityDetail(username);
+			if(admin != null &&
+					(admin.getSecurityDetail().hasAuthority(AuthorityRole.ROLE_ADMIN)
+					|| admin.getSecurityDetail().hasAuthority(AuthorityRole.ROLE_SUPER))){
 
-		if (securityDetail != null ){
-//			log.debug("Auths:"+securityDetail.getAuthorities().size());
+			log.info("Admin: " + admin + " is removing authority ["+authority+"] from: " + username);
 
-			securityDetail.removeAuthority(authority);
+			SecurityDetail securityDetail = securityRepository.findSecurityDetail(username);
 
-//			log.debug("Auths:"+securityDetail.getAuthorities().size());
+			if (securityDetail != null ){
+	//			log.debug("Auths:"+securityDetail.getAuthorities().size());
 
-			securityRepository.updateSecurityDetail(securityDetail);
+				securityDetail.removeAuthority(authority);
+
+	//			log.debug("Auths:"+securityDetail.getAuthorities().size());
+
+				securityRepository.updateSecurityDetail(securityDetail);
+			} else {
+				throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.SECURITY_DETAILS);
+			}
 		} else {
-			throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.SECURITY_DETAILS);
+				throw new SnapLogicalException(SnapLogicalException.SnapLogicalError.ACCESS_DENIED);
 		}
 	}
 
@@ -316,24 +325,33 @@ public class SecurityService extends AbstractService implements ISecurityService
 
 		assert username != null && username.length()>0;
 		assert authority != null;
-		
-		log.info("Adding authority ["+authority+"] to: " + username);
-		
 
-		SecurityDetail securityDetail = securityRepository.findSecurityDetail(username);
+		final Traveller admin = travellerService.findCurrentTraveller();
 
-		if (securityDetail != null ){
+		if(admin != null &&
+				(admin.getSecurityDetail().hasAuthority(AuthorityRole.ROLE_ADMIN)
+				|| admin.getSecurityDetail().hasAuthority(AuthorityRole.ROLE_SUPER))){
 
-//			log.debug("Auths:"+securityDetail.getAuthorities().size());
+		log.info("Admin: " + admin + " is adding authority ["+authority+"] to: " + username);
 
-			securityDetail.addAuthority(authority);
+			SecurityDetail securityDetail = securityRepository.findSecurityDetail(username);
 
-//			log.debug("Auths:"+securityDetail.getAuthorities().size());
+			if (securityDetail != null ){
 
-			securityRepository.updateSecurityDetail(securityDetail);
+	//			log.debug("Auths:"+securityDetail.getAuthorities().size());
+
+				securityDetail.addAuthority(authority);
+
+	//			log.debug("Auths:"+securityDetail.getAuthorities().size());
+
+				securityRepository.updateSecurityDetail(securityDetail);
+			} else {
+				throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.SECURITY_DETAILS);
+			}
 		} else {
-			throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.SECURITY_DETAILS);
+				throw new SnapLogicalException(SnapLogicalException.SnapLogicalError.ACCESS_DENIED);
 		}
+
 	}
 
 

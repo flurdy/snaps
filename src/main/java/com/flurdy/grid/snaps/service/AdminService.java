@@ -26,7 +26,7 @@ public class AdminService implements IAdminService {
 		if( traveller != null ){
 			if( traveller.isValid() ){
 
-				Traveller admin = travellerService.findCurrentTraveller();
+				final Traveller admin = travellerService.findCurrentTraveller();
 				log.info("Admin:" + admin + "| is updating: " + traveller);
 
 				Traveller realTraveller = travellerRepository.findTraveller(traveller.getTravellerId());

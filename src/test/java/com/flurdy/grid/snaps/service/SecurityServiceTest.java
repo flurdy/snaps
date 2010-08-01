@@ -44,6 +44,10 @@ public class SecurityServiceTest extends AbstractServiceTest {
 	private ITravellerRepository travellerRepository;
 
 	@Mock
+	private ITravellerService travellerService;
+
+
+	@Mock
 	private PasswordEncoder passwordEncoder;
 
 	private static final String TRAVELLER_USERNAME = "travelling testuser";
@@ -102,6 +106,33 @@ public class SecurityServiceTest extends AbstractServiceTest {
 					.enabled(true)
 					.authorities(new HashSet<String>(){{ add("ROLE_USER"); add("ROLE_ADMIN"); }})
 					.build();
+	}
+
+	private SecurityDetail generateMockSuperSecurityDetail() {
+		return new SecurityDetail.Builder()
+					.username(TRAVELLER_USERNAME)
+					.password(TRAVELLER_PASSWORD)
+					.enabled(true)
+					.authorities(new HashSet<String>(){{ add("ROLE_USER"); add("ROLE_SUPER"); }})
+					.build();
+	}
+
+	protected Traveller generateAdminTraveller(){
+		return new Traveller.Builder()
+			.username(ADMIN_USERNAME)
+			.fullname(ADMIN_FULLNAME)
+			.password(ADMIN_PASSWORD)
+			.authorities(new HashSet<String>(){{ add("ROLE_USER"); add("ROLE_ADMIN"); }})
+			.email(ADMIN_EMAIL).build();
+	}
+
+	protected Traveller generateSuperTraveller(){
+		return new Traveller.Builder()
+			.username(ADMIN_USERNAME)
+			.fullname(ADMIN_FULLNAME)
+			.password(ADMIN_PASSWORD)
+			.authorities(new HashSet<String>(){{ add("ROLE_USER"); add("ROLE_SUPER"); }})
+			.email(ADMIN_EMAIL).build();
 	}
 
 	@Test
@@ -224,12 +255,12 @@ public class SecurityServiceTest extends AbstractServiceTest {
 	@Test
 	public void testAddAuthority(){
 
-		final SecurityDetail mockSecurityDetail = generateMockSecurityDetail();
-		final SecurityDetail mockAdminSecurityDetail = generateMockAdminSecurityDetail();
+		Mockito.when(travellerService.findCurrentTraveller()).thenReturn(generateAdminTraveller());
+		
 		Mockito.when(securityRepository.findSecurityDetail(TRAVELLER_USERNAME))
-				.thenReturn(mockSecurityDetail)
-				.thenReturn(mockSecurityDetail)
-				.thenReturn(mockAdminSecurityDetail);
+				.thenReturn(generateMockSecurityDetail())
+				.thenReturn(generateMockSecurityDetail())
+				.thenReturn(generateMockAdminSecurityDetail());
 //		Mockito.doNothing().when(securityRepository).updateSecurityDetail(Mockito.<SecurityDetail>anyObject());
 
 		SecurityDetail securityDetail = securityService.findLogin(TRAVELLER_USERNAME);
@@ -258,8 +289,9 @@ public class SecurityServiceTest extends AbstractServiceTest {
 		Mockito.verify(securityRepository, Mockito.times(3)).findSecurityDetail(TRAVELLER_USERNAME);
 		Mockito.verify(securityRepository, Mockito.times(1)).updateSecurityDetail(Mockito.<SecurityDetail>anyObject());
 //		Mockito.verify(emailService).notifyNewRegistration(Mockito.<Traveller>anyObject());
-//		Mockito.verify(passwordEncoder).encodePassword(Mockito.anyString(),Mockito.anyObject());
-		Mockito.verifyNoMoreInteractions(securityRepository);
+//		Mockito.verify(passwordEncoder).encodePassword(Mockito.anyString(),Mockito.anyObject())
+		 Mockito.verify(travellerService, Mockito.times(1)).findCurrentTraveller();;
+		Mockito.verifyNoMoreInteractions(securityRepository,travellerService);
 		Mockito.verifyZeroInteractions(travellerRepository,emailService,passwordEncoder);
 
 	}
@@ -268,11 +300,12 @@ public class SecurityServiceTest extends AbstractServiceTest {
 	@Test // (expected = SnapLogicalException.class) // Idempotent
 	public void testAddAuthorityTwice(){
 
-		final SecurityDetail mockSecurityDetail = generateMockSecurityDetail();
-		final SecurityDetail mockAdminSecurityDetail = generateMockAdminSecurityDetail();
+		Mockito.when(travellerService.findCurrentTraveller())
+				.thenReturn(generateAdminTraveller())
+				.thenReturn(generateAdminTraveller());
 		Mockito.when(securityRepository.findSecurityDetail(TRAVELLER_USERNAME))
-				.thenReturn(mockSecurityDetail)
-				.thenReturn(mockAdminSecurityDetail);
+				.thenReturn(generateMockSecurityDetail())
+				.thenReturn(generateMockAdminSecurityDetail());
 
 		securityService.addAuthority(TRAVELLER_USERNAME, SecurityDetail.AuthorityRole.ROLE_ADMIN );
 		securityService.addAuthority(TRAVELLER_USERNAME, SecurityDetail.AuthorityRole.ROLE_ADMIN );
@@ -280,7 +313,8 @@ public class SecurityServiceTest extends AbstractServiceTest {
 
 		Mockito.verify(securityRepository, Mockito.times(2)).findSecurityDetail(TRAVELLER_USERNAME);
 		Mockito.verify(securityRepository, Mockito.times(2)).updateSecurityDetail(Mockito.<SecurityDetail>anyObject());
-		Mockito.verifyNoMoreInteractions(securityRepository);
+		Mockito.verify(travellerService, Mockito.times(2)).findCurrentTraveller();
+		Mockito.verifyNoMoreInteractions(securityRepository,travellerService);
 		Mockito.verifyZeroInteractions(travellerRepository,emailService,passwordEncoder);
 	}
 
@@ -288,8 +322,13 @@ public class SecurityServiceTest extends AbstractServiceTest {
 	public void testAddNullAuthority(){
 		securityService.addAuthority(TRAVELLER_USERNAME, null );
 	}
+
+
 	@Test // (expected = SnapLogicalException.class) //  Idempotent
 	public void testAddExistingAuthority(){
+		Mockito.when(travellerService.findCurrentTraveller())
+				.thenReturn(generateAdminTraveller());
+
 		final SecurityDetail mockSecurityDetail = generateMockSecurityDetail();
 		Mockito.when(securityRepository.findSecurityDetail(TRAVELLER_USERNAME))
 				.thenReturn(mockSecurityDetail);
@@ -297,9 +336,11 @@ public class SecurityServiceTest extends AbstractServiceTest {
 
 		Mockito.verify(securityRepository, Mockito.times(1)).findSecurityDetail(TRAVELLER_USERNAME);
 		Mockito.verify(securityRepository, Mockito.times(1)).updateSecurityDetail(Mockito.<SecurityDetail>anyObject());
-		Mockito.verifyNoMoreInteractions(securityRepository);
+		Mockito.verify(travellerService, Mockito.times(1)).findCurrentTraveller();
+		Mockito.verifyNoMoreInteractions(securityRepository,travellerService);
 		Mockito.verifyZeroInteractions(travellerRepository,emailService,passwordEncoder);
 	}
+
 
 	@Test(expected = AssertionError.class)
 	public void testAddAuthorityToNullTraveller(){
@@ -311,6 +352,8 @@ public class SecurityServiceTest extends AbstractServiceTest {
 
 	@Test(expected = SnapNotFoundException.class)
 	public void testAddAuthorityToNonExistantTraveller(){
+		Mockito.when(travellerService.findCurrentTraveller())				
+				.thenReturn(generateAdminTraveller());
 		Mockito.when(securityRepository.findSecurityDetail(TRAVELLER_USERNAME))
 				.thenReturn(null);
 		securityService.addAuthority("abrah", SecurityDetail.AuthorityRole.ROLE_ADMIN );
@@ -318,14 +361,79 @@ public class SecurityServiceTest extends AbstractServiceTest {
 
 
 
+	@Test(expected = SnapLogicalException.class)
+	public void testAddAuthorityWithoutAuthorization(){
+
+		final SecurityDetail mockAdminSecurityDetail = generateMockAdminSecurityDetail();
+		Mockito.when(securityRepository.findSecurityDetail(TRAVELLER_USERNAME))
+				.thenReturn(generateMockSecurityDetail())
+				.thenReturn(generateMockSecurityDetail())
+				.thenReturn(mockAdminSecurityDetail);
+		Mockito.when(travellerService.findCurrentTraveller()).thenReturn(generateDefaultRegisteredTraveller());
+
+		SecurityDetail securityDetail = securityService.findLogin(TRAVELLER_USERNAME);
+
+		Assert.assertNotNull( securityDetail );
+		Assert.assertNotNull( securityDetail.getAuthorities() );
+		Assert.assertTrue( securityDetail.getAuthorities().size() == 1 );
+		Assert.assertEquals( securityDetail.getAuthorities().iterator().next() , SecurityDetail.AuthorityRole.ROLE_USER );
+
+		securityService.addAuthority(TRAVELLER_USERNAME, SecurityDetail.AuthorityRole.ROLE_ADMIN );
+
+	}
+
+
+
+	@Test
+	public void testAddSuperAuthorityAsSuper(){
+		Mockito.when(travellerService.findCurrentTraveller()).thenReturn(generateSuperTraveller());
+		Mockito.when(securityRepository.findSecurityDetail(TRAVELLER_USERNAME))
+				.thenReturn(generateMockSecurityDetail())
+				.thenReturn(generateMockSecurityDetail())
+				.thenReturn(generateMockSuperSecurityDetail());
+
+		SecurityDetail securityDetail = securityService.findLogin(TRAVELLER_USERNAME);
+
+		Assert.assertNotNull( securityDetail );
+		Assert.assertNotNull( securityDetail.getAuthorities() );
+		Assert.assertTrue( securityDetail.getAuthorities().size() == 1 );
+		Assert.assertTrue( !securityDetail.hasAuthority( SecurityDetail.AuthorityRole.ROLE_SUPER ) );
+
+		securityService.addAuthority(TRAVELLER_USERNAME, SecurityDetail.AuthorityRole.ROLE_SUPER );
+
+		securityDetail = securityService.findLogin(TRAVELLER_USERNAME);
+
+		Assert.assertNotNull( securityDetail );
+		Assert.assertNotNull( securityDetail.getAuthorities() );
+		Assert.assertTrue( securityDetail.getAuthorities().size() == 2 );
+		Assert.assertTrue( securityDetail.hasAuthority( SecurityDetail.AuthorityRole.ROLE_SUPER ) );
+
+		Mockito.verify(securityRepository, Mockito.times(3)).findSecurityDetail(TRAVELLER_USERNAME);
+		Mockito.verify(securityRepository, Mockito.times(1)).updateSecurityDetail(Mockito.<SecurityDetail>anyObject());
+		Mockito.verify(travellerService).findCurrentTraveller();
+		Mockito.verifyNoMoreInteractions(travellerService,securityRepository);
+		Mockito.verifyZeroInteractions(travellerRepository,emailService,passwordEncoder);
+	}
+
+
+	@Test(expected = SnapLogicalException.class)
+	public void testAddSuperAuthorityAsNonSuper(){
+		Mockito.when(travellerService.findCurrentTraveller()).thenReturn(generateAdminTraveller());
+		securityService.addAuthority(TRAVELLER_USERNAME, SecurityDetail.AuthorityRole.ROLE_SUPER );
+
+	}
+
+
+
 	@Test
 	public void testRemoveAuthority(){
-		final SecurityDetail mockSecurityDetail = generateMockSecurityDetail();
-		final SecurityDetail mockEmptySecurityDetail = generateMockEmptySecurityDetail();
+		Mockito.when(travellerService.findCurrentTraveller())
+				.thenReturn(generateAdminTraveller());
+
 		Mockito.when(securityRepository.findSecurityDetail(TRAVELLER_USERNAME))
-				.thenReturn(mockSecurityDetail)
-				.thenReturn(mockSecurityDetail)
-				.thenReturn(mockEmptySecurityDetail);
+				.thenReturn(generateMockSecurityDetail())
+				.thenReturn(generateMockSecurityDetail())
+				.thenReturn(generateMockEmptySecurityDetail());
 
 		SecurityDetail securityDetail = securityService.findLogin(TRAVELLER_USERNAME);
 
@@ -342,7 +450,8 @@ public class SecurityServiceTest extends AbstractServiceTest {
 
 		Mockito.verify(securityRepository, Mockito.times(3)).findSecurityDetail(TRAVELLER_USERNAME);
 		Mockito.verify(securityRepository, Mockito.times(1)).updateSecurityDetail(Mockito.<SecurityDetail>anyObject());
-		Mockito.verifyNoMoreInteractions(securityRepository);
+		Mockito.verify(travellerService, Mockito.times(1)).findCurrentTraveller();
+		Mockito.verifyNoMoreInteractions(travellerService,securityRepository);
 		Mockito.verifyZeroInteractions(travellerRepository,emailService,passwordEncoder);
 	}
 
@@ -351,6 +460,9 @@ public class SecurityServiceTest extends AbstractServiceTest {
 
 	@Test // (expected = SnapLogicalException.class) //  idempotent
 	public void testRemoveAuthorityTwice(){
+		Mockito.when(travellerService.findCurrentTraveller())
+				.thenReturn(generateAdminTraveller())
+				.thenReturn(generateAdminTraveller());
 		final SecurityDetail mockSecurityDetail = generateMockSecurityDetail();
 		final SecurityDetail mockEmptySecurityDetail = generateMockEmptySecurityDetail();
 		Mockito.when(securityRepository.findSecurityDetail(TRAVELLER_USERNAME))
@@ -362,7 +474,8 @@ public class SecurityServiceTest extends AbstractServiceTest {
 
 		Mockito.verify(securityRepository, Mockito.times(2)).findSecurityDetail(TRAVELLER_USERNAME);
 		Mockito.verify(securityRepository, Mockito.times(2)).updateSecurityDetail(Mockito.<SecurityDetail>anyObject());
-		Mockito.verifyNoMoreInteractions(securityRepository);
+		Mockito.verify(travellerService, Mockito.times(2)).findCurrentTraveller();
+		Mockito.verifyNoMoreInteractions(travellerService,securityRepository);
 		Mockito.verifyZeroInteractions(travellerRepository,emailService,passwordEncoder);
 	}
 
@@ -373,6 +486,8 @@ public class SecurityServiceTest extends AbstractServiceTest {
 
 	@Test // (expected = SnapLogicalException.class) // idempotent
 	public void testRemoveNonExistentAuthority(){
+		Mockito.when(travellerService.findCurrentTraveller())
+				.thenReturn(generateAdminTraveller());
 		final SecurityDetail mockSecurityDetail = generateMockSecurityDetail();
 		Mockito.when(securityRepository.findSecurityDetail(TRAVELLER_USERNAME))
 				.thenReturn(mockSecurityDetail);
@@ -381,7 +496,8 @@ public class SecurityServiceTest extends AbstractServiceTest {
 
 		Mockito.verify(securityRepository, Mockito.times(1)).findSecurityDetail(TRAVELLER_USERNAME);
 		Mockito.verify(securityRepository, Mockito.times(1)).updateSecurityDetail(Mockito.<SecurityDetail>anyObject());
-		Mockito.verifyNoMoreInteractions(securityRepository);
+		Mockito.verify(travellerService, Mockito.times(1)).findCurrentTraveller();
+		Mockito.verifyNoMoreInteractions(travellerService,securityRepository);
 		Mockito.verifyZeroInteractions(travellerRepository,emailService,passwordEncoder);
 	}
 

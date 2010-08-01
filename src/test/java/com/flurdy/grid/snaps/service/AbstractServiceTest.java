@@ -69,6 +69,10 @@ public abstract class AbstractServiceTest  extends AbstractTransactionalJUnit4Sp
 	protected static final String DEFAULT_PASSWORD2 = "testuser2";
 	protected static final String DEFAULT_FULLNAME2 = "testuser2";
 	protected static final String DEFAULT_EMAIL2 = "testuser2@example.com";
+	protected static final String ADMIN_USERNAME = "admin testuser";
+	protected static final String ADMIN_PASSWORD = "admin testuser";
+	protected static final String ADMIN_FULLNAME = "admin testuser";
+	protected static final String ADMIN_EMAIL = "admin.testuser@example.com";
 
 	protected static final String DEFAULT_HOLIDAY_NAME = "Test Holiday";
 	protected static final String DEFAULT_HOLIDAY2_NAME = "Test 2nd Holiday";
