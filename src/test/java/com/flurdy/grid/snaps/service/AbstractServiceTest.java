@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.mail.internet.MimeMessage;
+import java.util.HashSet;
 
 
 @ContextConfiguration(locations = {"classpath:test-database.xml" } )//, "classpath:test-application.xml"})
@@ -81,6 +82,23 @@ public abstract class AbstractServiceTest  extends AbstractTransactionalJUnit4Sp
 //		Mockito.doNothing().when(emailService).sendPassword(Mockito.<Traveller>anyObject(),Mockito.anyString());
 //		Mockito.doNothing().when(emailService).notifyNewRegistration(Mockito.<Traveller>anyObject());
 //		Mockito.when(securityService.findLoggedInUsername()).thenReturn(DEFAULT_USERNAME);
+	}
+
+	protected Traveller generateDefaultTraveller(){
+		return new Traveller.Builder()
+					.username(DEFAULT_USERNAME)
+					.fullname(DEFAULT_FULLNAME)
+					.password(DEFAULT_PASSWORD)
+					.email(DEFAULT_EMAIL).build();
+	}
+
+	protected Traveller generateDefaultRegisterdTraveller(){
+		return new Traveller.Builder()
+			.username(DEFAULT_USERNAME)
+			.fullname(DEFAULT_FULLNAME)
+			.password(DEFAULT_PASSWORD)
+			.authorities(new HashSet<String>(){{ add("ROLE_USER"); }})
+			.email(DEFAULT_EMAIL).build();
 	}
 
 	protected Long addDefaultUser(SecurityService securityService){

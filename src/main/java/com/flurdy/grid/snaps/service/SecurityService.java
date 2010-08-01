@@ -182,6 +182,8 @@ public class SecurityService extends AbstractService implements ISecurityService
 	@Override
 	public void disableSecurityDetail(String username) {
 
+		assert username != null;
+
 		log.info("Disabling user: " + username);
 
 		SecurityDetail securityDetail = securityRepository.findSecurityDetail(username);
@@ -190,7 +192,9 @@ public class SecurityService extends AbstractService implements ISecurityService
 			securityDetail.setEnabled(false);
 
 			securityRepository.updateSecurityDetail(securityDetail);
-			
+
+			// Todo: Alert admins of action
+
 		} else {
 			throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.SECURITY_DETAILS);
 		}
@@ -264,12 +268,16 @@ public class SecurityService extends AbstractService implements ISecurityService
 
 		log.info("Enabling user: " + username);
 
+		assert username != null;
+
 		SecurityDetail securityDetail = securityRepository.findSecurityDetail(username);
 		if (securityDetail != null ){
 
 			securityDetail.setEnabled(true);
 
 			securityRepository.updateSecurityDetail(securityDetail);
+
+			// Todo: Alert admins of action if not user
 			
 		} else {
 			throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.SECURITY_DETAILS);
@@ -309,7 +317,7 @@ public class SecurityService extends AbstractService implements ISecurityService
 		assert username != null && username.length()>0;
 		assert authority != null;
 		
-		log.info("Adding authority ["+authority+"] from: " + username);
+		log.info("Adding authority ["+authority+"] to: " + username);
 		
 
 		SecurityDetail securityDetail = securityRepository.findSecurityDetail(username);

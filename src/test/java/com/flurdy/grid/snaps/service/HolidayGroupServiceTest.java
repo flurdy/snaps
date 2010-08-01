@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 
 @Transactional
-@ContextConfiguration(locations = {"classpath:test-database.xml", "classpath:test-domain.xml"})
+//@ContextConfiguration(locations = {"classpath:test-domain.xml"})
 public class HolidayGroupServiceTest  extends AbstractServiceTest {
 
 

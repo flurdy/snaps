@@ -1,6 +1,7 @@
 package com.flurdy.grid.snaps.service;
 
 import com.flurdy.grid.snaps.dao.ISecurityRepository;
+import com.flurdy.grid.snaps.dao.ITravellerRepository;
 import com.flurdy.grid.snaps.domain.SecurityDetail;
 import com.flurdy.grid.snaps.domain.Traveller;
 import com.flurdy.grid.snaps.exception.SnapInvalidClientInputException;
@@ -10,111 +11,181 @@ import org.junit.Assert;
 import org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Mockito.*;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import java.util.Iterator;
 
 @Transactional
 public class SecurityServiceTest extends AbstractServiceTest {
-/*
-	@Autowired
-	private PasswordEncoder passwordEncoder;
 
-	@Resource
-	private PasswordEncoder mockPasswordEncoder;
+	@InjectMocks
+	private ISecurityService securityService = new SecurityService();
 
-	@Autowired
+	@Mock
 	private ISecurityRepository securityRepository;
+
+	@Mock
+	private IEmailService emailService;
+
+	@Mock
+	private ITravellerRepository travellerRepository;
+
+	@Mock
+	private PasswordEncoder passwordEncoder;
 
 	private static final String TRAVELLER_USERNAME = "travelling testuser";
 	private static final String TRAVELLER_PASSWORD = "travelling testuser";
 	private static final String TRAVELLER_FULLNAME = "travelling testuser";
 	private static final String TRAVELLER_EMAIL = "travelling.testuser@example.com";
 
-	private Long defaultTravellerId = null;
 
 	@Before
 	public void setUp(){
-		super.setUp();
-		ReflectionTestUtils.setField(realSecurityService, "passwordEncoder", passwordEncoder );
-		Mockito.when(mockPasswordEncoder.encodePassword(Mockito.anyString(), Mockito.eq(DEFAULT_USERNAME))).thenReturn("RANDOM");
-		Mockito.doNothing().when(emailService).sendPassword(Mockito.<Traveller>anyObject(),Mockito.anyString());
-		Mockito.doNothing().when(emailService).notifyNewRegistration(Mockito.<Traveller>anyObject());
-		addDefaultUser2();
-		defaultTravellerId = addDefaultUser();
-		assert defaultTravellerId > 0;
+		MockitoAnnotations.initMocks(this);
+		Mockito.when(passwordEncoder.encodePassword(Mockito.anyString(),Mockito.anyObject())).thenReturn("ENCRYPTED");
 	}
 
+	private Traveller generateMockTraveller()  {
+		return new Traveller.Builder()
+					.username(TRAVELLER_USERNAME)
+					.password(TRAVELLER_PASSWORD)
+					.email(TRAVELLER_EMAIL)
+					.enabled(true)
+					.authorities(new HashSet<String>(){{ add("ROLE_USER"); }})
+					.build();
+	}
+
+	private SecurityDetail generateMockEmptySecurityDetail()  {
+		return new SecurityDetail.Builder()
+					.username(TRAVELLER_USERNAME)
+					.password(TRAVELLER_PASSWORD)
+					.enabled(true)
+					.authorities(new HashSet<String>())
+					.build();
+	}
+
+	private SecurityDetail generateMockSecurityDetail()  {
+		return new SecurityDetail.Builder()
+					.username(TRAVELLER_USERNAME)
+					.password(TRAVELLER_PASSWORD)
+					.enabled(true)
+					.authorities(new HashSet<String>(){{ add("ROLE_USER"); }})
+					.build();
+	}
+
+	private SecurityDetail generateMockDisabledSecurityDetail()  {
+		return new SecurityDetail.Builder()
+					.username(TRAVELLER_USERNAME)
+					.password(TRAVELLER_PASSWORD)
+					.enabled(false)
+					.authorities(new HashSet<String>(){{ add("ROLE_USER"); }})
+					.build();
+	}
+
+	private SecurityDetail generateMockAdminSecurityDetail() {
+		return new SecurityDetail.Builder()
+					.username(TRAVELLER_USERNAME)
+					.password(TRAVELLER_PASSWORD)
+					.enabled(true)
+					.authorities(new HashSet<String>(){{ add("ROLE_USER"); add("ROLE_ADMIN"); }})
+					.build();
+	}
 
 	@Test
 	public void testFindLogin(){
-		SecurityDetail securityDetail = realSecurityService.findLogin(DEFAULT_USERNAME);
+
+		SecurityDetail mockSecurityDetail = new SecurityDetail.Builder()
+				.username(DEFAULT_USERNAME).password(DEFAULT_PASSWORD).enabled(true).build();
+
+		Mockito.when(securityRepository.findSecurityDetail(DEFAULT_USERNAME)).thenReturn(mockSecurityDetail);
+
+		SecurityDetail securityDetail = securityService.findLogin(DEFAULT_USERNAME);
+
 		Assert.assertNotNull( securityDetail );
 		Assert.assertEquals( securityDetail.getUsername(), DEFAULT_USERNAME );
+		Mockito.verify(securityRepository).findSecurityDetail(DEFAULT_USERNAME);
+		Mockito.verifyNoMoreInteractions(securityRepository);
+		Mockito.verifyZeroInteractions(travellerRepository);
+
 	}
 
 	@Test
 	public void testFindNonExistentLogin(){
-		SecurityDetail securityDetail = realSecurityService.findLogin("asdasdas");
+		Mockito.when(securityRepository.findSecurityDetail("asdasdas")).thenReturn(null);
+
+		SecurityDetail securityDetail = securityService.findLogin("asdasdas");
+
 		Assert.assertNull( securityDetail );
+		Mockito.verify(securityRepository).findSecurityDetail("asdasdas");
+		Mockito.verifyNoMoreInteractions(securityRepository);
+		Mockito.verifyZeroInteractions(travellerRepository);
 	}
 
 	@Test
 	public void testFindNullLogin(){
-		SecurityDetail securityDetail = realSecurityService.findLogin(null);
+		SecurityDetail securityDetail = securityService.findLogin(null);
 		Assert.assertNull( securityDetail );
+		Mockito.verifyZeroInteractions(securityRepository,travellerRepository);
 	}
+
+
 
 	@Test
 	public void testRegisterTraveller(){
+
+		final SecurityDetail mockSecurityDetail = generateMockSecurityDetail();
+
+		Mockito.when(securityRepository.findSecurityDetail(TRAVELLER_USERNAME))
+				.thenReturn(null).thenReturn(mockSecurityDetail);
+//		Mockito.doNothing().when(travellerRepository).addTraveller(Mockito.<Traveller>anyObject());
 		Traveller traveller = new Traveller.Builder()
 					.username(TRAVELLER_USERNAME)
 					.fullname(TRAVELLER_FULLNAME)
 					.password(TRAVELLER_PASSWORD)
 					.email(TRAVELLER_EMAIL).build();
 
-		realSecurityService.registerTraveller(traveller);
+		securityService.registerTraveller(traveller);
 
-		SecurityDetail securityDetail = realSecurityService.findLogin(TRAVELLER_USERNAME);
+		SecurityDetail securityDetail = securityService.findLogin(TRAVELLER_USERNAME);
 		Assert.assertNotNull( securityDetail );
 		Assert.assertEquals( securityDetail.getUsername(), TRAVELLER_FULLNAME );
+
+		Mockito.verify(travellerRepository).addTraveller(Mockito.<Traveller>anyObject());
+		Mockito.verify(securityRepository, Mockito.times(2)).findSecurityDetail(TRAVELLER_USERNAME);
+		Mockito.verify(emailService).notifyNewRegistration(Mockito.<Traveller>anyObject());
+		Mockito.verify(passwordEncoder).encodePassword(Mockito.anyString(),Mockito.anyObject());
+		Mockito.verifyNoMoreInteractions(travellerRepository,securityRepository,emailService,passwordEncoder);
 	}
 
-	@Test
-	public void testRegisterTravellerRoleUse(){
-		Traveller traveller = new Traveller.Builder()
-					.username(TRAVELLER_USERNAME)
-					.fullname(TRAVELLER_FULLNAME)
-					.password(TRAVELLER_PASSWORD)
-					.email(TRAVELLER_EMAIL).build();
-
-		realSecurityService.registerTraveller(traveller);
-
-		SecurityDetail securityDetail = realSecurityService.findLogin(TRAVELLER_USERNAME);
-		Assert.assertNotNull( securityDetail );
-		Assert.assertNotNull( securityDetail.getAuthorities() );
-		Assert.assertTrue( securityDetail.getAuthorities().size() == 1 );
-		Assert.assertEquals( securityDetail.getAuthorities().iterator().next() , SecurityDetail.AuthorityRole.ROLE_USER );
-	}
 
 	@Test(expected = SnapLogicalException.class)
 	public void testRegisterTravellerTwice(){
 
+		final SecurityDetail mockSecurityDetail = generateMockSecurityDetail();
+
+		Mockito.when(securityRepository.findSecurityDetail(TRAVELLER_USERNAME))
+				.thenReturn(null).thenReturn(mockSecurityDetail);
+
 		Traveller traveller = new Traveller.Builder()
 					.username(TRAVELLER_USERNAME)
 					.fullname(TRAVELLER_FULLNAME)
 					.password(TRAVELLER_PASSWORD)
 					.email(TRAVELLER_EMAIL).build();
 
-		realSecurityService.registerTraveller(traveller);
+		securityService.registerTraveller(traveller);
 
 		traveller = new Traveller.Builder()
 					.username(TRAVELLER_USERNAME)
@@ -122,37 +193,55 @@ public class SecurityServiceTest extends AbstractServiceTest {
 					.password(TRAVELLER_PASSWORD)
 					.email(TRAVELLER_EMAIL).build();
 
-		realSecurityService.registerTraveller(traveller);
+		securityService.registerTraveller(traveller);
 	}
+
+
+
 
 
 	@Test(expected = SnapLogicalException.class)
 	public void testRegisterExistingTravellerUsername(){
 
+		final SecurityDetail mockSecurityDetail = generateMockSecurityDetail();
+//		Mockito.reset(securityRepository);
+		Mockito.when(securityRepository.findSecurityDetail(TRAVELLER_USERNAME))
+				.thenReturn(mockSecurityDetail);
+
 		Traveller traveller = new Traveller.Builder()
-					.username(DEFAULT_USERNAME)
+					.username(TRAVELLER_USERNAME)
 					.fullname(TRAVELLER_FULLNAME)
 					.password(TRAVELLER_PASSWORD)
 					.email(TRAVELLER_EMAIL).build();
 
-		realSecurityService.registerTraveller(traveller);
+		securityService.registerTraveller(traveller);
 
 	}
+
 
 
 
 	@Test
 	public void testAddAuthority(){
 
-		SecurityDetail securityDetail = realSecurityService.findLogin(DEFAULT_USERNAME);
+		final SecurityDetail mockSecurityDetail = generateMockSecurityDetail();
+		final SecurityDetail mockAdminSecurityDetail = generateMockAdminSecurityDetail();
+		Mockito.when(securityRepository.findSecurityDetail(TRAVELLER_USERNAME))
+				.thenReturn(mockSecurityDetail)
+				.thenReturn(mockSecurityDetail)
+				.thenReturn(mockAdminSecurityDetail);
+//		Mockito.doNothing().when(securityRepository).updateSecurityDetail(Mockito.<SecurityDetail>anyObject());
+
+		SecurityDetail securityDetail = securityService.findLogin(TRAVELLER_USERNAME);
+
 		Assert.assertNotNull( securityDetail );
 		Assert.assertNotNull( securityDetail.getAuthorities() );
 		Assert.assertTrue( securityDetail.getAuthorities().size() == 1 );
 		Assert.assertEquals( securityDetail.getAuthorities().iterator().next() , SecurityDetail.AuthorityRole.ROLE_USER );
 
-		realSecurityService.addAuthority(DEFAULT_USERNAME, SecurityDetail.AuthorityRole.ROLE_ADMIN );
+		securityService.addAuthority(TRAVELLER_USERNAME, SecurityDetail.AuthorityRole.ROLE_ADMIN );
 
-		securityDetail = realSecurityService.findLogin(DEFAULT_USERNAME);
+		securityDetail = securityService.findLogin(TRAVELLER_USERNAME);
 		Assert.assertNotNull( securityDetail );
 		Assert.assertNotNull( securityDetail.getAuthorities() );
 		Assert.assertTrue( securityDetail.getAuthorities().size() == 2 );
@@ -162,126 +251,238 @@ public class SecurityServiceTest extends AbstractServiceTest {
 		SecurityDetail.AuthorityRole role2 = iterator.next();
 		Assert.assertTrue( ( role1 == SecurityDetail.AuthorityRole.ROLE_USER && role2 == SecurityDetail.AuthorityRole.ROLE_ADMIN )
 			|| ( role2 == SecurityDetail.AuthorityRole.ROLE_USER && role1 == SecurityDetail.AuthorityRole.ROLE_ADMIN ) );
+
+
+
+//		Mockito.verify(travellerRepository).addTraveller(Mockito.<Traveller>anyObject());
+		Mockito.verify(securityRepository, Mockito.times(3)).findSecurityDetail(TRAVELLER_USERNAME);
+		Mockito.verify(securityRepository, Mockito.times(1)).updateSecurityDetail(Mockito.<SecurityDetail>anyObject());
+//		Mockito.verify(emailService).notifyNewRegistration(Mockito.<Traveller>anyObject());
+//		Mockito.verify(passwordEncoder).encodePassword(Mockito.anyString(),Mockito.anyObject());
+		Mockito.verifyNoMoreInteractions(securityRepository);
+		Mockito.verifyZeroInteractions(travellerRepository,emailService,passwordEncoder);
+
 	}
 
-	@Test // (expected = SnapLogicalException.class) // TODO:
+
+	@Test // (expected = SnapLogicalException.class) // Idempotent
 	public void testAddAuthorityTwice(){
-		realSecurityService.addAuthority(DEFAULT_USERNAME, SecurityDetail.AuthorityRole.ROLE_ADMIN );
-		realSecurityService.addAuthority(DEFAULT_USERNAME, SecurityDetail.AuthorityRole.ROLE_ADMIN );
+
+		final SecurityDetail mockSecurityDetail = generateMockSecurityDetail();
+		final SecurityDetail mockAdminSecurityDetail = generateMockAdminSecurityDetail();
+		Mockito.when(securityRepository.findSecurityDetail(TRAVELLER_USERNAME))
+				.thenReturn(mockSecurityDetail)
+				.thenReturn(mockAdminSecurityDetail);
+
+		securityService.addAuthority(TRAVELLER_USERNAME, SecurityDetail.AuthorityRole.ROLE_ADMIN );
+		securityService.addAuthority(TRAVELLER_USERNAME, SecurityDetail.AuthorityRole.ROLE_ADMIN );
+
+
+		Mockito.verify(securityRepository, Mockito.times(2)).findSecurityDetail(TRAVELLER_USERNAME);
+		Mockito.verify(securityRepository, Mockito.times(2)).updateSecurityDetail(Mockito.<SecurityDetail>anyObject());
+		Mockito.verifyNoMoreInteractions(securityRepository);
+		Mockito.verifyZeroInteractions(travellerRepository,emailService,passwordEncoder);
 	}
 
 	@Test(expected = AssertionError.class)
 	public void testAddNullAuthority(){
-		realSecurityService.addAuthority(DEFAULT_USERNAME, null );
+		securityService.addAuthority(TRAVELLER_USERNAME, null );
 	}
-	@Test // (expected = SnapLogicalException.class) // TODO:
+	@Test // (expected = SnapLogicalException.class) //  Idempotent
 	public void testAddExistingAuthority(){
-		realSecurityService.addAuthority(DEFAULT_USERNAME, SecurityDetail.AuthorityRole.ROLE_USER );
+		final SecurityDetail mockSecurityDetail = generateMockSecurityDetail();
+		Mockito.when(securityRepository.findSecurityDetail(TRAVELLER_USERNAME))
+				.thenReturn(mockSecurityDetail);
+		securityService.addAuthority(TRAVELLER_USERNAME, SecurityDetail.AuthorityRole.ROLE_USER );
+
+		Mockito.verify(securityRepository, Mockito.times(1)).findSecurityDetail(TRAVELLER_USERNAME);
+		Mockito.verify(securityRepository, Mockito.times(1)).updateSecurityDetail(Mockito.<SecurityDetail>anyObject());
+		Mockito.verifyNoMoreInteractions(securityRepository);
+		Mockito.verifyZeroInteractions(travellerRepository,emailService,passwordEncoder);
 	}
 
 	@Test(expected = AssertionError.class)
 	public void testAddAuthorityToNullTraveller(){
-		realSecurityService.addAuthority(null, SecurityDetail.AuthorityRole.ROLE_ADMIN );
+		securityService.addAuthority(null, SecurityDetail.AuthorityRole.ROLE_ADMIN );
 	}
+
+
 
 
 	@Test(expected = SnapNotFoundException.class)
 	public void testAddAuthorityToNonExistantTraveller(){
-		realSecurityService.addAuthority("abrah", SecurityDetail.AuthorityRole.ROLE_ADMIN );
+		Mockito.when(securityRepository.findSecurityDetail(TRAVELLER_USERNAME))
+				.thenReturn(null);
+		securityService.addAuthority("abrah", SecurityDetail.AuthorityRole.ROLE_ADMIN );
 	}
+
 
 
 	@Test
 	public void testRemoveAuthority(){
+		final SecurityDetail mockSecurityDetail = generateMockSecurityDetail();
+		final SecurityDetail mockEmptySecurityDetail = generateMockEmptySecurityDetail();
+		Mockito.when(securityRepository.findSecurityDetail(TRAVELLER_USERNAME))
+				.thenReturn(mockSecurityDetail)
+				.thenReturn(mockSecurityDetail)
+				.thenReturn(mockEmptySecurityDetail);
 
-		SecurityDetail securityDetail = realSecurityService.findLogin(DEFAULT_USERNAME);
+		SecurityDetail securityDetail = securityService.findLogin(TRAVELLER_USERNAME);
+
 		Assert.assertNotNull( securityDetail );
 		Assert.assertNotNull( securityDetail.getAuthorities() );
 		Assert.assertTrue( securityDetail.getAuthorities().size() == 1 );
 		Assert.assertEquals( securityDetail.getAuthorities().iterator().next() , SecurityDetail.AuthorityRole.ROLE_USER );
 
-		realSecurityService.removeAuthority(DEFAULT_USERNAME, SecurityDetail.AuthorityRole.ROLE_USER );
+		securityService.removeAuthority(TRAVELLER_USERNAME, SecurityDetail.AuthorityRole.ROLE_ADMIN );
 
-		securityDetail = realSecurityService.findLogin(DEFAULT_USERNAME);
+		securityDetail = securityService.findLogin(TRAVELLER_USERNAME);
 		Assert.assertNotNull( securityDetail );
 		Assert.assertTrue( securityDetail.getAuthorities() == null || securityDetail.getAuthorities().isEmpty() );
+
+		Mockito.verify(securityRepository, Mockito.times(3)).findSecurityDetail(TRAVELLER_USERNAME);
+		Mockito.verify(securityRepository, Mockito.times(1)).updateSecurityDetail(Mockito.<SecurityDetail>anyObject());
+		Mockito.verifyNoMoreInteractions(securityRepository);
+		Mockito.verifyZeroInteractions(travellerRepository,emailService,passwordEncoder);
 	}
 
-	@Test // (expected = SnapLogicalException.class) // TODO:
+
+
+
+	@Test // (expected = SnapLogicalException.class) //  idempotent
 	public void testRemoveAuthorityTwice(){
-		realSecurityService.removeAuthority(DEFAULT_USERNAME, SecurityDetail.AuthorityRole.ROLE_USER );
-		realSecurityService.removeAuthority(DEFAULT_USERNAME, SecurityDetail.AuthorityRole.ROLE_USER );
+		final SecurityDetail mockSecurityDetail = generateMockSecurityDetail();
+		final SecurityDetail mockEmptySecurityDetail = generateMockEmptySecurityDetail();
+		Mockito.when(securityRepository.findSecurityDetail(TRAVELLER_USERNAME))
+				.thenReturn(mockSecurityDetail)
+				.thenReturn(mockEmptySecurityDetail);
+
+		securityService.removeAuthority(TRAVELLER_USERNAME, SecurityDetail.AuthorityRole.ROLE_USER );
+		securityService.removeAuthority(TRAVELLER_USERNAME, SecurityDetail.AuthorityRole.ROLE_USER );
+
+		Mockito.verify(securityRepository, Mockito.times(2)).findSecurityDetail(TRAVELLER_USERNAME);
+		Mockito.verify(securityRepository, Mockito.times(2)).updateSecurityDetail(Mockito.<SecurityDetail>anyObject());
+		Mockito.verifyNoMoreInteractions(securityRepository);
+		Mockito.verifyZeroInteractions(travellerRepository,emailService,passwordEncoder);
 	}
 
 	@Test(expected = AssertionError.class)
 	public void testRemoveNullAuthority(){
-		realSecurityService.removeAuthority(DEFAULT_USERNAME, null );
+		securityService.removeAuthority(TRAVELLER_USERNAME, null );
 	}
 
-	@Test // (expected = SnapLogicalException.class) // TODO:
+	@Test // (expected = SnapLogicalException.class) // idempotent
 	public void testRemoveNonExistentAuthority(){
-		realSecurityService.removeAuthority(DEFAULT_USERNAME, SecurityDetail.AuthorityRole.ROLE_ADMIN );
+		final SecurityDetail mockSecurityDetail = generateMockSecurityDetail();
+		Mockito.when(securityRepository.findSecurityDetail(TRAVELLER_USERNAME))
+				.thenReturn(mockSecurityDetail);
+
+		securityService.removeAuthority(TRAVELLER_USERNAME, SecurityDetail.AuthorityRole.ROLE_ADMIN );
+
+		Mockito.verify(securityRepository, Mockito.times(1)).findSecurityDetail(TRAVELLER_USERNAME);
+		Mockito.verify(securityRepository, Mockito.times(1)).updateSecurityDetail(Mockito.<SecurityDetail>anyObject());
+		Mockito.verifyNoMoreInteractions(securityRepository);
+		Mockito.verifyZeroInteractions(travellerRepository,emailService,passwordEncoder);
 	}
 
 
 	@Test(expected = AssertionError.class)
 	public void testRemoveAuthorityFromNullTraveller(){
-		realSecurityService.removeAuthority(null, SecurityDetail.AuthorityRole.ROLE_USER );
+		securityService.removeAuthority(null, SecurityDetail.AuthorityRole.ROLE_USER );
 	}
 
 
 	@Test(expected = SnapLogicalException.class)
 	public void testRemoveAuthorityFromNonExistentTraveller(){
-		realSecurityService.removeAuthority("abrah", SecurityDetail.AuthorityRole.ROLE_USER );
+		
+		Mockito.when(securityRepository.findSecurityDetail(TRAVELLER_USERNAME))
+				.thenReturn(null);
+
+		securityService.removeAuthority("abrah", SecurityDetail.AuthorityRole.ROLE_USER );
 	}
+
+
 
 
 	@Test
 	public void testEnableSecurityDetail(){
 
-		realSecurityService.disableSecurityDetail(DEFAULT_USERNAME);
+		Mockito.when(securityRepository.findSecurityDetail(TRAVELLER_USERNAME))
+				.thenReturn(generateMockSecurityDetail())
+				.thenReturn(generateMockDisabledSecurityDetail())
+				.thenReturn(generateMockDisabledSecurityDetail())
+				.thenReturn(generateMockSecurityDetail());
 
-		SecurityDetail securityDetail = realSecurityService.findLogin(DEFAULT_USERNAME);
+		securityService.disableSecurityDetail(TRAVELLER_USERNAME);
+
+		SecurityDetail securityDetail = securityService.findLogin(TRAVELLER_USERNAME);
 		Assert.assertNotNull( securityDetail );
 		Assert.assertTrue( !securityDetail.isEnabled() );
 
-		realSecurityService.enableSecurityDetail(DEFAULT_USERNAME);
+		securityService.enableSecurityDetail(TRAVELLER_USERNAME);
 
-		securityDetail = realSecurityService.findLogin(DEFAULT_USERNAME);
+		securityDetail = securityService.findLogin(TRAVELLER_USERNAME);
 		Assert.assertNotNull( securityDetail );
 		Assert.assertTrue( securityDetail.isEnabled() );
+
+		Mockito.verify(securityRepository, Mockito.times(4)).findSecurityDetail(TRAVELLER_USERNAME);
+		Mockito.verify(securityRepository, Mockito.times(2)).updateSecurityDetail(Mockito.<SecurityDetail>anyObject());
+		Mockito.verifyNoMoreInteractions(securityRepository);
+		Mockito.verifyZeroInteractions(travellerRepository,emailService,passwordEncoder);
 	}
 
 
-	@Test
+
+	@Test // Idempotent
 	public void testEnablingAlreadyEnabledSecurityDetail(){
 
-		SecurityDetail securityDetail = realSecurityService.findLogin(DEFAULT_USERNAME);
+		Mockito.when(securityRepository.findSecurityDetail(TRAVELLER_USERNAME))
+				.thenReturn(generateMockSecurityDetail())
+				.thenReturn(generateMockSecurityDetail())
+				.thenReturn(generateMockSecurityDetail());
+
+		SecurityDetail securityDetail = securityService.findLogin(TRAVELLER_USERNAME);
 		Assert.assertNotNull( securityDetail );
 		Assert.assertTrue( securityDetail.isEnabled() );
 
-		realSecurityService.enableSecurityDetail(DEFAULT_USERNAME);
+		securityService.enableSecurityDetail(TRAVELLER_USERNAME);
 
-		securityDetail = realSecurityService.findLogin(DEFAULT_USERNAME);
+		securityDetail = securityService.findLogin(TRAVELLER_USERNAME);
 		Assert.assertNotNull( securityDetail );
 		Assert.assertTrue( securityDetail.isEnabled() );
+
+
+		Mockito.verify(securityRepository, Mockito.times(3)).findSecurityDetail(TRAVELLER_USERNAME);
+		Mockito.verify(securityRepository, Mockito.times(1)).updateSecurityDetail(Mockito.<SecurityDetail>anyObject());
+		Mockito.verifyNoMoreInteractions(securityRepository);
+		Mockito.verifyZeroInteractions(travellerRepository,emailService,passwordEncoder);
 	}
 
 
 	@Test(expected = SnapLogicalException.class)
 	public void testEnableNonExistentSecurityDetail(){
 
-		SecurityDetail securityDetail = realSecurityService.findLogin("asdasdsa");
+		Mockito.when(securityRepository.findSecurityDetail("asdasdsa"))
+				.thenReturn(null)
+				.thenReturn(null)
+				.thenReturn(null);
+
+
+		SecurityDetail securityDetail = securityService.findLogin("asdasdsa");
 		Assert.assertNull( securityDetail );
 
-		realSecurityService.enableSecurityDetail("asdasdsa");
+		securityService.enableSecurityDetail("asdasdsa");
+
+		Mockito.verify(securityRepository, Mockito.times(3)).findSecurityDetail("asdasdsa");
+		Mockito.verifyNoMoreInteractions(securityRepository);
+		Mockito.verifyZeroInteractions(travellerRepository,emailService,passwordEncoder);
 	}
 
 
 	@Test(expected = AssertionError.class)
 	public void testEnableNullSecurityDetail(){
 
-		realSecurityService.enableSecurityDetail(null);
+		securityService.enableSecurityDetail(null);
 
 	}
 
@@ -289,43 +490,71 @@ public class SecurityServiceTest extends AbstractServiceTest {
 	@Test
 	public void testDisableSecurityDetail(){
 
-		SecurityDetail securityDetail = realSecurityService.findLogin(DEFAULT_USERNAME);
+		Mockito.when(securityRepository.findSecurityDetail(TRAVELLER_USERNAME))
+				.thenReturn(generateMockSecurityDetail())
+				.thenReturn(generateMockSecurityDetail())
+				.thenReturn(generateMockDisabledSecurityDetail());
+
+		SecurityDetail securityDetail = securityService.findLogin(TRAVELLER_USERNAME);
+
 		Assert.assertNotNull( securityDetail );
 		Assert.assertTrue( securityDetail.isEnabled() );
 
-		realSecurityService.disableSecurityDetail(DEFAULT_USERNAME);
+		securityService.disableSecurityDetail(TRAVELLER_USERNAME);
 
-		securityDetail = realSecurityService.findLogin(DEFAULT_USERNAME);
+		securityDetail = securityService.findLogin(TRAVELLER_USERNAME);
 		Assert.assertNotNull( securityDetail );
 		Assert.assertTrue( !securityDetail.isEnabled() );
+
+		Mockito.verify(securityRepository, Mockito.times(3)).findSecurityDetail(TRAVELLER_USERNAME);
+		Mockito.verify(securityRepository, Mockito.times(1)).updateSecurityDetail(Mockito.<SecurityDetail>anyObject());
+		Mockito.verifyNoMoreInteractions(securityRepository);
+		Mockito.verifyZeroInteractions(travellerRepository,emailService,passwordEncoder);
 	}
+
 
 
 	@Test
 	public void testDisablingAlreadyDisabledSecurityDetail(){
 
-		realSecurityService.disableSecurityDetail(DEFAULT_USERNAME);
-		
-		SecurityDetail securityDetail = realSecurityService.findLogin(DEFAULT_USERNAME);
+		Mockito.when(securityRepository.findSecurityDetail(TRAVELLER_USERNAME))
+				.thenReturn(generateMockSecurityDetail())
+				.thenReturn(generateMockDisabledSecurityDetail())
+				.thenReturn(generateMockDisabledSecurityDetail())
+				.thenReturn(generateMockDisabledSecurityDetail());
+
+		securityService.disableSecurityDetail(TRAVELLER_USERNAME);
+
+		SecurityDetail securityDetail = securityService.findLogin(TRAVELLER_USERNAME);
 		Assert.assertNotNull( securityDetail );
 		Assert.assertTrue( !securityDetail.isEnabled() );
 
-		realSecurityService.disableSecurityDetail(DEFAULT_USERNAME);
+		securityService.disableSecurityDetail(TRAVELLER_USERNAME);
 
-		securityDetail = realSecurityService.findLogin(DEFAULT_USERNAME);
+		securityDetail = securityService.findLogin(TRAVELLER_USERNAME);
 		Assert.assertNotNull( securityDetail );
 		Assert.assertTrue( !securityDetail.isEnabled() );
+
+		Mockito.verify(securityRepository, Mockito.times(4)).findSecurityDetail(TRAVELLER_USERNAME);
+		Mockito.verify(securityRepository, Mockito.times(2)).updateSecurityDetail(Mockito.<SecurityDetail>anyObject());
+		Mockito.verifyNoMoreInteractions(securityRepository);
+		Mockito.verifyZeroInteractions(travellerRepository,emailService,passwordEncoder);
 	}
+
 
 
 	@Test(expected = SnapLogicalException.class)
 	public void testDisableNonExistentSecurityDetail(){
 
+		Mockito.when(securityRepository.findSecurityDetail("asdasdsa"))
+				.thenReturn(null)
+				.thenReturn(null)
+				.thenReturn(null);
 
-		SecurityDetail securityDetail = realSecurityService.findLogin("asdasdsa");
+		SecurityDetail securityDetail = securityService.findLogin("asdasdsa");
 		Assert.assertNull( securityDetail );
 
-		realSecurityService.disableSecurityDetail("asdasdsa");
+		securityService.disableSecurityDetail("asdasdsa");
 
 	}
 
@@ -333,40 +562,64 @@ public class SecurityServiceTest extends AbstractServiceTest {
 	@Test(expected = AssertionError.class)
 	public void testDisableNullSecurityDetail(){
 
-		realSecurityService.disableSecurityDetail(null);
+		securityService.disableSecurityDetail(null);
 
 	}
+
+
 
 
 	@Test
 	public void  testChangePassword(){
 
-		SecurityDetail securityDetail = realSecurityService.findLogin(DEFAULT_USERNAME);
+		Mockito.when(securityRepository.findSecurityDetail(TRAVELLER_USERNAME))
+				.thenReturn(generateMockSecurityDetail())
+				.thenReturn(generateMockSecurityDetail())
+				.thenReturn(generateMockSecurityDetail());
+		Mockito.when(passwordEncoder.encodePassword(Mockito.anyString(),Mockito.anyObject()))
+				.thenReturn(TRAVELLER_PASSWORD)
+				.thenReturn(TRAVELLER_PASSWORD)
+				.thenReturn(TRAVELLER_PASSWORD);
+
+		SecurityDetail securityDetail = securityService.findLogin(TRAVELLER_USERNAME);
+
 		Assert.assertNotNull( securityDetail );
 		Assert.assertEquals(securityDetail.getPassword(),
-				passwordEncoder.encodePassword( DEFAULT_PASSWORD, DEFAULT_USERNAME ) );
+				passwordEncoder.encodePassword( TRAVELLER_PASSWORD, TRAVELLER_USERNAME ) );
 
-		realSecurityService.changeSecurityDetailPassword(DEFAULT_USERNAME, "new password");
+		securityService.changeSecurityDetailPassword(TRAVELLER_USERNAME, "new password");
 
-		securityDetail = realSecurityService.findLogin(DEFAULT_USERNAME);
+		securityDetail = securityService.findLogin(TRAVELLER_USERNAME);
+		
 		Assert.assertNotNull( securityDetail );
 		Assert.assertEquals(securityDetail.getPassword(),
-				passwordEncoder.encodePassword( "new password", DEFAULT_USERNAME ) );
+				passwordEncoder.encodePassword( "new password", TRAVELLER_USERNAME ) );
+
+		Mockito.verify(securityRepository, Mockito.times(3)).findSecurityDetail(TRAVELLER_USERNAME);
+		Mockito.verify(securityRepository, Mockito.times(1)).updateSecurityDetail(Mockito.<SecurityDetail>anyObject());
+		Mockito.verify(passwordEncoder, Mockito.times(3)).encodePassword(Mockito.anyString(),Mockito.anyObject());
+		Mockito.verifyNoMoreInteractions(securityRepository,passwordEncoder);
+		Mockito.verifyZeroInteractions(travellerRepository,emailService);
 
 	}
+
 
 	@Test(expected = AssertionError.class)
 	public void  testChangeNullPassword(){
 
-		realSecurityService.changeSecurityDetailPassword(DEFAULT_USERNAME, null);
+		securityService.changeSecurityDetailPassword(TRAVELLER_USERNAME, null);
 
 	}
+
 
 
 	@Test(expected = SnapInvalidClientInputException.class)
 	public void  testChangeInvalidPassword(){
 
-		realSecurityService.changeSecurityDetailPassword(DEFAULT_USERNAME, "");				
+		Mockito.when(securityRepository.findSecurityDetail(TRAVELLER_USERNAME))
+				.thenReturn(generateMockSecurityDetail());
+
+		securityService.changeSecurityDetailPassword(TRAVELLER_USERNAME, "");
 
 	}
 
@@ -375,80 +628,139 @@ public class SecurityServiceTest extends AbstractServiceTest {
 	@Test
 	public void testResetPasswordByEmail(){
 
-		final String originalPassword = passwordEncoder.encodePassword(DEFAULT_PASSWORD,DEFAULT_USERNAME);
-		SecurityDetail securityDetail = securityRepository.findSecurityDetailByEmail(DEFAULT_EMAIL);
-		Assert.assertNotNull( securityDetail ); 
+		Mockito.when(securityRepository.findSecurityDetailByEmail(TRAVELLER_EMAIL))
+				.thenReturn(generateMockSecurityDetail())
+				.thenReturn(new SecurityDetail.Builder()
+					.username(TRAVELLER_USERNAME)
+					.password("RANDOM")
+					.enabled(true)
+					.authorities(new HashSet<String>(){{ add("ROLE_USER"); }})
+					.build());
+		Mockito.when(securityRepository.findSecurityDetail(TRAVELLER_EMAIL))
+				.thenReturn(null);
+		Mockito.when(passwordEncoder.encodePassword(Mockito.anyString(),Mockito.anyObject()))
+				.thenReturn(TRAVELLER_PASSWORD)
+				.thenReturn("RANDOM");
+		Mockito.when(travellerRepository.findTraveller(TRAVELLER_USERNAME)).thenReturn(generateMockTraveller());
+
+		final String originalPassword = passwordEncoder.encodePassword(TRAVELLER_PASSWORD,TRAVELLER_USERNAME);
+
+		SecurityDetail securityDetail = securityRepository.findSecurityDetailByEmail(TRAVELLER_EMAIL);
+
+		Assert.assertNotNull( securityDetail );
 		Assert.assertEquals( securityDetail.getPassword(), originalPassword );
 
-		ReflectionTestUtils.setField(realSecurityService, "passwordEncoder", mockPasswordEncoder );
+		securityService.resetPassword(TRAVELLER_EMAIL);
 
+		securityDetail = securityRepository.findSecurityDetailByEmail(TRAVELLER_EMAIL);
 
-
-		realSecurityService.resetPassword(DEFAULT_EMAIL);
-		securityDetail = securityRepository.findSecurityDetailByEmail(DEFAULT_EMAIL);
 		Assert.assertEquals( securityDetail.getPassword(), "RANDOM" );
 
-		ReflectionTestUtils.setField(realSecurityService, "passwordEncoder", passwordEncoder );
+		Mockito.verify(securityRepository, Mockito.times(1)).findSecurityDetail(TRAVELLER_EMAIL);
+//		Mockito.verify(securityRepository, Mockito.times(1)).findSecurityDetail(TRAVELLER_USERNAME);
+		Mockito.verify(securityRepository, Mockito.times(3)).findSecurityDetailByEmail(TRAVELLER_EMAIL);
+		Mockito.verify(securityRepository, Mockito.times(1)).updateSecurityDetail(Mockito.<SecurityDetail>anyObject());
+		Mockito.verify(travellerRepository, Mockito.times(1)).findTraveller(TRAVELLER_USERNAME);
+		Mockito.verify(passwordEncoder, Mockito.times(2)).encodePassword(Mockito.anyString(),Mockito.anyObject());
+		Mockito.verify(emailService,  Mockito.times(1)).sendPassword(Mockito.<Traveller>anyObject(),Mockito.anyString());
+		Mockito.verifyNoMoreInteractions(travellerRepository,securityRepository,passwordEncoder,emailService);
+
 	}
+
+
 
 
 	@Test
 	public void testResetPasswordByUsername(){
 
-		final String originalPassword = passwordEncoder.encodePassword(DEFAULT_PASSWORD,DEFAULT_USERNAME);
-		SecurityDetail securityDetail = securityRepository.findSecurityDetail(DEFAULT_USERNAME);
+//		Mockito.when(securityRepository.findSecurityDetailByEmail(TRAVELLER_USERNAME))
+//				.thenReturn(null);
+		Mockito.when(securityRepository.findSecurityDetail(TRAVELLER_USERNAME))
+				.thenReturn(generateMockSecurityDetail())
+				.thenReturn(generateMockSecurityDetail())
+				.thenReturn(new SecurityDetail.Builder()
+					.username(TRAVELLER_USERNAME)
+					.password("RANDOM")
+					.enabled(true)
+					.authorities(new HashSet<String>(){{ add("ROLE_USER"); }})
+					.build());
+		Mockito.when(passwordEncoder.encodePassword(Mockito.anyString(),Mockito.anyObject()))
+				.thenReturn(TRAVELLER_PASSWORD)
+				.thenReturn("RANDOM");
+		Mockito.when(travellerRepository.findTraveller(TRAVELLER_USERNAME)).thenReturn(generateMockTraveller());
+
+		final String originalPassword = passwordEncoder.encodePassword(TRAVELLER_PASSWORD, TRAVELLER_USERNAME);
+		SecurityDetail securityDetail = securityRepository.findSecurityDetail(TRAVELLER_USERNAME);
+
 		Assert.assertNotNull( securityDetail );
 		Assert.assertEquals( securityDetail.getPassword(), originalPassword );
 
-		ReflectionTestUtils.setField(realSecurityService, "passwordEncoder", mockPasswordEncoder );
+		securityService.resetPassword(TRAVELLER_USERNAME);
 
-//		Mockito.when(mockPasswordEncoder.encodePassword(Mockito.anyString(),DEFAULT_USERNAME)).thenReturn("RANDOM");
-
-		realSecurityService.resetPassword(DEFAULT_USERNAME);
-
-		 securityDetail = securityRepository.findSecurityDetail(DEFAULT_USERNAME);
+		securityDetail = securityRepository.findSecurityDetail(TRAVELLER_USERNAME);
 		Assert.assertEquals( securityDetail.getPassword(), "RANDOM" );
 
-		ReflectionTestUtils.setField(realSecurityService, "passwordEncoder", passwordEncoder );
+
+//		Mockito.verify(securityRepository, Mockito.times(1)).findSecurityDetailByEmail(TRAVELLER_USERNAME);
+		Mockito.verify(securityRepository, Mockito.times(3)).findSecurityDetail(TRAVELLER_USERNAME);
+		Mockito.verify(securityRepository, Mockito.times(1)).updateSecurityDetail(Mockito.<SecurityDetail>anyObject());
+		Mockito.verify(travellerRepository, Mockito.times(1)).findTraveller(TRAVELLER_USERNAME);
+		Mockito.verify(passwordEncoder, Mockito.times(2)).encodePassword(Mockito.anyString(),Mockito.anyObject());
+		Mockito.verify(emailService,  Mockito.times(1)).sendPassword(Mockito.<Traveller>anyObject(),Mockito.anyString());
+		Mockito.verifyNoMoreInteractions(travellerRepository,securityRepository,passwordEncoder,emailService);
 	}
+
 
 
 	@Test(expected = SnapNotFoundException.class)
 	public void testResetPasswordByNonExistentEmail(){
-		realSecurityService.resetPassword("avava@asass.com");
+
+		Mockito.when(securityRepository.findSecurityDetailByEmail("avava@asass.com"))
+				.thenReturn(null);
+		Mockito.when(securityRepository.findSecurityDetail("avava@asass.com"))
+				.thenReturn(null);
+
+		securityService.resetPassword("avava@asass.com");
 	}
+
+
 
 
 	@Test(expected = SnapNotFoundException.class)
 	public void testResetPasswordByNonexistentUsername(){
-		realSecurityService.resetPassword("avava");
+		Mockito.when(securityRepository.findSecurityDetailByEmail("avava@asass.com"))
+				.thenReturn(null);
+		Mockito.when(securityRepository.findSecurityDetail("avava@asass.com"))
+				.thenReturn(null);
+		securityService.resetPassword("avava");
 	}
 
 
 	@Test(expected = SnapLogicalException.class)
 	public void testResetPasswordWhereUsernameAndEmailMatch(){
-		
-		Traveller traveller = new Traveller.Builder()
-					.username("testusermatch")
-					.fullname(DEFAULT_FULLNAME)
-					.password(DEFAULT_PASSWORD)
-					.email("testusermatch@example.org").build();
 
-		realSecurityService.registerTraveller(traveller);
-
-		traveller = new Traveller.Builder()
+		Mockito.when(securityRepository.findSecurityDetailByEmail("avava@asass.com"))
+				.thenReturn(new SecurityDetail.Builder()
+					.username(TRAVELLER_USERNAME)
+					.password(TRAVELLER_PASSWORD)
+					.enabled(true)
+					.authorities(new HashSet<String>())
+					.build());
+		Mockito.when(securityRepository.findSecurityDetail("avava@asass.com"))
+				.thenReturn(new SecurityDetail.Builder()
 					.username("testusermatch@example.org")
-					.fullname(DEFAULT_FULLNAME)
-					.password(DEFAULT_PASSWORD)
-					.email("anothertestusermatch@example.org").build();
+					.password(TRAVELLER_PASSWORD)
+					.enabled(true)
+					.authorities(new HashSet<String>())
+					.build());
 
-		realSecurityService.registerTraveller(traveller);
-
-		realSecurityService.resetPassword("testusermatch@example.org");
+		securityService.resetPassword("testusermatch@example.org");
 	}
+
+
 
 
 //	public void enforceAristocracy();
 	
-*/
+
 }
