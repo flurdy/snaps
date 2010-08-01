@@ -416,9 +416,12 @@ public class SecurityServiceTest extends AbstractServiceTest {
 	}
 
 
+	
 	@Test(expected = SnapLogicalException.class)
 	public void testAddSuperAuthorityAsNonSuper(){
 		Mockito.when(travellerService.findCurrentTraveller()).thenReturn(generateAdminTraveller());
+		Mockito.when(securityRepository.findSecurityDetail(TRAVELLER_USERNAME))
+				.thenReturn(generateMockSecurityDetail());
 		securityService.addAuthority(TRAVELLER_USERNAME, SecurityDetail.AuthorityRole.ROLE_SUPER );
 
 	}
@@ -517,6 +520,50 @@ public class SecurityServiceTest extends AbstractServiceTest {
 		securityService.removeAuthority("abrah", SecurityDetail.AuthorityRole.ROLE_USER );
 	}
 
+
+
+
+	@Test
+	public void testRemoveSuperAuthorityAsSuper(){
+		Mockito.when(travellerService.findCurrentTraveller()).thenReturn(generateSuperTraveller());
+		Mockito.when(securityRepository.findSecurityDetail(TRAVELLER_USERNAME))
+				.thenReturn(generateMockSuperSecurityDetail())
+				.thenReturn(generateMockSuperSecurityDetail())
+				.thenReturn(generateMockSecurityDetail());
+
+		SecurityDetail securityDetail = securityService.findLogin(TRAVELLER_USERNAME);
+
+		Assert.assertNotNull( securityDetail );
+		Assert.assertNotNull( securityDetail.getAuthorities() );
+		Assert.assertTrue( securityDetail.getAuthorities().size() == 2 );
+		Assert.assertTrue( securityDetail.hasAuthority( SecurityDetail.AuthorityRole.ROLE_SUPER ) );
+
+		securityService.removeAuthority(TRAVELLER_USERNAME, SecurityDetail.AuthorityRole.ROLE_SUPER );
+
+		securityDetail = securityService.findLogin(TRAVELLER_USERNAME);
+
+		Assert.assertNotNull( securityDetail );
+		Assert.assertNotNull( securityDetail.getAuthorities() );
+		Assert.assertTrue( securityDetail.getAuthorities().size() == 1 );
+		Assert.assertTrue( !securityDetail.hasAuthority( SecurityDetail.AuthorityRole.ROLE_SUPER ) );
+
+		Mockito.verify(securityRepository, Mockito.times(3)).findSecurityDetail(TRAVELLER_USERNAME);
+		Mockito.verify(securityRepository, Mockito.times(1)).updateSecurityDetail(Mockito.<SecurityDetail>anyObject());
+		Mockito.verify(travellerService).findCurrentTraveller();
+		Mockito.verifyNoMoreInteractions(travellerService,securityRepository);
+		Mockito.verifyZeroInteractions(travellerRepository,emailService,passwordEncoder);
+	}
+
+
+
+	@Test(expected = SnapLogicalException.class)
+	public void testRemoveSuperAuthorityAsNonSuper(){
+		Mockito.when(travellerService.findCurrentTraveller()).thenReturn(generateAdminTraveller());
+		Mockito.when(securityRepository.findSecurityDetail(TRAVELLER_USERNAME))
+				.thenReturn(generateMockSuperSecurityDetail());
+		securityService.removeAuthority(TRAVELLER_USERNAME, SecurityDetail.AuthorityRole.ROLE_SUPER );
+
+	}
 
 
 

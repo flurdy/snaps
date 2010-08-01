@@ -1,5 +1,9 @@
 package com.flurdy.grid.snaps.domain;
 
+import com.flurdy.grid.snaps.service.AbstractService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,6 +21,8 @@ import javax.persistence.*;
 })
 @Entity
 public class HolidayGroup implements Serializable {
+
+	protected static final Logger log = LoggerFactory.getLogger(HolidayGroup.class);
 
 	@Id
 	@GeneratedValue
@@ -82,10 +88,12 @@ public class HolidayGroup implements Serializable {
 	public boolean isMember(Traveller traveller){
 		if( traveller != null ){
 			if( members != null && !members.isEmpty()){
-				for( HolidayMember holidayMember : members ){
+				for( HolidayMember holidayMember : members ){					
 					if( holidayMember.getTraveller()!=null && holidayMember.getTraveller().equals(traveller) ){
 						return holidayMember.isApproved();
-					}	
+//					} else {
+//						log.debug("Traveller is not a member");
+					}
 				}
 			}
 		}

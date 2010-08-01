@@ -303,13 +303,19 @@ public class SecurityService extends AbstractService implements ISecurityService
 			SecurityDetail securityDetail = securityRepository.findSecurityDetail(username);
 
 			if (securityDetail != null ){
-	//			log.debug("Auths:"+securityDetail.getAuthorities().size());
 
-				securityDetail.removeAuthority(authority);
+				if( (authority == AuthorityRole.ROLE_SUPER
+								&& admin.getSecurityDetail().hasAuthority(AuthorityRole.ROLE_SUPER ) )
+							|| (authority != AuthorityRole.ROLE_SUPER) ){
 
-	//			log.debug("Auths:"+securityDetail.getAuthorities().size());
+					securityDetail.removeAuthority(authority);
 
-				securityRepository.updateSecurityDetail(securityDetail);
+					securityRepository.updateSecurityDetail(securityDetail);
+
+				} else {
+					throw new SnapLogicalException(SnapLogicalException.SnapLogicalError.ACCESS_DENIED);
+				}
+
 			} else {
 				throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.SECURITY_DETAILS);
 			}
@@ -332,19 +338,25 @@ public class SecurityService extends AbstractService implements ISecurityService
 				(admin.getSecurityDetail().hasAuthority(AuthorityRole.ROLE_ADMIN)
 				|| admin.getSecurityDetail().hasAuthority(AuthorityRole.ROLE_SUPER))){
 
-		log.info("Admin: " + admin + " is adding authority ["+authority+"] to: " + username);
+			log.info("Admin: " + admin + " is adding authority ["+authority+"] to: " + username);
 
 			SecurityDetail securityDetail = securityRepository.findSecurityDetail(username);
 
 			if (securityDetail != null ){
 
-	//			log.debug("Auths:"+securityDetail.getAuthorities().size());
 
-				securityDetail.addAuthority(authority);
+				if( ( authority == AuthorityRole.ROLE_SUPER
+							&& admin.getSecurityDetail().hasAuthority(AuthorityRole.ROLE_SUPER ) )
+						|| ( authority != AuthorityRole.ROLE_SUPER ) ){
 
-	//			log.debug("Auths:"+securityDetail.getAuthorities().size());
+					securityDetail.addAuthority(authority);
 
-				securityRepository.updateSecurityDetail(securityDetail);
+					securityRepository.updateSecurityDetail(securityDetail);
+
+				} else {
+					throw new SnapLogicalException(SnapLogicalException.SnapLogicalError.ACCESS_DENIED);
+				}
+
 			} else {
 				throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.SECURITY_DETAILS);
 			}

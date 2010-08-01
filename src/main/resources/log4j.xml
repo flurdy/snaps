@@ -81,7 +81,7 @@
 	</logger>
 
 	<logger name="org.springframework.web">
-		<level value="info" />
+		<level value="warn" />
 		<appender-ref ref="console" />
 	</logger>
 

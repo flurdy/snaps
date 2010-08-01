@@ -34,7 +34,7 @@ public abstract class AbstractGridController {
 
 	protected ModelAndView returnTemplate(String view){
 		ModelAndView modelAndView = new ModelAndView(view);
-		modelAndView.getModel().put("analyticsId", "123" );
+		modelAndView.getModel().put("analyticsId", "12345" );
 		log.debug("returning view: "+view);
 		return modelAndView;
 	}

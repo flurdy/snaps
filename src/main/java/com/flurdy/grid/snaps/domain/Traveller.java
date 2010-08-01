@@ -142,13 +142,15 @@ public class Traveller implements Serializable {
 		if( object != null && object instanceof Traveller){
 			Traveller traveller = (Traveller) object;
 
-			if( (travellerId == traveller.getTravellerId())
-					&& fullname.equals(traveller.getFullname())
-					&& email.equals(traveller.getEmail()) ){
-				if( (securityDetail != null && traveller.getSecurityDetail() != null
-						&& traveller.getSecurityDetail().equals(this.securityDetail))
-						|| (securityDetail == null && traveller.getSecurityDetail() == null )	){
-					return true;
+			if( (travellerId == null && traveller.getTravellerId() == null ) || travellerId.equals( traveller.getTravellerId() ) ){
+				if(  fullname.equals(traveller.getFullname()) ){
+					if( email.equals(traveller.getEmail()) ){
+						if( (securityDetail != null && traveller.getSecurityDetail() != null
+									&& traveller.getSecurityDetail().equals(this.securityDetail))
+								|| (securityDetail == null && traveller.getSecurityDetail() == null )	){
+							return true;
+						}
+					}
 				}
 			}
 
