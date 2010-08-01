@@ -95,7 +95,8 @@ public class EmailService extends AbstractService implements IEmailService {
 				Set<Traveller> peopleToBeNotified = findPeopleToBeNotifiedOfRegistrations();
 
 				if( peopleToBeNotified == null || peopleToBeNotified.isEmpty() ){
-					throw new SnapLogicalException(SnapLogicalException.SnapLogicalError.INVALID_STATE,"No people can be notified!");
+//					throw new napLogicalException(SnapLogicalException.SnapLogicalError.INVALID_STATE,"No people can be notified!");
+					log.warn("No people can be notified!");
 				}
 				while( !peopleToBeNotified.isEmpty() ){ // oooh never ending looooooooop
 					Set<Traveller> nextRecipients = findNextRecipients(peopleToBeNotified);

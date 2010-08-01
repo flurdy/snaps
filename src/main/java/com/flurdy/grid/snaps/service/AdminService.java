@@ -18,11 +18,16 @@ public class AdminService implements IAdminService {
 
 	@Autowired ITravellerRepository travellerRepository;
 
+	@Autowired ITravellerService travellerService;
+
 	@Override
 	public void updateTraveller(Traveller traveller) {
 
 		if( traveller != null ){
 			if( traveller.isValid() ){
+
+				Traveller admin = travellerService.findCurrentTraveller();
+				log.info("Admin:" + admin + "| is updating: " + traveller);
 
 				Traveller realTraveller = travellerRepository.findTraveller(traveller.getTravellerId());
 				if( realTraveller != null ){
@@ -51,7 +56,9 @@ public class AdminService implements IAdminService {
 		Traveller traveller = travellerRepository.findTraveller(travellerId);
 
 		if( traveller != null ){
-			log.info("Deleting traveller"+ traveller);
+
+			Traveller admin = travellerService.findCurrentTraveller();
+			log.info("Admin:" + admin + "| is deleting: " + traveller);
 
 			travellerRepository.deleteTraveller(traveller);
 		} else {

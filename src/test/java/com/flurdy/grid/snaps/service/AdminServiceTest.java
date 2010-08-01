@@ -38,6 +38,7 @@ public class AdminServiceTest extends AbstractServiceTest {
 	@Test
 	public void testUpdateTraveller(){
 
+		Mockito.when(travellerService.findCurrentTraveller()).thenReturn(generateDefaultTraveller());
 		Mockito.when(travellerRepository.findTraveller(new Long(1))).thenReturn(generateDefaultRegisteredTraveller());
 
 		Traveller traveller = new Traveller.Builder()
@@ -56,6 +57,7 @@ public class AdminServiceTest extends AbstractServiceTest {
 //		Assert.assertEquals( traveller.getFullname(), TRAVELLER_FULLNAME );
 //		Assert.assertEquals( traveller.getEmail(), TRAVELLER_EMAIL );
 
+		Mockito.verify(travellerService).findCurrentTraveller();
 		Mockito.verify(travellerRepository).findTraveller(new Long(1));
 		Mockito.verify(travellerRepository).updateTraveller(Mockito.<Traveller>anyObject());
 		Mockito.verifyNoMoreInteractions(travellerRepository);
@@ -126,11 +128,12 @@ public class AdminServiceTest extends AbstractServiceTest {
 
 	@Test
 	public void testDeleteTraveller(){
-
+		Mockito.when(travellerService.findCurrentTraveller()).thenReturn(generateDefaultTraveller());
 		Mockito.when(travellerRepository.findTraveller(new Long(1))).thenReturn(generateDefaultRegisteredTraveller());
 
 		adminService.deleteTraveller(new Long(1));
 
+		Mockito.verify(travellerService).findCurrentTraveller();
 		Mockito.verify(travellerRepository).findTraveller(new Long(1));
 		Mockito.verify(travellerRepository).deleteTraveller(Mockito.<Traveller>anyObject());
 		Mockito.verifyNoMoreInteractions(travellerRepository);

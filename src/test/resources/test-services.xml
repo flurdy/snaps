@@ -20,5 +20,6 @@
     <bean id="travellerService" class="com.flurdy.grid.snaps.service.TravellerService" />
     <bean id="adminService" class="com.flurdy.grid.snaps.service.AdminService" />
 
+    <bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder"/>
 
 </beans>

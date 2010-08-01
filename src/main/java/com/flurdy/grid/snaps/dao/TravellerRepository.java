@@ -23,6 +23,9 @@ public class TravellerRepository extends AbstractRepository implements ITravelle
 //		SecurityDetail securityDetail = traveller.getSecurityDetail();
 
 //		entityManager.persist(sec);
+//		log.debug("adding traveller:" + traveller);
+//		log.debug("with sd:" + traveller.getSecurityDetail());
+//		log.debug("with sd:" + traveller.getSecurityDetail().getPassword());
 
 		entityManager.persist(traveller);
 

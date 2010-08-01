@@ -83,7 +83,7 @@ public class HolidayGroup implements Serializable {
 		if( traveller != null ){
 			if( members != null && !members.isEmpty()){
 				for( HolidayMember holidayMember : members ){
-					if( holidayMember.getTraveller().equals(traveller) ){
+					if( holidayMember.getTraveller()!=null && holidayMember.getTraveller().equals(traveller) ){
 						return holidayMember.isApproved();
 					}	
 				}
