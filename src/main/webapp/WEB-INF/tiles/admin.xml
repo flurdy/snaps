@@ -21,5 +21,17 @@
 	</definition>
 
 
+    <definition name="admin/holiday/list" extends="adminTemplate">
+        <put-attribute name="pageTitle" type="string" value="holiday"/>
+        <put-attribute name="cargo" value="/WEB-INF/views/admin/holiday/listHolidays.jsp"/>
+    </definition>
+
+
+    <definition name="admin/holiday/read" extends="adminTemplate">
+        <put-attribute name="pageTitle" type="string" value="holiday"/>
+        <put-attribute name="cargo" value="/WEB-INF/views/admin/holiday/editHoliday.jsp"/>
+    </definition>
+
+
 
 </tiles-definitions>

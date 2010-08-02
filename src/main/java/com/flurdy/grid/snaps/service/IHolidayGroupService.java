@@ -1,6 +1,8 @@
 package com.flurdy.grid.snaps.service;
 
 import com.flurdy.grid.snaps.domain.HolidayGroup;
+
+import java.util.List;
 import java.util.Set;
 
 import com.flurdy.grid.snaps.domain.Traveller;
@@ -21,4 +23,6 @@ public interface IHolidayGroupService {
 
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public void addTravellerAsPendingMember(HolidayGroup holidayGroup, Traveller traveller);
+
+	public List<HolidayGroup> findAllHolidays();
 }

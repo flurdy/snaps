@@ -7,6 +7,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+
+import com.flurdy.grid.snaps.domain.HolidayMember;
+import com.flurdy.grid.snaps.domain.PhotoAlbum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -48,9 +51,8 @@ public class HolidayGroupRepository implements IHolidayGroupRepository {
 	@Override
 	public Collection<HolidayGroup> findHolidayGroups(String groupName) {
 
-		// TODO convert to name query
 		Query query = entityManager.createQuery(
-				"select hg from HolidayGroup hg where hg.groupName like '%"+ groupName +"%'" );
+				"select hg from HolidayGroup hg where hg.groupName like '%"+ groupName +"%' order by hg.groupId" );
 		@SuppressWarnings("unchecked")
 		List<HolidayGroup> results = query.getResultList();
 		return results;
@@ -61,6 +63,39 @@ public class HolidayGroupRepository implements IHolidayGroupRepository {
 	public void updateHolidayGroup(HolidayGroup holidayGroup) {
 		assert holidayGroup != null;
 		entityManager.merge(holidayGroup);	
+	}
+
+	@Override
+	public Collection<HolidayGroup> findAllHolidayGroups() {
+		Query query = entityManager.createQuery(
+				"select hg from HolidayGroup hg order by hg.groupId" );
+		@SuppressWarnings("unchecked")
+		List<HolidayGroup> results = query.getResultList();
+		return results;
+	}
+
+	@Override
+	public void deleteHolidayGroup(HolidayGroup holidayGroup) {
+
+		assert holidayGroup != null;
+		Query query = entityManager.createNamedQuery("holidayGroup.findById");
+		query.setParameter("groupId", holidayGroup.getGroupId() );
+		holidayGroup = (HolidayGroup) query.getSingleResult();
+
+		if( holidayGroup.getMembers() != null ){
+			for( HolidayMember holidayMember : holidayGroup.getMembers()){
+			}
+		}
+
+		if( holidayGroup.getPhotoAlbums() != null ){
+			for( PhotoAlbum photoAlbum: holidayGroup.getPhotoAlbums()){
+			}
+		}
+
+		entityManager.remove(holidayGroup);
+
+		entityManager.flush();
+
 	}
 
 

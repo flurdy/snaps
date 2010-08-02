@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
@@ -23,10 +24,9 @@ public class HolidayServiceIntegrationTest extends AbstractServiceIntegrationTes
 
 	@Mock
 	private IEmailService emailService;
-//
-//	@InjectMocks
-//	@Autowired
-//	private ITravellerRepository travellerRepository;
+
+	@Mock
+	private PasswordEncoder passwordEncoder;
 
 	@InjectMocks
 	@Autowired
@@ -52,22 +52,20 @@ public class HolidayServiceIntegrationTest extends AbstractServiceIntegrationTes
 	@Before
 	public void setUp(){
 		MockitoAnnotations.initMocks(this);
-		registerDefaultTraveller();
-//		addDefaultHoliday();
 	}
 
 	private void registerDefaultTraveller(){
+		Mockito.when(passwordEncoder.encodePassword(Mockito.anyString(),Mockito.anyObject())).thenReturn(ENCODED_PASSWORD);
 		Traveller traveller = generateDefaultTraveller();
 		securityService.registerTraveller(traveller);
 		defaultTravellerId = traveller.getTravellerId();
 		Assert.assertTrue( defaultTravellerId > 0 );
 		Mockito.verify(emailService).notifyNewRegistration(Mockito.<Traveller>anyObject());
-		Mockito.verifyNoMoreInteractions(emailService);
+		Mockito.verify(passwordEncoder).encodePassword(Mockito.anyString(),Mockito.anyObject());
+		Mockito.verifyNoMoreInteractions(emailService,passwordEncoder);
 	}
 
 	private Traveller findDefaultTraveller(){
-//		Mockito.when(travellerService.findTraveller(defaultTravellerId))
-//				.thenReturn(realTravellerService.findTraveller(defaultTravellerId));
 		Traveller traveller = realTravellerService.findTraveller(defaultTravellerId);
 		return traveller;
 	}
@@ -94,6 +92,7 @@ public class HolidayServiceIntegrationTest extends AbstractServiceIntegrationTes
 
 	@Test
 	public void testFindHoliday(){
+		registerDefaultTraveller();
 		addDefaultHoliday();
 
 		Mockito.when(travellerService.findCurrentTraveller()).thenReturn(findDefaultTraveller());
@@ -110,6 +109,7 @@ public class HolidayServiceIntegrationTest extends AbstractServiceIntegrationTes
 	@Test
 	public void testAddHoliday(){
 
+		registerDefaultTraveller();
 
 		HolidayGroup holidayGroupWithMember = new HolidayGroup.Builder()
 					.groupName(DEFAULT_HOLIDAY3_NAME)

@@ -1,10 +1,13 @@
 package com.flurdy.grid.snaps.service;
 
+import com.flurdy.grid.snaps.dao.IHolidayGroupRepository;
 import com.flurdy.grid.snaps.dao.ITravellerRepository;
+import com.flurdy.grid.snaps.domain.HolidayGroup;
 import com.flurdy.grid.snaps.domain.Traveller;
 import com.flurdy.grid.snaps.exception.SnapLogicalException;
 import com.flurdy.grid.snaps.exception.SnapNotFoundException;
 import com.flurdy.grid.snaps.exception.SnapTechnicalException;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -22,6 +25,9 @@ public class AdminServiceTest extends AbstractServiceTest {
 
 	@Mock
 	private ITravellerService travellerService;
+
+	@Mock
+	private IHolidayGroupRepository holidayGroupRepository;
 
 	@InjectMocks
 	private IAdminService adminService = new AdminService();
@@ -173,6 +179,122 @@ public class AdminServiceTest extends AbstractServiceTest {
 		adminService.deleteTraveller(-1);
 
 	}
+
+
+	@Test
+	public void testUpdateHoliday(){
+
+		Mockito.when(travellerService.findCurrentTraveller())
+				.thenReturn(generateDefaultTraveller());
+
+		Mockito.when(holidayGroupRepository.findHolidayGroup(new Long(1)))
+				.thenReturn(generateDefaultHoliday());
+
+		HolidayGroup holidayGroup = generateDefaultHoliday();
+		holidayGroup.setGroupName("asasasasas");
+		holidayGroup.setGroupId(new Long(1));
+
+		adminService.updateHolidayGroup(holidayGroup);
+
+		Mockito.verify(travellerService, Mockito.times(1)).findCurrentTraveller();
+		Mockito.verify(holidayGroupRepository, Mockito.times(1)).findHolidayGroup(Mockito.anyLong());
+		Mockito.verify(holidayGroupRepository, Mockito.times(1)).updateHolidayGroup(Mockito.<HolidayGroup>anyObject());
+		Mockito.verifyNoMoreInteractions(travellerService,holidayGroupRepository);
+	}
+
+
+	@Test(expected = SnapLogicalException.class)
+	public void testUpdateHolidayWithNullName(){
+
+		Mockito.when(travellerService.findCurrentTraveller())
+				.thenReturn(generateDefaultTraveller());
+
+		Mockito.when(holidayGroupRepository.findHolidayGroup(new Long(1)))
+				.thenReturn(generateDefaultHoliday());
+
+		HolidayGroup holidayGroup = generateDefaultHoliday();
+		holidayGroup.setGroupName(null);
+
+		adminService.updateHolidayGroup(holidayGroup);
+	}
+
+
+	@Test(expected = SnapLogicalException.class)
+	public void testUpdateHolidayWithInvalidName(){
+
+		Mockito.when(travellerService.findCurrentTraveller())
+				.thenReturn(generateDefaultTraveller());
+
+		Mockito.when(holidayGroupRepository.findHolidayGroup(new Long(1)))
+				.thenReturn(generateDefaultHoliday());
+
+		HolidayGroup holidayGroup = generateDefaultHoliday();
+		holidayGroup.setGroupName("");
+
+		adminService.updateHolidayGroup(holidayGroup);
+	}
+
+
+
+	@Test(expected = SnapLogicalException.class)
+	public void testUpdateNonExistentHoliday(){
+
+		Mockito.when(travellerService.findCurrentTraveller())
+				.thenReturn(generateDefaultTraveller());
+
+		Mockito.when(holidayGroupRepository.findHolidayGroup(new Long(1)))
+				.thenReturn(null);
+
+		HolidayGroup holidayGroup = generateDefaultHoliday();
+		holidayGroup.setGroupName("asasassa");
+
+		adminService.updateHolidayGroup(holidayGroup);
+	}
+
+
+	@Test
+	public void testDeleteHoliday(){
+
+		Mockito.when(travellerService.findCurrentTraveller())
+				.thenReturn(generateDefaultTraveller());
+
+		Mockito.when(holidayGroupRepository.findHolidayGroup(new Long(1)))
+				.thenReturn(generateDefaultHoliday());
+
+
+		adminService.deleteHolidayGroup(1);
+
+
+		Mockito.verify(travellerService, Mockito.times(1)).findCurrentTraveller();
+		Mockito.verify(holidayGroupRepository, Mockito.times(1)).findHolidayGroup(Mockito.anyLong());
+		Mockito.verify(holidayGroupRepository, Mockito.times(1)).deleteHolidayGroup(Mockito.<HolidayGroup>anyObject());
+		Mockito.verifyNoMoreInteractions(travellerService,holidayGroupRepository);
+	}
+
+
+	@Test // idempotent
+	public void testDeleteNonExistentHoliday(){
+
+		Mockito.when(travellerService.findCurrentTraveller())
+				.thenReturn(generateDefaultTraveller());
+
+		Mockito.when(holidayGroupRepository.findHolidayGroup(new Long(1)))
+				.thenReturn(null);
+
+
+		adminService.deleteHolidayGroup(1);
+	}
+
+
+	@Test(expected = SnapTechnicalException.class)
+	public void testDeleteInvalidHoliday(){
+
+		Mockito.when(travellerService.findCurrentTraveller())
+				.thenReturn(generateDefaultTraveller());
+
+		adminService.deleteHolidayGroup(-1);		
+	}
+
 
 
 }

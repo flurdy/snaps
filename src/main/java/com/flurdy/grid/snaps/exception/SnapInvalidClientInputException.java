@@ -10,6 +10,7 @@ public class SnapInvalidClientInputException extends SnapLogicalException {
 		PASSWORD_LENGTH("Password not long enough"),
 		URL("URL not valid"),
 		USERNAME_TAKEN("Username already taken"),
+		HOLIDAY("Holiday invalid"),
 		UNSPECIFIED("Input invalid");
 
 		private String description;
@@ -28,6 +29,11 @@ public class SnapInvalidClientInputException extends SnapLogicalException {
 	public SnapInvalidClientInputException(InputError snapInputError){
 		super(SnapLogicalError.INVALID_INPUT,snapInputError.getDescription());
 		this.inputError = snapInputError;
+	}
+
+	public SnapInvalidClientInputException(String message){
+		super(SnapLogicalError.INVALID_INPUT, message);
+		this.inputError = InputError.UNSPECIFIED;
 	}
 
 	public InputError getInputError(){

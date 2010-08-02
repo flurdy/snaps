@@ -2,7 +2,10 @@ package com.flurdy.grid.snaps.service;
 
 import com.flurdy.grid.snaps.dao.IHolidayGroupRepository;
 import com.flurdy.grid.snaps.domain.HolidayGroup;
+
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.flurdy.grid.snaps.domain.HolidayMember;
@@ -131,6 +134,11 @@ public class HolidayGroupService extends AbstractService implements IHolidayGrou
 		} else {
 			throw new SnapTechnicalException(SnapTechnicalError.INVALID_INPUT,"Not a valid holiday");
 		}
+	}
+
+	@Override
+	public List<HolidayGroup> findAllHolidays() {
+		return new ArrayList(holidayGroupRepository.findAllHolidayGroups());				
 	}
 
 	private Set<HolidayGroup> findHolidayGroups(String groupName) {

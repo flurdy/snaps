@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract class AbstractService {
 
 
-	protected static final Logger log = LoggerFactory.getLogger(AbstractService.class);
+	protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
 	protected ISecurityRepository securityRepository;

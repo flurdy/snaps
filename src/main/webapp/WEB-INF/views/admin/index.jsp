@@ -4,9 +4,14 @@
 
 <div class="centreCargo">
 
-	<p>
-		<a href="${pageContext.request.contextPath}/admin/traveller">manage travellers</a>
-	</p>
+	<ul>
+        <li>
+		    <a href="${pageContext.request.contextPath}/admin/traveller">manage travellers</a>
+         </li>
+        <li>
+		    <a href="${pageContext.request.contextPath}/admin/holiday">manage holidays</a>
+         </li>
+	</ul>
 
 	<br/>
 	<br/>

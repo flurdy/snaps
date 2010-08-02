@@ -1,12 +1,12 @@
 package com.flurdy.grid.snaps.integration;
 
+import com.flurdy.grid.snaps.dao.IHolidayGroupRepository;
 import com.flurdy.grid.snaps.dao.ISecurityRepository;
+import com.flurdy.grid.snaps.domain.HolidayGroup;
+import com.flurdy.grid.snaps.domain.HolidayMember;
 import com.flurdy.grid.snaps.domain.SecurityDetail;
 import com.flurdy.grid.snaps.domain.Traveller;
-import com.flurdy.grid.snaps.service.IAdminService;
-import com.flurdy.grid.snaps.service.IEmailService;
-import com.flurdy.grid.snaps.service.ISecurityService;
-import com.flurdy.grid.snaps.service.ITravellerService;
+import com.flurdy.grid.snaps.service.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,6 +16,8 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
+
+import java.util.HashSet;
 
 
 public class AdminServiceIntegrationTest  extends AbstractServiceIntegrationTest {
@@ -33,6 +35,14 @@ public class AdminServiceIntegrationTest  extends AbstractServiceIntegrationTest
 	@InjectMocks
 	@Autowired
 	private IAdminService adminService;
+
+	@InjectMocks
+	@Autowired
+	private IHolidayGroupService holidayGroupService;
+
+	@InjectMocks
+	@Autowired
+	private IHolidayGroupRepository holidayGroupRepository;
 
 	@InjectMocks
 	@Autowired
@@ -85,6 +95,29 @@ public class AdminServiceIntegrationTest  extends AbstractServiceIntegrationTest
 		securityService.addAuthority(ADMIN_USERNAME, SecurityDetail.AuthorityRole.ROLE_ADMIN );
 
 		Mockito.verifyNoMoreInteractions(emailService,passwordEncoder);
+	}
+
+
+	private HolidayGroup generateDefaultHoliday(){
+		final HolidayGroup defaultHoliday = new HolidayGroup.Builder()
+					.groupName(DEFAULT_HOLIDAY_NAME)
+					.members(new HashSet<HolidayMember>())
+					.build();
+		defaultHoliday.addMember(generateDefaultTraveller());
+		return defaultHoliday;
+	}
+
+
+	private Long addDefaultHoliday(){
+		Mockito.when(travellerService.findCurrentTraveller()).thenReturn(generateDefaultTraveller());
+		final HolidayGroup defaultHoliday = generateDefaultHoliday();
+		holidayGroupService.addHolidayGroup(defaultHoliday);
+		long defaultHolidayId = defaultHoliday.getGroupId();
+		Assert.assertTrue( defaultHolidayId > 0 );
+		Mockito.verify(travellerService).findCurrentTraveller();
+		Mockito.verifyNoMoreInteractions(travellerService);
+		Mockito.verifyZeroInteractions(emailService);
+		return defaultHolidayId;
 	}
 
 
@@ -158,6 +191,53 @@ public class AdminServiceIntegrationTest  extends AbstractServiceIntegrationTest
 	}
 
 
+	@Test
+	public void testUpdateHoliday(){
+		Mockito.when(travellerService.findCurrentTraveller())
+				.thenReturn(generateDefaultTraveller())
+				.thenReturn(generateDefaultTraveller())
+				.thenReturn(generateDefaultTraveller());
+
+		long holidayId = addDefaultHoliday();
+		HolidayGroup holidayGroup = holidayGroupService.findHolidayGroup(holidayId);
+		Assert.assertNotNull(holidayGroup);
+		Assert.assertTrue(!holidayGroup.getGroupName().equals("asasasasas"));
+
+		holidayGroup.setGroupName("asasasasas");
+
+		adminService.updateHolidayGroup(holidayGroup);
+
+		holidayGroup = holidayGroupService.findHolidayGroup(holidayId);
+
+		Assert.assertNotNull(holidayGroup);
+		Assert.assertTrue(holidayGroup.getGroupName().equals("asasasasas"));
+		Mockito.verify(travellerService, Mockito.times(4)).findCurrentTraveller();
+		Mockito.verifyNoMoreInteractions(travellerService);
+		Mockito.verifyZeroInteractions(emailService,passwordEncoder);
+	}
+
+	@Test
+	public void testDeleteHoliday(){
+
+		Mockito.when(travellerService.findCurrentTraveller())
+				.thenReturn(generateDefaultTraveller())
+				.thenReturn(generateDefaultTraveller())
+				.thenReturn(generateDefaultTraveller());
+
+		long holidayId = addDefaultHoliday();
+		HolidayGroup holidayGroup = holidayGroupService.findHolidayGroup(holidayId);
+		Assert.assertNotNull(holidayGroup);
+
+
+		adminService.deleteHolidayGroup(holidayId);
+
+		holidayGroup = holidayGroupService.findHolidayGroup(holidayId);
+
+		Assert.assertNull(holidayGroup);
+		Mockito.verify(travellerService, Mockito.times(3)).findCurrentTraveller();
+		Mockito.verifyNoMoreInteractions(travellerService);
+		Mockito.verifyZeroInteractions(emailService,passwordEncoder);
+	}
 
 	
 }
