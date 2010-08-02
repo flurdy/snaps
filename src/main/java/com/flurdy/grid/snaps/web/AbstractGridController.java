@@ -21,6 +21,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
+import java.util.Map;
+
 public abstract class AbstractGridController {
 
 	protected transient Logger log = LoggerFactory.getLogger(this.getClass());
@@ -32,9 +35,12 @@ public abstract class AbstractGridController {
 	@Autowired protected IPhotoAlbumService photoAlbumService;
 	@Autowired protected IPhotoSharingProviderService sharingProviderService;
 
+	@Resource
+	protected Map<String,String> configurationMap;
+
 	protected ModelAndView returnTemplate(String view){
 		ModelAndView modelAndView = new ModelAndView(view);
-		modelAndView.getModel().put("analyticsId", "12345" );
+		modelAndView.getModel().put("analyticsId", configurationMap.get("analyticsId") );
 		log.debug("returning view: "+view);
 		return modelAndView;
 	}
