@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.flurdy.grid.snaps.domain.HolidayMember;
+import com.flurdy.grid.snaps.domain.SecurityDetail;
 import com.flurdy.grid.snaps.domain.Traveller;
 import com.flurdy.grid.snaps.exception.SnapAccessDeniedException;
 import com.flurdy.grid.snaps.exception.SnapLogicalException;
@@ -29,16 +30,20 @@ public class HolidayGroupService extends AbstractService implements IHolidayGrou
 	private ITravellerService travellerService;
 
 	@Override
-	public Set<HolidayGroup> searchForHolidayGroups(String groupName) {
+	public List<HolidayGroup> searchForHolidayGroups(String groupName) {
 		assert groupName != null ;
-		assert groupName.length() > 0;
-		try {
-			Long groupId = Long.parseLong(groupName);
-			Set<HolidayGroup> holidayGroups = new HashSet<HolidayGroup>();
-			holidayGroups.add(findHolidayGroup(groupId));
-			return holidayGroups;
-		} catch (NumberFormatException exception){
-			return findHolidayGroups(groupName);
+//		assert groupName.length() > 0;
+		if( groupName.length() == 0){
+			return holidayGroupRepository.findAllHolidayGroups();
+		} else {
+			try {
+				Long groupId = Long.parseLong(groupName);
+				List<HolidayGroup> holidayGroups = new ArrayList<HolidayGroup>();
+				holidayGroups.add(findHolidayGroup(groupId));
+				return holidayGroups;
+			} catch (NumberFormatException exception){
+				return findHolidayGroups(groupName);
+			}
 		}		
 	}
 
@@ -74,7 +79,7 @@ public class HolidayGroupService extends AbstractService implements IHolidayGrou
 
 			if( traveller != null ){
 
-				if( holidayGroup.isMember(traveller)){
+				if( holidayGroup.isMember(traveller) || traveller.isAdminOrSuper() ){					
 					return holidayGroup;
 				} else {
 					return holidayGroup.getBasicHolidayGroupClone();
@@ -83,7 +88,7 @@ public class HolidayGroupService extends AbstractService implements IHolidayGrou
 				throw new SnapTechnicalException(SnapTechnicalError.UNEXPECTED,"Current traveller unavailable");
 			}
 		} else {
-			log.debug("Holiday not found: " + groupId);			
+			log.debug("Holiday not found: " + groupId);
 			return null;
 		}
 	}
@@ -138,13 +143,13 @@ public class HolidayGroupService extends AbstractService implements IHolidayGrou
 
 	@Override
 	public List<HolidayGroup> findAllHolidays() {
-		return new ArrayList(holidayGroupRepository.findAllHolidayGroups());				
+		return holidayGroupRepository.findAllHolidayGroups();				
 	}
 
-	private Set<HolidayGroup> findHolidayGroups(String groupName) {
+	private List<HolidayGroup> findHolidayGroups(String groupName) {
 		if(groupName == null)
 			groupName = "";
-		return new HashSet<HolidayGroup>(holidayGroupRepository.findHolidayGroups( groupName ));
+		return holidayGroupRepository.findHolidayGroups( groupName );
 	}
 
 

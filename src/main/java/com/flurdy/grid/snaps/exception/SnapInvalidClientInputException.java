@@ -11,7 +11,8 @@ public class SnapInvalidClientInputException extends SnapLogicalException {
 		URL("URL not valid"),
 		USERNAME_TAKEN("Username already taken"),
 		HOLIDAY("Holiday invalid"),
-		UNSPECIFIED("Input invalid");
+		UNSPECIFIED("Input invalid"),
+		PHOTO_ALBUM("Photo album invalid");
 
 		private String description;
 

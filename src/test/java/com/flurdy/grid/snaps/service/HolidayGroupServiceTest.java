@@ -14,7 +14,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,6 +102,7 @@ public class HolidayGroupServiceTest  extends AbstractServiceTest {
 	}
 
 
+
 	@Test
 	public void testFindHoliday(){
 
@@ -113,6 +118,10 @@ public class HolidayGroupServiceTest  extends AbstractServiceTest {
 		Mockito.verify(travellerService).findCurrentTraveller();
 		Mockito.verifyNoMoreInteractions(travellerService);
 	}
+
+
+
+
 
 
 
@@ -245,6 +254,166 @@ public class HolidayGroupServiceTest  extends AbstractServiceTest {
 		Mockito.verifyNoMoreInteractions(holidayGroupRepository);
 
 	}
+
+
+
+
+	@Test
+	public void testFindHolidaysByNameWithNumber(){
+		Mockito.when(holidayGroupRepository.findHolidayGroups(Mockito.anyString())).thenReturn(
+						new ArrayList<HolidayGroup>(){{
+//							add( findDefaultHoliday() );
+//							add( findOtherHoliday() );
+						}});
+//		Mockito.when(travellerService.findCurrentTraveller()).thenReturn(CURRENT_TRAVELLER);
+
+		List<HolidayGroup> holidayGroups = holidayGroupService.searchForHolidayGroups("Ibiza 2010");
+
+		Assert.assertNotNull( holidayGroups == null || holidayGroups.isEmpty() );
+
+		Mockito.verify(holidayGroupRepository).findHolidayGroups("Ibiza 2010");
+		Mockito.verifyNoMoreInteractions(holidayGroupRepository);
+//		Mockito.verify(travellerService).findCurrentTraveller();
+		Mockito.verifyZeroInteractions(travellerService);
+	}
+
+
+
+	@Test
+	public void testFindHolidaysByName(){
+
+		Mockito.when(holidayGroupRepository.findHolidayGroups(Mockito.anyString())).thenReturn(
+				new ArrayList<HolidayGroup>(){{
+					add( findDefaultHoliday() );
+//							add( findOtherHoliday() );
+				}});
+//		Mockito.when(travellerService.findCurrentTraveller()).thenReturn(CURRENT_TRAVELLER);
+
+		List<HolidayGroup>  holidayGroups = holidayGroupService.searchForHolidayGroups("Test Holiday");
+
+		Assert.assertNotNull( holidayGroups );
+		Assert.assertTrue( holidayGroups.size() == 1 );
+
+		Mockito.verify(holidayGroupRepository).findHolidayGroups("Test Holiday");
+		Mockito.verifyNoMoreInteractions(holidayGroupRepository);
+	Mockito.verifyZeroInteractions(travellerService);
+	}
+
+
+
+	@Test
+	public void testFindHolidaysByPartialName(){
+
+		Mockito.when(holidayGroupRepository.findHolidayGroups(Mockito.anyString())).thenReturn(
+						new ArrayList<HolidayGroup>(){{
+							add( findDefaultHoliday() );
+							add( findOtherHoliday() );
+						}});
+//		Mockito.when(travellerService.findCurrentTraveller()).thenReturn(CURRENT_TRAVELLER);
+
+		List<HolidayGroup>  holidayGroups = holidayGroupService.searchForHolidayGroups("Test");
+
+		Assert.assertNotNull( holidayGroups );
+		Assert.assertTrue( holidayGroups.size() == 2 );
+
+		Mockito.verify(holidayGroupRepository).findHolidayGroups("Test");
+		Mockito.verifyNoMoreInteractions(holidayGroupRepository);
+		Mockito.verifyZeroInteractions(travellerService);
+	}
+
+
+	@Test
+	public void testFindHolidaysById(){
+
+		Mockito.when(holidayGroupRepository.findHolidayGroup(Mockito.anyLong())).thenReturn(findDefaultHoliday());
+		Mockito.when(travellerService.findCurrentTraveller()).thenReturn(CURRENT_TRAVELLER);
+
+		List<HolidayGroup>  holidayGroups = holidayGroupService.searchForHolidayGroups("1");
+
+		Assert.assertNotNull( holidayGroups );
+
+		Mockito.verify(holidayGroupRepository).findHolidayGroup(new Long(1));
+		Mockito.verifyNoMoreInteractions(holidayGroupRepository);
+		Mockito.verify(travellerService).findCurrentTraveller();
+		Mockito.verifyNoMoreInteractions(travellerService);
+	}
+
+
+
+	@Test
+	public void testFindEmptyHolidays(){
+
+		Mockito.when(holidayGroupRepository.findAllHolidayGroups())
+				.thenReturn(
+						new ArrayList<HolidayGroup>(){{
+							add( findDefaultHoliday() );
+							add( findOtherHoliday() );
+						}});
+//		Mockito.when(travellerService.findCurrentTraveller()).thenReturn(CURRENT_TRAVELLER);
+
+		List<HolidayGroup>  holidayGroups = holidayGroupService.searchForHolidayGroups("");
+
+		Assert.assertNotNull( holidayGroups );
+		Assert.assertTrue( holidayGroups.size() == 2 );
+
+		Mockito.verify(holidayGroupRepository).findAllHolidayGroups();
+		Mockito.verifyNoMoreInteractions(holidayGroupRepository);
+		Mockito.verifyZeroInteractions(travellerService);
+	}
+
+
+
+
+
+
+	@Test
+	public void testFindNoMatchingHolidays(){
+		Mockito.when(holidayGroupRepository.findHolidayGroups(Mockito.anyString())).thenReturn(
+						new ArrayList<HolidayGroup>(){{
+//							add( findDefaultHoliday() );
+//							add( findOtherHoliday() );
+						}});
+//		Mockito.when(holidayGroupRepository.findHolidayGroup(Mockito.anyLong())).thenReturn(findDefaultHoliday());
+//		Mockito.when(travellerService.findCurrentTraveller()).thenReturn(CURRENT_TRAVELLER);
+
+		List<HolidayGroup>  holidayGroups = holidayGroupService.searchForHolidayGroups("F123123123123");
+
+		Assert.assertTrue( holidayGroups == null || holidayGroups.isEmpty() );
+
+		Mockito.verify(holidayGroupRepository).findHolidayGroups("F123123123123");
+		Mockito.verifyNoMoreInteractions(holidayGroupRepository);
+		Mockito.verifyZeroInteractions(travellerService);
+	}
+
+
+
+
+
+	@Test(expected = AssertionError.class)
+	public void testFindHolidaysInvalidInput(){
+
+		Mockito.when(holidayGroupRepository.findHolidayGroup(Mockito.anyLong())).thenReturn(findDefaultHoliday());
+		Mockito.when(travellerService.findCurrentTraveller()).thenReturn(CURRENT_TRAVELLER);
+
+		List<HolidayGroup>  holidayGroups = holidayGroupService.searchForHolidayGroups(null);
+
+	}
+
+
+
+
+
+
+	@Test(expected = AssertionError.class)
+	public void testFindInvalidHolidays(){
+
+		Mockito.when(holidayGroupRepository.findHolidayGroup(Mockito.anyLong())).thenReturn(findDefaultHoliday());
+//		Mockito.when(travellerService.findCurrentTraveller()).thenReturn(CURRENT_TRAVELLER);
+
+		List<HolidayGroup>  holidayGroups = holidayGroupService.searchForHolidayGroups("-1");
+	}
+
+
 
 
 }

@@ -13,7 +13,9 @@ import com.flurdy.grid.snaps.exception.SnapLogicalException.SnapLogicalError;
 import com.flurdy.grid.snaps.exception.SnapNotFoundException;
 import com.flurdy.grid.snaps.web.AbstractGridController;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
@@ -32,20 +34,24 @@ public class HolidayController extends AbstractGridController {
 
 	@RequestMapping(value="",method=RequestMethod.GET)
 	public ModelAndView findOrListHolidaysHandler(String groupName){
-//		log.debug("finding holiday group");
-//		log.debug("starting with: "+groupName);
-		
-		Set<HolidayGroup> holidayGroups = holidayGroupService.searchForHolidayGroups(groupName);
+		log.debug("finding holiday group");
+		log.debug("starting with: "+groupName);
+
+		List<HolidayGroup> holidayGroups =
+			( groupName != null && groupName.length() > 0 )
+				? holidayGroups = holidayGroupService.searchForHolidayGroups(groupName)
+				: holidayGroupService.findAllHolidays();
 
 		if( holidayGroups.size()==1){
 			HolidayGroup holidayGroup = holidayGroups.iterator().next();
 			return showHolidayHandler(holidayGroup.getGroupId());
-		}
+		} 		
 
 		ModelAndView modelAndView = new ModelAndView("holiday/list");
 		modelAndView.addObject("holidayGroups", holidayGroups);
 		return returnTemplate(modelAndView);
 	}
+
 
 
 	@RequestMapping(value="",method=RequestMethod.POST)
@@ -60,6 +66,7 @@ public class HolidayController extends AbstractGridController {
 		return "redirect:/holiday/"+holidayGroup.getGroupId();
 	}
 
+	
 
 	@RequestMapping("/{groupId}")
 	public ModelAndView showHolidayHandler(@PathVariable("groupId") long groupId){

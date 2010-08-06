@@ -1,8 +1,10 @@
 package com.flurdy.grid.snaps.service;
 
 import com.flurdy.grid.snaps.dao.IHolidayGroupRepository;
+import com.flurdy.grid.snaps.dao.IPhotoAlbumRepository;
 import com.flurdy.grid.snaps.dao.ITravellerRepository;
 import com.flurdy.grid.snaps.domain.HolidayGroup;
+import com.flurdy.grid.snaps.domain.PhotoAlbum;
 import com.flurdy.grid.snaps.domain.Traveller;
 import com.flurdy.grid.snaps.exception.SnapLogicalException;
 import com.flurdy.grid.snaps.exception.SnapNotFoundException;
@@ -22,6 +24,9 @@ public class AdminService implements IAdminService {
 
 	@Autowired
 	IHolidayGroupRepository holidayGroupRepository;
+
+	@Autowired
+	IPhotoAlbumRepository photoAlbumRepository;
 
 	@Autowired ITravellerService travellerService;
 
@@ -103,19 +108,55 @@ public class AdminService implements IAdminService {
 
 	@Override
 	public void deleteHolidayGroup(long holidayId) {
-		if( holidayId > 0 ){
+		assert holidayId > 0 ;
 
-			final Traveller admin = travellerService.findCurrentTraveller();
+		final Traveller admin = travellerService.findCurrentTraveller();
 
-			HolidayGroup realHolidayGroup = holidayGroupRepository.findHolidayGroup(holidayId);
+		HolidayGroup holidayGroup = holidayGroupRepository.findHolidayGroup(holidayId);
 
-			log.info("Admin:" + admin + "| is removing: " + realHolidayGroup);
+		if( holidayGroup != null ){
 
-			holidayGroupRepository.deleteHolidayGroup(realHolidayGroup);
+			log.info("Admin:" + admin + "| is removing holiday: " + holidayGroup);
+
+			holidayGroupRepository.deleteHolidayGroup( holidayGroup );
 
 		} else {
-			throw new SnapTechnicalException(SnapTechnicalException.SnapTechnicalError.INVALID_INPUT,"Traveller is null");
+			throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.HOLIDAY);
+		}
+
+	}
+
+
+	@Override
+	public void deletePhotoAlbum(long holidayId, long albumId) {
+
+		assert holidayId > 0 ;
+		assert albumId > 0 ;
+
+		final Traveller admin = travellerService.findCurrentTraveller();
+
+		HolidayGroup holidayGroup = holidayGroupRepository.findHolidayGroup(holidayId);
+
+		if( holidayGroup != null ){
+
+			PhotoAlbum photoAlbum = photoAlbumRepository.findAlbum(albumId);
+
+			if( photoAlbum != null ){
+
+				log.info("Admin:" + admin + "| is removing album: " + photoAlbum);
+
+				photoAlbumRepository.deleteAlbum(albumId);
+
+			} else {
+				throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.PHOTO_ALBUM);
+			}
+
+		} else {
+			throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.HOLIDAY);
 		}
 	}
 
 }
+
+
+

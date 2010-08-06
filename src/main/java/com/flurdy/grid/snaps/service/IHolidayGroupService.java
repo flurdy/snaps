@@ -10,7 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 public interface IHolidayGroupService {
 
-	public Set<HolidayGroup> searchForHolidayGroups(String groupName);
+	public List<HolidayGroup> searchForHolidayGroups(String groupName);
 	
 //	@Secured("ROLE_USER") 
 	@PreAuthorize("hasRole('ROLE_USER')")

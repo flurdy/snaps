@@ -88,4 +88,24 @@ public class HolidayAdminController extends AbstractGridController {
 
 
 
+
+	@RequestMapping(value = "/{holidayId}/album/{albumId}", method = RequestMethod.DELETE)
+	public String removePhotoAlbumHandler(@PathVariable("holidayId") long holidayId, @PathVariable("albumId") long albumId) {
+
+		if( holidayId > 0 ){
+			if( albumId > 0 ){
+
+				adminService.deletePhotoAlbum(holidayId,albumId);
+
+				return "redirect:/admin/holiday/" + holidayId + "/edit";
+			} else {
+				throw new SnapInvalidClientInputException(SnapInvalidClientInputException.InputError.PHOTO_ALBUM);
+			}
+		} else {
+			throw new SnapInvalidClientInputException(SnapInvalidClientInputException.InputError.HOLIDAY);
+		}
+	}
+
+
+
 }

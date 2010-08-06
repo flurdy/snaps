@@ -49,10 +49,10 @@ public class HolidayGroupRepository implements IHolidayGroupRepository {
 	}
 
 	@Override
-	public Collection<HolidayGroup> findHolidayGroups(String groupName) {
+	public List<HolidayGroup> findHolidayGroups(String groupName) {
 
-		Query query = entityManager.createQuery(
-				"select hg from HolidayGroup hg where hg.groupName like '%"+ groupName +"%' order by hg.groupId" );
+		Query query = entityManager.createNamedQuery("holidayGroup.searchByName");
+		query.setParameter("groupName", groupName);
 		@SuppressWarnings("unchecked")
 		List<HolidayGroup> results = query.getResultList();
 		return results;
@@ -66,9 +66,8 @@ public class HolidayGroupRepository implements IHolidayGroupRepository {
 	}
 
 	@Override
-	public Collection<HolidayGroup> findAllHolidayGroups() {
-		Query query = entityManager.createQuery(
-				"select hg from HolidayGroup hg order by hg.groupId" );
+	public List<HolidayGroup> findAllHolidayGroups() {
+		Query query = entityManager.createNamedQuery("holidayGroup.findAll");
 		@SuppressWarnings("unchecked")
 		List<HolidayGroup> results = query.getResultList();
 		return results;

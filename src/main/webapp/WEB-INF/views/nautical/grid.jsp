@@ -94,7 +94,7 @@
 								<div id="aft" class="compartment">
 									<ul class="horizontal">
 										<li><a href="http://flurdy.com/contact/">contact</a></li>
-										<li><a href="http://code.flurdy.com/grid/snaps">project</a></li>
+										<li><a href="http://github.com/flurdy/snaps">project</a></li>
 										<li><a href="http://code.flurdy.com/grid/snaps">help</a></li>
 									</ul>
 								</div>

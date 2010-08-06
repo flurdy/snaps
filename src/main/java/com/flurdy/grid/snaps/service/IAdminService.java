@@ -17,4 +17,7 @@ public interface IAdminService {
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SUPER')")
 	public void deleteHolidayGroup(long holidayId);
+
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SUPER')")
+	public void deletePhotoAlbum(long holidayId, long albumId);
 }

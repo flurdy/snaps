@@ -18,12 +18,14 @@ import javax.persistence.*;
     @NamedQuery(name = "traveller.findFullById",
 		query = "select distinct trav from Traveller trav " +
 		"left join fetch trav.securityDetail " +
+		"left join fetch trav.securityDetail.authorities " +
 		"left join fetch trav.photoAlbums " +
 		"left join fetch trav.holidayMemberships " +
 		"where trav.travellerId = :travellerId"),
     @NamedQuery(name = "traveller.findByUsername",
 		query = "select distinct trav from Traveller trav " +
 		"left join fetch trav.securityDetail " +
+		"left join fetch trav.securityDetail.authorities " +
 		"where trav.securityDetail.username = :username")
 //		query = "from Traveller")traveller.findById
 })
@@ -90,6 +92,11 @@ public class Traveller implements Serializable {
 				&& email != null && email.trim().length()>6
 				&& email.matches("^[^@]+@[^@]+\\.[^@\\.]{2,12}$")
 				&& securityDetail != null && securityDetail.isValid();
+	}
+
+	public boolean isAdminOrSuper() {
+		return securityDetail.hasAuthority(SecurityDetail.AuthorityRole.ROLE_ADMIN)
+					|| securityDetail.hasAuthority(SecurityDetail.AuthorityRole.ROLE_SUPER);
 	}
 
 

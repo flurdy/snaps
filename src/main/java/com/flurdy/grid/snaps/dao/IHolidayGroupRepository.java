@@ -9,11 +9,11 @@ public interface IHolidayGroupRepository {
 	public Long addHolidayGroup(HolidayGroup holidayGroup);
 
 	public HolidayGroup findHolidayGroup(Long groupId);
-	public Collection<HolidayGroup> findHolidayGroups(String groupName);
+	public List<HolidayGroup> findHolidayGroups(String groupName);
 
 	public void updateHolidayGroup(HolidayGroup holidayGroup);
 
-	public Collection<HolidayGroup> findAllHolidayGroups();
+	public List<HolidayGroup> findAllHolidayGroups();
 
 	public void deleteHolidayGroup(HolidayGroup holidayGroup);
 }

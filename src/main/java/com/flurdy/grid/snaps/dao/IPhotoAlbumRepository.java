@@ -8,4 +8,5 @@ public interface IPhotoAlbumRepository {
 
 	public PhotoAlbum findAlbum(long albumId);
 
+	public void deleteAlbum(long albumId);
 }

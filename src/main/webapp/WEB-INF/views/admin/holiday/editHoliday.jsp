@@ -1,12 +1,11 @@
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <div class="centreCargo">
 
 	<form action="${pageContext.request.contextPath}/admin/holiday/${holidayGroup.groupId}" method="post">
 		<input type="hidden" name="_method" value="PUT"/>
-		<input type="hidden" name="groupId" value="${holidayGroup.groupId}"/>
 		<table>
 			<tr>
 				<th>group name</th>
@@ -24,7 +23,6 @@
 
 	<form action="${pageContext.request.contextPath}/admin/holiday/${holidayGroup.groupId}" method="post">
 		<input type="hidden" name="_method" value="DELETE"/>
-		<input type="hidden" name="groupId" value="${holidayGroup.groupId}"/>
 		<table>
 			<tr>
 				<td colspan="2"><input type="submit" value="delete holiday"/></td>
@@ -35,6 +33,26 @@
     <br/>
     <hr/>
     <br/>
+
+    <ul>
+        <c:forEach items="${holidayGroup.photoAlbums}" var="photoAlbum">
+        <li>
+            <form action="${pageContext.request.contextPath}/admin/holiday/${holidayGroup.groupId}/album/${photoAlbum.albumId}" method="post">
+		        <input type="hidden" name="_method" value="DELETE"/>
+                ${photoAlbum.owner.fullname}'s
+                <a href="${photoAlbum.url}">photo album</a>
+                at ${photoAlbum.sharingProvider}
+		        <input type="submit" value="remove photo album"/>
+	        </form>
+        </li>
+        </c:forEach>
+    </ul>
+
+    <br/>
+    <hr/>
+    <br/>
+
+
 
     <a href="${pageContext.request.contextPath}/admin/holiday">return to list</a>
 

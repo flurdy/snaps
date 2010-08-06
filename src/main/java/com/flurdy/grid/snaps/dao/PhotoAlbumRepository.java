@@ -1,5 +1,7 @@
 package com.flurdy.grid.snaps.dao;
 
+import com.flurdy.grid.snaps.domain.HolidayGroup;
+import com.flurdy.grid.snaps.domain.HolidayMember;
 import com.flurdy.grid.snaps.domain.PhotoAlbum;
 import com.flurdy.grid.snaps.domain.Traveller;
 import javax.persistence.NoResultException;
@@ -37,5 +39,21 @@ public class PhotoAlbumRepository extends AbstractRepository implements IPhotoAl
 //			throw new TechnicalException(TechnicalError.DATA_ERROR,ex);
 		}
 	}
+
+
+	@Override
+	public void deleteAlbum(long albumId) {
+
+		assert albumId > 0;
+
+		Query query = entityManager.createNamedQuery("photoAlbum.findById");
+		query.setParameter("albumId", albumId);
+		PhotoAlbum photoAlbum = (PhotoAlbum) query.getSingleResult();
+
+		entityManager.remove(photoAlbum);
+
+		entityManager.flush();
+	}
+
 
 }

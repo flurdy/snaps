@@ -17,7 +17,14 @@ import javax.persistence.*;
 			+ "where hg.groupId = :groupId"),
 	@NamedQuery(name="holidayGroup.findBasicById",
 			query="select distinct hg from HolidayGroup hg "
-			+ "where hg.groupId = :groupId")
+			+ "where hg.groupId = :groupId"),
+	@NamedQuery(name="holidayGroup.searchByName",
+			query="select distinct hg from HolidayGroup hg " +
+				"where hg.groupName like :groupName " +
+				"order by hg.groupId" ),
+	@NamedQuery(name="holidayGroup.findAll",
+			query="select distinct hg from HolidayGroup hg " +
+				"order by hg.groupId" )
 })
 @Entity
 public class HolidayGroup implements Serializable {
