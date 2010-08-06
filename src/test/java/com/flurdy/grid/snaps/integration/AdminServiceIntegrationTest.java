@@ -1,11 +1,9 @@
 package com.flurdy.grid.snaps.integration;
 
 import com.flurdy.grid.snaps.dao.IHolidayGroupRepository;
+import com.flurdy.grid.snaps.dao.IPhotoAlbumRepository;
 import com.flurdy.grid.snaps.dao.ISecurityRepository;
-import com.flurdy.grid.snaps.domain.HolidayGroup;
-import com.flurdy.grid.snaps.domain.HolidayMember;
-import com.flurdy.grid.snaps.domain.SecurityDetail;
-import com.flurdy.grid.snaps.domain.Traveller;
+import com.flurdy.grid.snaps.domain.*;
 import com.flurdy.grid.snaps.service.*;
 import org.junit.Assert;
 import org.junit.Before;
@@ -42,6 +40,10 @@ public class AdminServiceIntegrationTest  extends AbstractServiceIntegrationTest
 
 	@InjectMocks
 	@Autowired
+	private IPhotoAlbumService photoAlbumService;
+
+	@InjectMocks
+	@Autowired
 	private IHolidayGroupRepository holidayGroupRepository;
 
 	@InjectMocks
@@ -54,6 +56,10 @@ public class AdminServiceIntegrationTest  extends AbstractServiceIntegrationTest
 	@InjectMocks
 	@Autowired
 	private ITravellerService realTravellerService;
+
+
+	private static final PhotoSharingProvider DEFAULT_PROVIDER = PhotoSharingProvider.flickr;
+	private static final String DEFAULT_PHOTOALBUM_URL = "http://www.flickr.com/photos/flurdy/sets/72157624009834665/";
 
 
 	@Before
@@ -108,16 +114,32 @@ public class AdminServiceIntegrationTest  extends AbstractServiceIntegrationTest
 	}
 
 
-	private Long addDefaultHoliday(){
-		Mockito.when(travellerService.findCurrentTraveller()).thenReturn(generateDefaultTraveller());
-		final HolidayGroup defaultHoliday = generateDefaultHoliday();
+	private HolidayGroup generateDefaultUnregisteredHoliday(){
+		final HolidayGroup defaultHoliday = new HolidayGroup.Builder()
+					.groupName(DEFAULT_HOLIDAY_NAME)
+					.members(new HashSet<HolidayMember>())
+					.build();
+		return defaultHoliday;
+	}
+
+
+	private Long addDefaultHoliday(long travellerId){
+		Mockito.when(travellerService.findCurrentTraveller())
+				.thenReturn(realTravellerService.findTraveller(travellerId))
+				.thenReturn(realTravellerService.findTraveller(travellerId));
+		final HolidayGroup defaultHoliday = generateDefaultUnregisteredHoliday();
+
 		holidayGroupService.addHolidayGroup(defaultHoliday);
-		long defaultHolidayId = defaultHoliday.getGroupId();
-		Assert.assertTrue( defaultHolidayId > 0 );
-		Mockito.verify(travellerService).findCurrentTraveller();
+
+		long holidayId = defaultHoliday.getGroupId();
+		Assert.assertTrue( holidayId > 0 );
+		HolidayGroup holidayGroup = holidayGroupService.findHolidayGroup(holidayId);
+		Assert.assertNotNull(holidayGroup);
+		Assert.assertTrue(holidayGroup.isMember(realTravellerService.findTraveller(travellerId)));
+		Mockito.verify(travellerService, Mockito.times(2)).findCurrentTraveller();
 		Mockito.verifyNoMoreInteractions(travellerService);
 		Mockito.verifyZeroInteractions(emailService);
-		return defaultHolidayId;
+		return holidayId;
 	}
 
 
@@ -193,12 +215,14 @@ public class AdminServiceIntegrationTest  extends AbstractServiceIntegrationTest
 
 	@Test
 	public void testUpdateHoliday(){
-		Mockito.when(travellerService.findCurrentTraveller())
-				.thenReturn(generateDefaultTraveller())
-				.thenReturn(generateDefaultTraveller())
-				.thenReturn(generateDefaultTraveller());
+		long defaultTravellerId = registerDefaultTraveller();
 
-		long holidayId = addDefaultHoliday();
+		Mockito.when(travellerService.findCurrentTraveller())
+				.thenReturn(realTravellerService.findTraveller(defaultTravellerId))
+				.thenReturn(realTravellerService.findTraveller(defaultTravellerId))
+				.thenReturn(realTravellerService.findTraveller(defaultTravellerId));
+
+		long holidayId = addDefaultHoliday(defaultTravellerId);
 		HolidayGroup holidayGroup = holidayGroupService.findHolidayGroup(holidayId);
 		Assert.assertNotNull(holidayGroup);
 		Assert.assertTrue(!holidayGroup.getGroupName().equals("asasasasas"));
@@ -211,7 +235,7 @@ public class AdminServiceIntegrationTest  extends AbstractServiceIntegrationTest
 
 		Assert.assertNotNull(holidayGroup);
 		Assert.assertTrue(holidayGroup.getGroupName().equals("asasasasas"));
-		Mockito.verify(travellerService, Mockito.times(4)).findCurrentTraveller();
+		Mockito.verify(travellerService, Mockito.times(5)).findCurrentTraveller();
 		Mockito.verifyNoMoreInteractions(travellerService);
 		Mockito.verifyZeroInteractions(emailService,passwordEncoder);
 	}
@@ -219,12 +243,14 @@ public class AdminServiceIntegrationTest  extends AbstractServiceIntegrationTest
 	@Test
 	public void testDeleteHoliday(){
 
-		Mockito.when(travellerService.findCurrentTraveller())
-				.thenReturn(generateDefaultTraveller())
-				.thenReturn(generateDefaultTraveller())
-				.thenReturn(generateDefaultTraveller());
+		long defaultTravellerId = registerDefaultTraveller();
 
-		long holidayId = addDefaultHoliday();
+		Mockito.when(travellerService.findCurrentTraveller())
+				.thenReturn(realTravellerService.findTraveller(defaultTravellerId))
+				.thenReturn(realTravellerService.findTraveller(defaultTravellerId))
+				.thenReturn(realTravellerService.findTraveller(defaultTravellerId));
+
+		long holidayId = addDefaultHoliday(defaultTravellerId);
 		HolidayGroup holidayGroup = holidayGroupService.findHolidayGroup(holidayId);
 		Assert.assertNotNull(holidayGroup);
 
@@ -234,10 +260,71 @@ public class AdminServiceIntegrationTest  extends AbstractServiceIntegrationTest
 		holidayGroup = holidayGroupService.findHolidayGroup(holidayId);
 
 		Assert.assertNull(holidayGroup);
-		Mockito.verify(travellerService, Mockito.times(3)).findCurrentTraveller();
+		Mockito.verify(travellerService, Mockito.times(4)).findCurrentTraveller();
 		Mockito.verifyNoMoreInteractions(travellerService);
 		Mockito.verifyZeroInteractions(emailService,passwordEncoder);
 	}
+
+
+
+
+	@Test
+	public void testDeletePhotoAlbum(){
+
+		long travellerId = registerDefaultTraveller();
+		assert travellerId > 0;
+		Mockito.verifyZeroInteractions(travellerService,emailService,passwordEncoder);
+
+		Mockito.when(travellerService.findCurrentTraveller())
+				.thenReturn(realTravellerService.findTraveller(travellerId));
+
+		long holidayId = addDefaultHoliday(travellerId);
+		assert holidayId > 0;
+		Mockito.verifyNoMoreInteractions(travellerService);
+
+		HolidayGroup holidayGroup = holidayGroupService.findHolidayGroup(holidayId);
+		Assert.assertNotNull(holidayGroup);
+		Assert.assertTrue(holidayGroup.isMember(realTravellerService.findTraveller(travellerId)));
+		Mockito.verify(travellerService, Mockito.times(3)).findCurrentTraveller();
+		Mockito.verifyNoMoreInteractions(travellerService);
+
+
+		Mockito.when(travellerService.findCurrentTraveller())
+				.thenReturn(realTravellerService.findTraveller(travellerId));
+
+		PhotoAlbum photoAlbum = photoAlbumService.addAlbum(holidayGroup, DEFAULT_PROVIDER, DEFAULT_PHOTOALBUM_URL);
+		Assert.assertNotNull(photoAlbum);
+		Assert.assertTrue(photoAlbum.getAlbumId()>0);
+		Mockito.verify(travellerService, Mockito.times(4)).findCurrentTraveller();
+		Mockito.verifyNoMoreInteractions(travellerService);
+
+		long albumId = photoAlbum.getAlbumId();
+
+		Mockito.when(travellerService.findCurrentTraveller())
+				.thenReturn(realTravellerService.findTraveller(travellerId))
+				.thenReturn(realTravellerService.findTraveller(travellerId));
+
+		adminService.deletePhotoAlbum(holidayId,albumId);
+
+		Mockito.verify(travellerService, Mockito.times(5)).findCurrentTraveller();
+		Mockito.verifyNoMoreInteractions(travellerService);
+
+		Mockito.when(travellerService.findCurrentTraveller())
+				.thenReturn(realTravellerService.findTraveller(travellerId))
+				.thenReturn(realTravellerService.findTraveller(travellerId));
+
+		photoAlbum = photoAlbumService.findPhotoAlbum(holidayId,albumId);
+		Assert.assertNull(photoAlbum);
+
+		holidayGroup = holidayGroupService.findHolidayGroup(holidayId);
+		Assert.assertNotNull(holidayGroup);
+
+		Mockito.verify(travellerService, Mockito.times(7)).findCurrentTraveller();
+		Mockito.verifyNoMoreInteractions(travellerService);
+		Mockito.verifyZeroInteractions(emailService,passwordEncoder);
+	}
+
+
 
 	
 }

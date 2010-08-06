@@ -98,8 +98,9 @@ public class HolidayGroup implements Serializable {
 				for( HolidayMember holidayMember : members ){					
 					if( holidayMember.getTraveller()!=null && holidayMember.getTraveller().equals(traveller) ){
 						return holidayMember.isApproved();
-//					} else {
-//						log.debug("Traveller is not a member");
+					} else {
+						log.debug("Traveller is not a member: "+traveller);
+						log.debug("member: "+holidayMember);
 					}
 				}
 			}

@@ -42,13 +42,15 @@ public class PhotoAlbumRepository extends AbstractRepository implements IPhotoAl
 
 
 	@Override
-	public void deleteAlbum(long albumId) {
+	public void deleteAlbum(PhotoAlbum photoAlbum) {
 
-		assert albumId > 0;
+		assert photoAlbum != null;
+		assert photoAlbum.getAlbumId() != null;
+		assert photoAlbum.getAlbumId() > 0;
 
 		Query query = entityManager.createNamedQuery("photoAlbum.findById");
-		query.setParameter("albumId", albumId);
-		PhotoAlbum photoAlbum = (PhotoAlbum) query.getSingleResult();
+		query.setParameter("albumId", photoAlbum.getAlbumId());
+		photoAlbum = (PhotoAlbum) query.getSingleResult();
 
 		entityManager.remove(photoAlbum);
 

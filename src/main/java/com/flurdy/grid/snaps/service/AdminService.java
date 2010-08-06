@@ -121,7 +121,8 @@ public class AdminService implements IAdminService {
 			holidayGroupRepository.deleteHolidayGroup( holidayGroup );
 
 		} else {
-			throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.HOLIDAY);
+			log.info("Trying to delete a non existant holiday");
+//			throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.HOLIDAY);
 		}
 
 	}
@@ -145,7 +146,7 @@ public class AdminService implements IAdminService {
 
 				log.info("Admin:" + admin + "| is removing album: " + photoAlbum);
 
-				photoAlbumRepository.deleteAlbum(albumId);
+				photoAlbumRepository.deleteAlbum(photoAlbum);
 
 			} else {
 				throw new SnapNotFoundException(SnapNotFoundException.SnapResourceNotFound.PHOTO_ALBUM);

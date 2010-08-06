@@ -1,8 +1,11 @@
 package com.flurdy.grid.snaps.service;
 
 import com.flurdy.grid.snaps.dao.IHolidayGroupRepository;
+import com.flurdy.grid.snaps.dao.IPhotoAlbumRepository;
 import com.flurdy.grid.snaps.dao.ITravellerRepository;
 import com.flurdy.grid.snaps.domain.HolidayGroup;
+import com.flurdy.grid.snaps.domain.PhotoAlbum;
+import com.flurdy.grid.snaps.domain.PhotoSharingProvider;
 import com.flurdy.grid.snaps.domain.Traveller;
 import com.flurdy.grid.snaps.exception.SnapLogicalException;
 import com.flurdy.grid.snaps.exception.SnapNotFoundException;
@@ -29,11 +32,27 @@ public class AdminServiceTest extends AbstractServiceTest {
 	@Mock
 	private IHolidayGroupRepository holidayGroupRepository;
 
+	@Mock
+	private IPhotoAlbumRepository photoAlbumRepository;
+
 	@InjectMocks
 	private IAdminService adminService = new AdminService();
 
 	private static final String TRAVELLER_FULLNAME = "New testuser";
 	private static final String TRAVELLER_EMAIL = "new.testuser@example.com";
+	private static final String ALBUM_URL= "http://www.example.com/123";
+
+
+	private PhotoAlbum generateDefaultPhotoAlbum(){
+		PhotoAlbum photoAlbum = new PhotoAlbum.Builder()
+				.holidayGroup(generateDefaultHoliday())
+				.sharingProvider(PhotoSharingProvider.flickr)
+				.owner(generateDefaultTraveller())
+				.url(ALBUM_URL)
+				.build();
+		return photoAlbum;
+	}
+
 
 	@Before
 	public void setUp(){
@@ -286,7 +305,7 @@ public class AdminServiceTest extends AbstractServiceTest {
 	}
 
 
-	@Test(expected = SnapTechnicalException.class)
+	@Test(expected = AssertionError.class)
 	public void testDeleteInvalidHoliday(){
 
 		Mockito.when(travellerService.findCurrentTraveller())
@@ -294,6 +313,37 @@ public class AdminServiceTest extends AbstractServiceTest {
 
 		adminService.deleteHolidayGroup(-1);		
 	}
+
+
+
+
+
+
+
+	@Test
+	public void testDeletePhotoAlbum(){
+
+		Mockito.when(travellerService.findCurrentTraveller())
+				.thenReturn(generateDefaultTraveller());
+		Mockito.when(holidayGroupRepository.findHolidayGroup(new Long(1)))
+				.thenReturn(generateDefaultHoliday());
+		Mockito.when(photoAlbumRepository.findAlbum(new Long(1)))
+				.thenReturn(generateDefaultPhotoAlbum());
+
+//		photoAlbumRepository.deleteAlbum(generateDefaultPhotoAlbum());
+
+		adminService.deletePhotoAlbum(1,1);
+
+		Mockito.verify(travellerService, Mockito.times(1)).findCurrentTraveller();
+		Mockito.verify(holidayGroupRepository, Mockito.times(1)).findHolidayGroup(Mockito.anyLong());
+		Mockito.verify(photoAlbumRepository, Mockito.times(1)).findAlbum(Mockito.anyLong());
+		Mockito.verify(photoAlbumRepository, Mockito.times(1)).deleteAlbum(Mockito.<PhotoAlbum>anyObject());
+		Mockito.verifyNoMoreInteractions(travellerService,holidayGroupRepository,photoAlbumRepository);
+	}
+
+
+
+
 
 
 
