@@ -8,8 +8,8 @@
 	<definition name="gridTemplate" template="/WEB-INF/views/nautical/grid.jsp">
 		<put-attribute name="headerTitle" type="string" value="snaps @ flurdy"/>
 		<put-attribute name="bowTitle" type="string" value="snaps"/>
-		<put-attribute name="version" type="string" value="v.0.2&amp;alpha;"/>
-		<put-attribute name="releaseStage" type="string" value="&amp;alpha;lpha"/>
+		<put-attribute name="version" type="string" value="v.0.2&amp;beta;"/>
+		<put-attribute name="releaseStage" type="string" value="&amp;beta;eta"/>
 		<put-attribute name="dragons">
 			<definition template="/WEB-INF/views/nautical/dragons.jsp" />
 		</put-attribute>
