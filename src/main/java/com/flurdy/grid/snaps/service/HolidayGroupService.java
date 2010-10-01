@@ -12,6 +12,7 @@ import com.flurdy.grid.snaps.domain.HolidayMember;
 import com.flurdy.grid.snaps.domain.SecurityDetail;
 import com.flurdy.grid.snaps.domain.Traveller;
 import com.flurdy.grid.snaps.exception.SnapAccessDeniedException;
+import com.flurdy.grid.snaps.exception.SnapInvalidClientInputException;
 import com.flurdy.grid.snaps.exception.SnapLogicalException;
 import com.flurdy.grid.snaps.exception.SnapLogicalException.SnapLogicalError;
 import com.flurdy.grid.snaps.exception.SnapTechnicalException;
@@ -64,7 +65,7 @@ public class HolidayGroupService extends AbstractService implements IHolidayGrou
 			holidayGroupRepository.updateHolidayGroup( holidayGroup );
 
 		} else {
-			throw new SnapTechnicalException(SnapTechnicalError.INVALID_INPUT,"Not a valid holiday");
+				throw new SnapInvalidClientInputException(SnapInvalidClientInputException.InputError.HOLIDAY);
 		}
 	}
 
@@ -122,17 +123,23 @@ public class HolidayGroupService extends AbstractService implements IHolidayGrou
 	public void addTravellerAsPendingMember(HolidayGroup holidayGroup, Traveller pendingTraveller) {
 		if( holidayGroup != null && holidayGroup.getGroupId() > 0 ){
 
-			if( !holidayGroup.isMember(pendingTraveller)
-					&& !holidayGroup.isPendingMember(pendingTraveller) ){
+			if( !holidayGroup.isMember(pendingTraveller) ){
+				if( !holidayGroup.isPendingMember(pendingTraveller)	){
 
-				log.info("Adding traveller [" + pendingTraveller.getSecurityDetail().getUsername()
-						+ "] as pending member of [" + holidayGroup.getGroupId() + "]");
+					log.info("Adding traveller [" + pendingTraveller.getSecurityDetail().getUsername()
+							+ "] as pending member of [" + holidayGroup.getGroupId() + "]");
 
-				holidayGroup.addPendingMember(pendingTraveller);
+					if( holidayGroup.getMembers() == null || holidayGroup.getMembers().isEmpty() ){
+						holidayGroup.addMember(pendingTraveller);
+					} else {
+						holidayGroup.addPendingMember(pendingTraveller);
+					}
 
-				holidayGroupRepository.updateHolidayGroup(holidayGroup);
+					holidayGroupRepository.updateHolidayGroup(holidayGroup);
 
-
+				} else {
+					log.debug("Traveller is already a pending member");
+				}
 			} else {
 				throw new SnapLogicalException(SnapLogicalError.INVALID_STATE, "Traveller is already a pending/member of this group");
 			}

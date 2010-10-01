@@ -13,7 +13,7 @@
 	<groupId>com.flurdy.grid</groupId>
 	<artifactId>snaps</artifactId>
 	<packaging>war</packaging>
-	<version>0.2-SNAPSHOT</version>
+	<version>0.2.1-SNAPSHOT</version>
 	<name>snaps</name>
 	<description>event photo aggregator</description>
 	<url>http://code.flurdy.com/grid/snaps</url>

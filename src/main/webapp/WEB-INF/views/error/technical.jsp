@@ -38,7 +38,7 @@
     <c:if test="${not empty exception}">
 
         <p>
-            <b>${exception.errorCode}</b>
+            <b>${exception.errorCode.description}</b>
         </p>
 
         <hr width="70%"/>

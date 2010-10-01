@@ -89,6 +89,5 @@
         <error-code>406</error-code>
          <location>/app/error/serverError.html</location>
     </error-page>
-    -->
-
+    
 </web-app>

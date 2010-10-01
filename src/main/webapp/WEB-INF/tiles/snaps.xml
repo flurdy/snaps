@@ -26,9 +26,9 @@
 
 	<definition name="holiday/list" extends="holidayTemplate">
 		<put-attribute name="pageTitle" type="string" value="holiday groups"/>
+        <put-attribute name="port" value="/WEB-INF/views/holiday/listHolidaysPort.jsp"/>
 		<put-attribute name="cargo" value="/WEB-INF/views/holiday/listHolidays.jsp"/>
 	</definition>
-
 
 	<definition name="holiday/album/new" extends="albumTemplate">
 		<put-attribute name="cargo" value="/WEB-INF/views/holiday/album/newAlbum.jsp"/>

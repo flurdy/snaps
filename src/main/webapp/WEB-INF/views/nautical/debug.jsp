@@ -6,8 +6,8 @@
     || fn:startsWith(pageContext.request.serverName,'192.168')
     || fn:startsWith(pageContext.request.serverName,'djalma') }">
                 /* incognito/paranoia.. */
-				body { background-color: #ffffff; }
-				#bow { display: none; }
+				/* body { background-color: #ffffff; } */
+				/* #bow { display: none; }
 				/* #jib, #cargo h2  { display: none; } */
 				/* #bow, #bow a, #jib, #cargo h2  { color: #e0e0e0; }  */
 </c:if>

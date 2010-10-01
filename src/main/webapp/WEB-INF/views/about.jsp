@@ -7,10 +7,10 @@
 		<b>snaps @ flurdy</a> is a holiday photo aggregator.
 	</h4>
 	<p>
-		A holiday photo aggregator is a tool to gather holiday photos in one place.
+		A holiday photo aggregator is a tool<br/> to gather holiday photos in one place.
 	</p>
 	<p>
-        By using <b>snaps</b>, people can share their photos with their fellow travellers.
+        By using <b>snaps</b>, people can share their photos<br/> with their fellow travellers.
 	</p>
 
 

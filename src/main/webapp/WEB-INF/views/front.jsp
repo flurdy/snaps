@@ -6,6 +6,24 @@
 
 <div class="centreCargo">
 
+    <br/>
+
+    <h4>
+        snaps is a holiday photo aggregator
+    </h4>
+
+    <br/>
+
+    <hr width="80%"/>
+
+    <br/>
+
+
+    <h4>
+        <a href="${pageContext.request.contextPath}/holiday">find your holiday</a>
+    </h4>
+
+<!--
     <h2>holidays</h2>
 
     <form action="holiday/" method="get">
@@ -32,6 +50,8 @@
 	<form action="holiday/new.html">
 		<button type="submit">create new holiday</button>
 	</form>
+
+    -->
 
 
 

@@ -11,6 +11,22 @@
       <value>2</value>
       <value><![CDATA[Ecuador &amp; Galapagos]]></value>
     </row>
+    <row>
+      <value>3</value>
+      <value><![CDATA[Christmas 2010]]></value>
+    </row>
+    <row>
+      <value>4</value>
+      <value><![CDATA[Bermuda]]></value>
+    </row>
+    <row>
+      <value>5</value>
+      <value><![CDATA[Pamporovo]]></value>
+    </row>
+    <row>
+      <value>6</value>
+      <value><![CDATA[Florence weekend trip August 2010]]></value>
+    </row>
   </table>
   <table name="SECURITYDETAIL">
     <column>USERNAME</column>
@@ -124,12 +140,18 @@
     <column>MEMBERID</column>
     <column>APPROVED</column>
     <column>HOLIDAYGROUP_GROUPID</column>
-    <column>TRAVELLER_TRAVELLERID</column>    
+    <column>TRAVELLER_TRAVELLERID</column>
     <row>
         <value>1</value>
         <value>true</value>
         <value>1</value>
         <value>1</value>
+    </row>
+    <row>
+        <value>2</value>
+        <value>true</value>
+        <value>2</value>
+        <value>2</value>
     </row>
   </table>
 </dataset>

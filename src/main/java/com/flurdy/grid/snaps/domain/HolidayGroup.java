@@ -21,10 +21,10 @@ import javax.persistence.*;
 	@NamedQuery(name="holidayGroup.searchByName",
 			query="select distinct hg from HolidayGroup hg " +
 				"where hg.groupName like :groupName " +
-				"order by hg.groupId" ),
+				"order by hg.groupName" ),
 	@NamedQuery(name="holidayGroup.findAll",
 			query="select distinct hg from HolidayGroup hg " +
-				"order by hg.groupId" )
+				"order by hg.groupName" )
 })
 @Entity
 public class HolidayGroup implements Serializable {
@@ -156,7 +156,14 @@ public class HolidayGroup implements Serializable {
 
 
 	public boolean isValid() {
-		return (this.groupName != null && this.groupName.trim().length() > 3 ); 
+		if( this.groupName != null  ){
+			if(this.groupName.length() > 3 ){
+				if(this.groupName.matches("^\\p{L}[\\p{L} ]+\\p{L}$") ){
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	
@@ -166,6 +173,8 @@ public class HolidayGroup implements Serializable {
 	}
 
 	public void setGroupName(String groupName) {
+		if(groupName != null)
+			groupName = groupName.trim();
 		this.groupName = groupName;
 	}
 

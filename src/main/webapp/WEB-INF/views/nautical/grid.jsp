@@ -65,10 +65,14 @@
 								<div id="lookout" class="compartment">
 									<ul class="horizontal">
 										<li><a href="${pageContext.request.contextPath}/">home</a></li>
+										<li><a href="${pageContext.request.contextPath}/holiday">holidays</a></li>
 										<sec:authorize ifNotGranted="ROLE_USER">
 											<li><a href="${pageContext.request.contextPath}/join.html">join</a></li>
 										</sec:authorize>
 										<li><a href="${pageContext.request.contextPath}/about.html">about</a></li>
+                                         <sec:authorize ifAnyGranted="ROLE_ADMIN,ROLE_SUPER">
+										    <li><a href="${pageContext.request.contextPath}/admin">admin</a></li>
+									    </sec:authorize>
 									</ul>
 								</div>
 								<div id="keel" class="structure">
