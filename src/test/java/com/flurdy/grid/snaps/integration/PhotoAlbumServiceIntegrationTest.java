@@ -2,7 +2,6 @@ package com.flurdy.grid.snaps.integration;
 
 import com.flurdy.grid.snaps.dao.IHolidayGroupRepository;
 import com.flurdy.grid.snaps.dao.IPhotoAlbumRepository;
-import com.flurdy.grid.snaps.dao.ISecurityRepository;
 import com.flurdy.grid.snaps.domain.*;
 import com.flurdy.grid.snaps.service.*;
 import org.junit.Assert;
@@ -13,7 +12,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.encoding.PasswordEncoder;
 
 import java.util.HashSet;
 
@@ -49,7 +47,7 @@ public class PhotoAlbumServiceIntegrationTest extends AbstractServiceIntegration
 	@Autowired
 	private IPhotoAlbumService photoAlbumService;
 
-	private static final PhotoSharingProvider DEFAULT_PROVIDER = PhotoSharingProvider.flickr;
+	private static final PhotoSharingProvider DEFAULT_PROVIDER = PhotoSharingProvider.FLICKR;
 	private static final String DEFAULT_PHOTOALBUM_URL = "http://www.flickr.com/photos/flurdy/sets/72157624009834665/";
 
 
@@ -89,7 +87,7 @@ public class PhotoAlbumServiceIntegrationTest extends AbstractServiceIntegration
 		return new PhotoAlbum.Builder()
 				.holidayGroup(generateDefaultHoliday(defaultTraveller))
 				.owner(generateDefaultTraveller())
-				.sharingProvider(PhotoSharingProvider.flickr)
+				.sharingProvider(PhotoSharingProvider.FLICKR)
 				.url(DEFAULT_PHOTOALBUM_URL)
 				.build();
 	}

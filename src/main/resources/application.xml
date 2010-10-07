@@ -18,6 +18,7 @@
 
     <util:map id="configurationMap">
         <entry key="analyticsId" value="${analyticsId}"/>
+        <entry key="flickrApiKey" value="${flickrApiKey}"/>
     </util:map>
 
     <bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder" />

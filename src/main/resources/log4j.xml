@@ -80,12 +80,16 @@
 		<appender-ref ref="console" />
 	</logger>
 
-	<logger name="org.springframework.web">
-		<level value="warn" />
+    <!--
+	<logger name="org.springframework.web.client">
+		<level value="debug" />
+		<appender-ref ref="console" />
+	</logger>
+	<logger name="org.springframework.http.client">
+		<level value="debug" />
 		<appender-ref ref="console" />
 	</logger>
 
-    <!--
 	<logger name="org.springframework">
 		<level value="info" />
 		<appender-ref ref="allLog" />

@@ -1,15 +1,9 @@
 package com.flurdy.grid.snaps.domain;
 
 import java.io.Serializable;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-
+import java.util.Set;
+import java.util.HashSet;
+import javax.persistence.*;
 
 
 @NamedQueries({
@@ -30,10 +24,16 @@ public class PhotoAlbum implements Serializable{
 	@ManyToOne(cascade={CascadeType.MERGE},fetch=FetchType.EAGER)
 	private HolidayGroup holidayGroup;
 
+//	@Column(nullable = false)
 	private String sharingProvider;
+
+//	private String providerId;
 
 	@ManyToOne(cascade={CascadeType.MERGE},fetch=FetchType.EAGER)
 	private Traveller owner;
+
+	@Transient
+	private Set<String> thumbnails;
 
 	public PhotoAlbum() { 	}
 	
@@ -46,14 +46,22 @@ public class PhotoAlbum implements Serializable{
 		this.sharingProvider = builder.sharingProvider.name();
 		this.url = builder.url;
 		this.holidayGroup = builder.holidayGroup;
+//		this.providerId = builder.providerId;
 		this.owner = builder.owner;
 	}
 
 
 	public boolean isValid() {
-		return sharingProvider != null && PhotoSharingProvider.valueOf(sharingProvider) != null
-				&& url != null && url.trim().length() > 0
-				&& ( url.startsWith("http://") || url.startsWith("https://") );
+		if( sharingProvider != null ){
+			PhotoSharingProvider photoSharingProvider = PhotoSharingProvider.valueOf(sharingProvider);
+			if( photoSharingProvider != null ){
+				if( url != null && url.trim().length() > 0
+						&& ( url.startsWith("http://") || url.startsWith("https://") )){
+					return photoSharingProvider.validUrl(url);	
+				}
+			}
+		}
+		return false;
 	}
 
 
@@ -62,8 +70,13 @@ public class PhotoAlbum implements Serializable{
 		private HolidayGroup holidayGroup;
 		private PhotoSharingProvider sharingProvider;
 		private Traveller owner;
+//		private String providerId;
 		public Builder(){
 		}
+//		public Builder providerId(String providerId){
+//			this.providerId = providerId;
+//			return this;
+//		}
 		public Builder url(String url){
 			this.url = url;
 			return this;
@@ -126,6 +139,24 @@ public class PhotoAlbum implements Serializable{
 	public void setOwner(Traveller owner) {
 		this.owner = owner;
 	}
+
+	public Set<String> getThumbnails() {
+		if( thumbnails == null)
+			thumbnails = new HashSet<String>();
+		return thumbnails;
+	}
+
+	public void setThumbnails(Set<String> thumbnails) {
+		this.thumbnails = thumbnails;
+	}
+
+//	public String getProviderId() {
+//		return providerId;
+//	}
+//
+//	public void setProviderId(String providerId) {
+//		this.providerId = providerId;
+//	}
 
 	@Override
 	public String toString() {

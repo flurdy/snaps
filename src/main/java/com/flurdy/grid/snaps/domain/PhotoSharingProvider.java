@@ -6,6 +6,8 @@
 package com.flurdy.grid.snaps.domain;
 
 import java.io.Serializable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 //@NamedQueries({
 //    @NamedQuery(name = "sharingProvider.findAll",
@@ -16,32 +18,48 @@ import java.io.Serializable;
 //})
 //@Entity
 public enum PhotoSharingProvider  {
-	PicasaWeb, flickr, Custom;
+	PICASA("Picasa Webalbum"), FLICKR("Flickr"), CUSTOM("Custom album");
 
+	private String title;
 
+	PhotoSharingProvider(String title){
+		this.title = title;
+	}
 
-//	@Id
-//	private Long providerId;
-//
-//
-//	private String name;
-//
-//	public String getName() {
-//		return name;
-//	}
-//
-//	public void setName(String name) {
-//		this.name = name;
-//	}
-//
-//	public Long getProviderId() {
-//		return providerId;
-//	}
-//
-//	public void setProviderId(Long providerId) {
-//		this.providerId = providerId;
-//	}
+	public String getTitle(){
+		return title;
+	}
 
+	public boolean validUrl(String url){
+		switch(this){
+			case PICASA:
+				return url.matches("^http://picasaweb.google.com/\\w+/\\w+.?$");
+			case FLICKR:
+				return url.matches("^http://www.flickr.com/photos/\\w+/sets/\\d+/?$");
+			case CUSTOM:
+				return true;
+			default:
+				return false;
+		}
+	}
+	private static final Pattern PICASA_ID= Pattern.compile("^http://picasaweb.google.com/(\\w+/\\w+).?$");
+	private static final Pattern FLICKR_ID = Pattern.compile("^http://www.flickr.com/(photos/\\w+/sets/)(\\d+)/$");
+	public String parseProviderId(String url){
+		Matcher matcher = null;
+		switch(this){
+			case PICASA:
+				matcher = PICASA_ID.matcher(url);
+				matcher.find();
+				return matcher.group(1);
+			case FLICKR:
+				matcher = FLICKR_ID.matcher(url);
+				matcher.find();
+				return matcher.group(2);
+			case CUSTOM:
+			default:
+				return null;
+		}
+	}
 
 
 }

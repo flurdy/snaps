@@ -123,14 +123,14 @@
     <column>OWNER_TRAVELLERID</column>
     <row>
       <value>1</value>
-      <value>flickr</value>
+      <value>FLICKR</value>
       <value>http://www.flickr.com/photos/flurdy/sets/72157624009834665/</value>
       <value>1</value>
       <value>1</value>
     </row>
     <row>
       <value>2</value>
-      <value>flickr</value>
+      <value>FLICKR</value>
       <value>http://www.flickr.com/photos/flurdy/sets/72157622527536656/</value>
       <value>2</value>
       <value>1</value>

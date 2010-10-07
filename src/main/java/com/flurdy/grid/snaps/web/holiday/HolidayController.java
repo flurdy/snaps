@@ -5,19 +5,15 @@
 
 package com.flurdy.grid.snaps.web.holiday;
 
-import com.flurdy.grid.snaps.domain.HolidayGroup;
-import com.flurdy.grid.snaps.domain.HolidayMember;
-import com.flurdy.grid.snaps.domain.Traveller;
-import com.flurdy.grid.snaps.exception.SnapLogicalException;
-import com.flurdy.grid.snaps.exception.SnapLogicalException.SnapLogicalError;
+import com.flurdy.grid.snaps.domain.*;
 import com.flurdy.grid.snaps.exception.SnapNotFoundException;
 import com.flurdy.grid.snaps.web.AbstractGridController;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.springframework.security.access.annotation.Secured;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -98,6 +94,14 @@ public class HolidayController extends AbstractGridController {
 					}
 				}
 				modelAndView.addObject("travellers", travellers);
+				if( holidayGroup.getPhotoAlbums() != null ){
+					for( PhotoAlbum photoAlbum : holidayGroup.getPhotoAlbums()){
+						if(photoAlbum.getSharingProvider().equals(PhotoSharingProvider.FLICKR)){
+							Collection<String> thumbnails = photoAlbumService.findThumbnails(photoAlbum);
+							photoAlbum.setThumbnails(new HashSet<String>(thumbnails));
+						}
+					}
+				}
 
 			} else if ( holidayGroup.isPendingMember(currentTraveller) ){
 				modelAndView.addObject("isPendingTraveller", Boolean.TRUE);

@@ -4,6 +4,7 @@ import com.flurdy.grid.snaps.dao.IHolidayGroupRepository;
 import com.flurdy.grid.snaps.domain.HolidayGroup;
 import com.flurdy.grid.snaps.domain.HolidayMember;
 import com.flurdy.grid.snaps.domain.Traveller;
+import com.flurdy.grid.snaps.exception.SnapInvalidClientInputException;
 import com.flurdy.grid.snaps.exception.SnapNotFoundException;
 import com.flurdy.grid.snaps.exception.SnapTechnicalException;
 import org.junit.After;
@@ -196,7 +197,7 @@ public class HolidayGroupServiceTest  extends AbstractServiceTest {
 	}
 
 
-	@Test(expected = SnapTechnicalException.class)
+	@Test(expected = SnapInvalidClientInputException.class)
 	public void testAddNullHoliday(){
 		Mockito.when(travellerService.findCurrentTraveller()).thenReturn(CURRENT_TRAVELLER);
 		holidayGroupService.addHolidayGroup(null);
@@ -207,7 +208,7 @@ public class HolidayGroupServiceTest  extends AbstractServiceTest {
 
 
 
-	@Test(expected = SnapTechnicalException.class)
+	@Test(expected = SnapInvalidClientInputException.class)
 	public void testAddInvalidHoliday(){
 		Mockito.when(travellerService.findCurrentTraveller()).thenReturn(CURRENT_TRAVELLER);
 		HolidayGroup holidayGroup = new HolidayGroup.Builder()
@@ -232,10 +233,10 @@ public class HolidayGroupServiceTest  extends AbstractServiceTest {
 		Mockito.when(holidayGroupRepository.findHolidayGroup(new Long(2))).thenReturn(findOtherHoliday());
 		Mockito.doNothing().when(holidayGroupRepository).updateHolidayGroup(Mockito.<HolidayGroup>anyObject());
 
-		final HolidayGroup defaultHoliday = new HolidayGroup.Builder()
-					.groupName(DEFAULT_HOLIDAY_NAME)
-					.members(new HashSet<HolidayMember>())
-					.build();
+//		final HolidayGroup defaultHoliday = new HolidayGroup.Builder()
+//					.groupName(DEFAULT_HOLIDAY_NAME)
+//					.members(new HashSet<HolidayMember>())
+//					.build();
 		holidayGroupService.addHolidayGroup(findDefaultHoliday());
 
 
@@ -243,7 +244,7 @@ public class HolidayGroupServiceTest  extends AbstractServiceTest {
 					.groupName(DEFAULT_HOLIDAY_NAME)
 					.members(new HashSet<HolidayMember>())
 					.build();
-		holidayGroupService.addHolidayGroup(findOtherHoliday());
+		holidayGroupService.addHolidayGroup(otherHoliday);//findOtherHoliday());
 
 		Mockito.verify(travellerService, Mockito.times(2)).findCurrentTraveller();
 		Mockito.verifyNoMoreInteractions(travellerService);

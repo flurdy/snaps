@@ -75,7 +75,7 @@ public abstract class AbstractServiceTest  extends AbstractTransactionalJUnit4Sp
 	protected static final String ADMIN_EMAIL = "admin.testuser@example.com";
 
 	protected static final String DEFAULT_HOLIDAY_NAME = "Test Holiday";
-	protected static final String DEFAULT_HOLIDAY2_NAME = "Test 2nd Holiday";
+	protected static final String DEFAULT_HOLIDAY2_NAME = "Test nd Holiday";
 
 	protected final Traveller CURRENT_TRAVELLER = new Traveller.Builder()
 					.username(DEFAULT_USERNAME)

@@ -10,7 +10,6 @@ import com.flurdy.grid.snaps.domain.Traveller;
 import com.flurdy.grid.snaps.exception.SnapLogicalException;
 import com.flurdy.grid.snaps.exception.SnapNotFoundException;
 import com.flurdy.grid.snaps.exception.SnapTechnicalException;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -46,7 +45,7 @@ public class AdminServiceTest extends AbstractServiceTest {
 	private PhotoAlbum generateDefaultPhotoAlbum(){
 		PhotoAlbum photoAlbum = new PhotoAlbum.Builder()
 				.holidayGroup(generateDefaultHoliday())
-				.sharingProvider(PhotoSharingProvider.flickr)
+				.sharingProvider(PhotoSharingProvider.FLICKR)
 				.owner(generateDefaultTraveller())
 				.url(ALBUM_URL)
 				.build();

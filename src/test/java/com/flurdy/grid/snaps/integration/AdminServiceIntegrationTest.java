@@ -1,7 +1,6 @@
 package com.flurdy.grid.snaps.integration;
 
 import com.flurdy.grid.snaps.dao.IHolidayGroupRepository;
-import com.flurdy.grid.snaps.dao.IPhotoAlbumRepository;
 import com.flurdy.grid.snaps.dao.ISecurityRepository;
 import com.flurdy.grid.snaps.domain.*;
 import com.flurdy.grid.snaps.service.*;
@@ -58,7 +57,7 @@ public class AdminServiceIntegrationTest  extends AbstractServiceIntegrationTest
 	private ITravellerService realTravellerService;
 
 
-	private static final PhotoSharingProvider DEFAULT_PROVIDER = PhotoSharingProvider.flickr;
+	private static final PhotoSharingProvider DEFAULT_PROVIDER = PhotoSharingProvider.FLICKR;
 	private static final String DEFAULT_PHOTOALBUM_URL = "http://www.flickr.com/photos/flurdy/sets/72157624009834665/";
 
 

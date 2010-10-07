@@ -3,7 +3,6 @@ package com.flurdy.grid.snaps.service;
 import com.flurdy.grid.snaps.dao.IHolidayGroupRepository;
 import com.flurdy.grid.snaps.dao.IPhotoAlbumRepository;
 import com.flurdy.grid.snaps.domain.HolidayGroup;
-import com.flurdy.grid.snaps.domain.HolidayMember;
 import com.flurdy.grid.snaps.domain.PhotoAlbum;
 import com.flurdy.grid.snaps.domain.PhotoSharingProvider;
 import com.flurdy.grid.snaps.exception.SnapAccessDeniedException;
@@ -18,12 +17,10 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-
 @Transactional
 public class PhotoAlbumServiceTest extends AbstractServiceTest {
 
-	private static final PhotoSharingProvider DEFAULT_PROVIDER = PhotoSharingProvider.flickr;
+	private static final PhotoSharingProvider DEFAULT_PROVIDER = PhotoSharingProvider.FLICKR;
 	private static final String DEFAULT_PHOTOALBUM_URL = "http://www.flickr.com/photos/flurdy/sets/72157624009834665/";
 	private static final String DEFAULT_PHOTOALBUM2_URL = "http://www.flickr.com/photos/flurdy/sets/72157624009834665/";
 
@@ -53,7 +50,7 @@ public class PhotoAlbumServiceTest extends AbstractServiceTest {
 		return new PhotoAlbum.Builder()
 				.holidayGroup(generateDefaultHoliday())
 				.owner(generateDefaultTraveller())
-				.sharingProvider(PhotoSharingProvider.flickr)
+				.sharingProvider(PhotoSharingProvider.FLICKR)
 				.url(DEFAULT_PHOTOALBUM_URL)
 				.build();
 	}
