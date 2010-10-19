@@ -28,7 +28,7 @@
                     <div class="">
                         ${photoAlbum.owner.fullname}'s
                         <a href="${photoAlbum.url}">photo album</a>
-                        at ${photoAlbum.sharingProvider}
+                        at ${photoAlbum.sharingProvider.title}
                     </div>
                     <div>
                         <c:forEach items="${photoAlbum.thumbnails}" var="thumbnail">

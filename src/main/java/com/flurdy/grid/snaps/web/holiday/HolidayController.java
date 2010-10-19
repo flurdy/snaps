@@ -96,10 +96,10 @@ public class HolidayController extends AbstractGridController {
 				modelAndView.addObject("travellers", travellers);
 				if( holidayGroup.getPhotoAlbums() != null ){
 					for( PhotoAlbum photoAlbum : holidayGroup.getPhotoAlbums()){
-						if(photoAlbum.getSharingProvider().equals(PhotoSharingProvider.FLICKR)){
+//						if(photoAlbum.getSharingProvider().equals(PhotoSharingProvider.FLICKR)){
 							Collection<String> thumbnails = photoAlbumService.findThumbnails(photoAlbum);
 							photoAlbum.setThumbnails(new HashSet<String>(thumbnails));
-						}
+//						}
 					}
 				}
 

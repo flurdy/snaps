@@ -5,22 +5,19 @@ import com.flurdy.grid.snaps.domain.PhotoAlbum;
 import com.flurdy.grid.snaps.domain.PhotoSharingProvider;
 import com.flurdy.grid.snaps.domain.Traveller;
 import com.flurdy.grid.snaps.exception.*;
-import org.apache.commons.httpclient.HttpException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.xml.xpath.JaxenXPathTemplate;
 import org.springframework.xml.xpath.Jaxp13XPathTemplate;
 import org.springframework.xml.xpath.NodeMapper;
 import org.springframework.xml.xpath.XPathOperations;
 import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import javax.annotation.Resource;
 import javax.xml.transform.Source;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 
 //import org.apache.commons.httpclient.HttpClient;
@@ -54,7 +51,7 @@ public class PhotoAlbumService extends AbstractService implements IPhotoAlbumSer
 
 			if( provider.validUrl(url) ){
 
-//				String providerId = provider.parseProviderId(url);
+//				String providerId = provider.parseFlickrSetId(url);
 
 //				log.debug("PROVIDER ID IS "+providerId);
 
@@ -122,53 +119,145 @@ public class PhotoAlbumService extends AbstractService implements IPhotoAlbumSer
 	@Override
 	public Collection<String> findThumbnails(final PhotoAlbum photoAlbum) {
 
-		assert photoAlbum.getSharingProvider().equals(PhotoSharingProvider.FLICKR);
-//		assert configurationMap.get("flickrApiKey") != null && configurationMap.get("flickrApiKey").trim().length()>0;
-
 		Collection<String> thumbnails = new HashSet<String>();
-		if(configurationMap.containsKey("flickrApiKey") && configurationMap.get("flickrApiKey") != null && configurationMap.get("flickrApiKey").trim().length()>0 ){
 
-			final String photosetUrl = "http://www.flickr.com/services/rest/?method={method}" +
-					"&api_key={api_key}&photoset_id={photoset_id}&media=photos&per_page=3&format=rest&privacy_filter=public%20photos";
-			Map<String,String> parameters = new HashMap<String,String>(){{
-				put("method","flickr.photosets.getPhotos");
-				put("api_key",configurationMap.get("flickrApiKey"));
-				put("photoset_id",photoAlbum.getSharingProvider().parseProviderId(photoAlbum.getUrl()));
-			}};
+		if( photoAlbum.getSharingProvider().equals(PhotoSharingProvider.FLICKR) ){
 
-			log.debug("API:"+configurationMap.get("flickrApiKey"));
-			log.debug("ALBUM URL:"+photoAlbum.getUrl());
-			log.debug("ID:"+parameters.get("photoset_id"));
+			if(configurationMap.containsKey("flickrApiKey") && configurationMap.get("flickrApiKey") != null && configurationMap.get("flickrApiKey").trim().length()>0 ){
 
-			RestTemplate restTemplate = new RestTemplate();
+				final String photosetUrl = "http://www.flickr.com/services/rest/?method={method}" +
+						"&api_key={api_key}&photoset_id={photoset_id}&media=photos&per_page=3&format=rest&privacy_filter=public%20photos";
+				Map<String,String> parameters = new HashMap<String,String>(){{
+					put("method","flickr.photosets.getPhotos");
+					put("api_key",configurationMap.get("flickrApiKey"));
+					put("photoset_id",photoAlbum.getSharingProvider().parseFlickrSetId(photoAlbum.getUrl()));
+				}};
 
-			try {
+				log.debug("API:"+configurationMap.get("flickrApiKey"));
+				log.debug("ALBUM URL:"+photoAlbum.getUrl());
+				log.debug("ID:"+parameters.get("photoset_id"));
 
-				Source flickrResponse = restTemplate.getForObject( photosetUrl, Source.class, parameters );
+				final RestTemplate restTemplate = new RestTemplate();
 
-//				log.debug("flickr response?:"+flickrResponse);
-				XPathOperations xpathTemplate = new Jaxp13XPathTemplate();
-				thumbnails = xpathTemplate.evaluate("//photo", flickrResponse, new NodeMapper(){
-					public Object mapNode(Node node, int i) throws DOMException {
-						Element photo = (Element) node;
-						String photoUrl = "http://farm{farm-id}.static.flickr.com/{server-id}/{id}_{secret}_t.jpg";
-						photoUrl = photoUrl.replaceAll("\\{farm-id\\}", photo.getAttribute("farm") );
-						photoUrl = photoUrl.replaceAll("\\{server-id\\}", photo.getAttribute("server") );
-						photoUrl = photoUrl.replaceAll("\\{id\\}", photo.getAttribute("id") );
-						photoUrl = photoUrl.replaceAll("\\{secret\\}", photo.getAttribute("secret") );
+				try {
 
-						log.debug("THUMB URL:"+photoUrl);
+					Source flickrResponse = restTemplate.getForObject( photosetUrl, Source.class, parameters );
 
-						return photoUrl;
-					}
-				});
-			} catch (Exception ex){
-				log.warn("resttemplate failed but ignoring",ex);
+	//				log.debug("flickr response?:"+flickrResponse);
+					XPathOperations xpathTemplate = new Jaxp13XPathTemplate();
+					thumbnails = xpathTemplate.evaluate("//photo", flickrResponse, new NodeMapper(){
+						public Object mapNode(Node node, int i) throws DOMException {
+							Element photo = (Element) node;
+							String photoUrl = "http://farm{farm-id}.static.flickr.com/{server-id}/{id}_{secret}_t.jpg";
+							photoUrl = photoUrl.replaceAll("\\{farm-id\\}", photo.getAttribute("farm") );
+							photoUrl = photoUrl.replaceAll("\\{server-id\\}", photo.getAttribute("server") );
+							photoUrl = photoUrl.replaceAll("\\{id\\}", photo.getAttribute("id") );
+							photoUrl = photoUrl.replaceAll("\\{secret\\}", photo.getAttribute("secret") );
+
+							log.debug("THUMB URL:"+photoUrl);
+
+							return photoUrl;
+						}
+					});
+				} catch (Exception ex){
+					log.warn("resttemplate failed but ignoring",ex);
+				}
 			}
-		}	
+		} else if( photoAlbum.getSharingProvider().equals(PhotoSharingProvider.PICASA) ){
+
+			log.debug("ALBUM URL:"+photoAlbum.getUrl());
+
+			final String userID = photoAlbum.getSharingProvider().parsePicasaUsername(photoAlbum.getUrl());
+			final String albumID = findPicasaAlbumId(photoAlbum);
+
+			final String albumURL = "http://picasaweb.google.com/data/feed/api/user/{userID}/albumid/{albumID}";
+
+			Map<String,String> parameters = new HashMap<String,String>(){{
+					put("userID",  userID);
+					put("albumID", albumID);
+				}};
+
+			log.debug("UID:"+parameters.get("userID"));
+			log.debug("AID:"+parameters.get("albumID"));
+
+//			final RestTemplate restTemplate = new RestTemplate();
+
+//				try {
+
+//					String picasaResponse = restTemplate.getForObject( albumURL, String.class, parameters );
+
+//					log.debug("response?:"+picasaResponse);
+//					XPathOperations xpathTemplate = new Jaxp13XPathTemplate();
+//					thumbnails = xpathTemplate.evaluate("//photo", picasaResponse, new NodeMapper(){
+//						public Object mapNode(Node node, int i) throws DOMException {
+//							Element photo = (Element) node;
+//							String photoUrl = "http://farm{farm-id}.static.flickr.com/{server-id}/{id}_{secret}_t.jpg";
+//
+////							photoUrl = photoUrl.replaceAll("\\{farm-id\\}", photo.getAttribute("farm") );
+//
+//							log.debug("THUMB URL:"+photoUrl);
+//
+//							return photoUrl;
+//						}
+//					});
+//				} catch (Exception ex){
+//					log.warn("resttemplate failed but ignoring",ex);
+//				}
+
+			// http://picasaweb.google.com/flurdy/Industriagata?feat=directlink
+
+		}
 		log.debug("thumbnails found: ",thumbnails.size());
 		return thumbnails;
 
+	}
+
+	private String findPicasaAlbumId(final PhotoAlbum photoAlbum){
+
+		final String albumsURL = "http://picasaweb.google.com/data/feed/api/user/{userID}";
+		final String userID = photoAlbum.getSharingProvider().parsePicasaUsername(photoAlbum.getUrl());
+
+		Map<String,String> parameters = new HashMap<String,String>(){{
+			put("userID",  userID);
+		}};
+
+		log.debug("UID:"+parameters.get("userID"));
+
+		final RestTemplate restTemplate = new RestTemplate();
+
+		List<Map<String,String>> albumIds = null;
+		try {
+				log.debug("response:"+restTemplate.getForObject( albumsURL, String.class, parameters ));
+				log.debug("");
+				log.debug("");
+				Source picasaResponse = restTemplate.getForObject( albumsURL, Source.class, parameters );
+//				XPathOperations xpathTemplate = new JaxenXPathTemplate();
+				XPathOperations xpathTemplate = new Jaxp13XPathTemplate();
+				albumIds = xpathTemplate.evaluate("//atom:feed/atom:entry", picasaResponse, new NodeMapper(){
+					public Object mapNode(Node node, int i) throws DOMException {
+						Element album = (Element) node;
+						Map<String,String> albumId = new HashMap<String,String>();
+						log.debug("NODE ALBUM");	log.debug("NODE ALBUM URL:"+album.toString());
+						// gphoto:id		// title
+						return albumId;
+////							photoUrl = photoUrl.replaceAll("\\{farm-id\\}", photo.getAttribute("farm") );
+					}
+				});
+		} catch (Exception ex){
+			log.warn("resttemplate failed but ignoring",ex);
+		}
+
+		final String albumName = photoAlbum.getSharingProvider().parsePicasaAlbumname(photoAlbum.getUrl());
+		log.debug("album name:"+albumName);
+		if( albumIds != null ){
+			for(Map<String,String> albumId : albumIds){
+				if( albumId.containsKey("ALBUM NAME") && albumId.get("ALBUM NAME").equals(albumName)){
+					return albumId.get("ALBUM ID") ;
+				}
+			}
+		}
+
+		return null;
 	}
 
 

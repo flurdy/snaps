@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 //})
 //@Entity
 public enum PhotoSharingProvider  {
-	PICASA("Picasa Webalbum"), FLICKR("Flickr"), CUSTOM("Custom album");
+	PICASA("Picasa Web Album"), FLICKR("Flickr"), CUSTOM("Custom album");
 
 	private String title;
 
@@ -33,7 +33,7 @@ public enum PhotoSharingProvider  {
 	public boolean validUrl(String url){
 		switch(this){
 			case PICASA:
-				return url.matches("^http://picasaweb.google.com/\\w+/\\w+.?$");
+				return (url.matches("^http://picasaweb.google.com/\\w+/\\w+.?$") || url.matches("^http://picasaweb.google.com/data/feed/api/user/\\w+/albumid/\\w+.?$"));
 			case FLICKR:
 				return url.matches("^http://www.flickr.com/photos/\\w+/sets/\\d+/?$");
 			case CUSTOM:
@@ -42,24 +42,40 @@ public enum PhotoSharingProvider  {
 				return false;
 		}
 	}
-	private static final Pattern PICASA_ID= Pattern.compile("^http://picasaweb.google.com/(\\w+/\\w+).?$");
+
 	private static final Pattern FLICKR_ID = Pattern.compile("^http://www.flickr.com/(photos/\\w+/sets/)(\\d+)/$");
-	public String parseProviderId(String url){
+
+	public String parseFlickrSetId(String url){
 		Matcher matcher = null;
 		switch(this){
-			case PICASA:
-				matcher = PICASA_ID.matcher(url);
-				matcher.find();
-				return matcher.group(1);
 			case FLICKR:
 				matcher = FLICKR_ID.matcher(url);
 				matcher.find();
 				return matcher.group(2);
 			case CUSTOM:
+			case PICASA:
 			default:
 				return null;
 		}
 	}
 
 
+	private static final Pattern PICASAURL_ID= Pattern.compile("^http://picasaweb.google.com/(\\w+)/(\\w+).?$");
+	private static final Pattern PICASARSS_ID= Pattern.compile("^http://picasaweb.google.com/data/feed/api/user/(\\w+)/albumid/(\\w+).?$");
+
+	public String parsePicasaUsername(String url) {
+		Matcher matcher = PICASAURL_ID.matcher(url);
+		if( matcher.find() ){
+			return matcher.group(1);
+		}
+		return null;
+	}
+
+	public String parsePicasaAlbumname(String url) {
+		Matcher matcher = PICASAURL_ID.matcher(url);
+		if( matcher.find() ){
+			return matcher.group(2);
+		}
+		return null;
+	}
 }

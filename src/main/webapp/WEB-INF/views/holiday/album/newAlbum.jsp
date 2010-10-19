@@ -32,7 +32,7 @@
 				
 		<div id="tabs-1">
 			<form action="${pageContext.request.contextPath}/holiday/${holidayGroup.groupId}/album" method="post">
-				<input type="hidden" name="providerName" value="PicasaWeb"/>
+				<input type="hidden" name="providerName" value="PICASA"/>
 
 				URL: <input type="text" name="url" value=""/>
 
@@ -43,7 +43,7 @@
 		<div id="tabs-2">
 
 			<form action="${pageContext.request.contextPath}/holiday/${holidayGroup.groupId}/album" method="post">
-				<input type="hidden" name="providerName" value="flickr"/>
+				<input type="hidden" name="providerName" value="FLICKR"/>
 				URL: <input type="text" name="url" value=""/>
 
 				<button>add set</button>

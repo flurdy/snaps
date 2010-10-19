@@ -17,6 +17,10 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
+import java.util.Collection;
+import java.util.Map;
+
 @Transactional
 public class PhotoAlbumServiceTest extends AbstractServiceTest {
 
@@ -33,6 +37,9 @@ public class PhotoAlbumServiceTest extends AbstractServiceTest {
 
 	@Mock
 	private ITravellerService travellerService;
+
+	@Mock
+	protected Map<String,String> configurationMap;
 
 	@Mock
 	private IPhotoAlbumRepository photoAlbumRepository;
@@ -183,5 +190,30 @@ public class PhotoAlbumServiceTest extends AbstractServiceTest {
 	}
 
 
+//	@Test
+//	public void testFindFlickrThumbnails(){
+//		Assert.fail("");
+//	}
+
+	@Test
+	public void testFindPicasaThumbnails(){
+
+		PhotoAlbum photoAlbum = new PhotoAlbum.Builder()
+				.sharingProvider(PhotoSharingProvider.PICASA)
+				.url("http://picasaweb.google.com/flurdy/Industrigata")
+				.build();
+
+		//Mockito.when(configurationMap.(new Long(2))).thenReturn(generate);
+
+		Collection<String> thumbnails = photoAlbumService.findThumbnails(photoAlbum);
+
+
+
+
+
+		Assert.fail("not tested");
+	}
+
 
 }
+

@@ -70,7 +70,7 @@ public class AlbumController extends AbstractGridController {
 			String providerName,
 			String url ){
 
-		log.debug("adding album");
+		log.debug("adding album from provider:"+providerName);
 
 		HolidayGroup holidayGroup = holidayGroupService.findHolidayGroup(holidayGroupId);
 		if( holidayGroup != null ){
