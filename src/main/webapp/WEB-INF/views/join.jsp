@@ -35,6 +35,6 @@
 	<br/>
 
 	<p>
-		Want to join the <a href="http://code.flurdy.grid/snaps">actual project</a>?
+		Want to join the <a href="http://code.flurdy.com/grid/snaps">actual project</a>?
 	</p>
 </div>
