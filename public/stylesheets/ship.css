@@ -1,0 +1,96 @@
+/* ### css by flurdy . Copyright: electric ray 2004, www.eray.co.uk ### */
+/*  ###  Scrolling overflow ### */
+/* #innerhull{ overflow: auto; } */
+
+/*  ###  Fonts ### */
+body{ font-family: sans-serif; }
+
+/*  ### ### */
+
+/*  ### Other ### */
+
+/* ###	css by flurdy . Copyright: electric ray 2004		### */
+/* borders */
+/* ship borders */
+#hull {
+	/* border: 0.2em outset #222222; */
+    border: 3px outset #333
+}
+
+/* rounding & shadows */
+
+#hull {
+	border-radius: 20px;
+	-webkit-border-radius: 20px;
+	-moz-border-radius: 20px;
+}
+
+
+#hull {
+	box-shadow: 10px 10px 15px -5px #333333;
+	-webkit-box-shadow: 10px 10px 15px -5px #333333;
+	-moz-box-shadow: 10px 10px 15px -5px #333333;
+}
+
+/* internal */
+#stern, #aft, #bridge { border-top: 2px ridge silver; }
+#bow, #lookout { border-bottom: 2px ridge silver;  }
+#deck { border-left: 2px ridge silver;  }
+/* #cargo { border: 2px solid #8ad;  } */
+
+
+/* colours */
+body {  background-color: #d00;  }
+#hull { background-color: #fff;  }
+#innerhull { background-color: #fff;  }
+
+/* dimensions   */
+.structure {  }
+.compartment { padding: 0.2em 0.5em; }
+body {  }
+#ocean { margin-left: 0em; }
+#fleet { padding: 1em; }
+#ship { max-width: 60em; }
+#ballast { padding: 1em; min-height: 30em; min-width: 40em; max-width: 60em; }
+#cargo { padding: 0 0; }
+#bow { padding: 0 1em; }
+#lookout { padding: 0; margin: 0; }
+#stern { height: 1em; }
+#innerhull { padding: 0; margin: 0; }
+
+
+
+/* structure */
+root {  }
+html {  }
+body {  }
+#ocean { font-family: Arial, sans-serif, serif;  }
+#fleet {   }
+#regatta {  }
+#ship {  }
+#vaka {  }
+#hull {  }
+#keel {  }
+#innerhull { vertical-align: top; }
+#bulkhead {  }
+#ballast {  }
+
+/* compartments */
+#prow { }
+#bow { }
+#lookout {   }
+#port {   }
+#starboard {    }
+#jib {  }
+#hatch {    }
+#deck {   }
+#cockpit {  }
+#aft {  }
+#stern {   }
+#anchor { }
+
+#cargo { }
+
+
+#starboard, #lookout, #tug, #net, #ama, #deck, #bridge, #hatch, #port, #aft,
+#foremast, #lighthouse, #buoy { display: none; }

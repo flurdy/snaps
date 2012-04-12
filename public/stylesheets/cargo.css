@@ -1,0 +1,26 @@
+/* ### css by flurdy . Copyright: electric ray 2004, www.eray.co.uk ### */
+
+#bow { padding: 0 0 0 3em; }
+img#fork-me {
+    float: right; width: 6em; margin-right: 0em; margin-top: -3em;
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+}
+#stern { padding: 0.2em 1.5em; margin: 0px; overflow: hidden; }
+#stern #flurdy{
+    font-size: 1em;
+	float: right;
+	margin: -0.4em 0;
+	padding: 0;
+}
+#stern #flurdy a{
+	margin: 0;
+	padding: 0;
+}
+#stern #flurdy img{
+	margin: 0;
+	padding: 0;
+	height: 1em;
+}

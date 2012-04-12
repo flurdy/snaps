@@ -3,14 +3,14 @@ nbactions.xml
 catalog.xml
 nb-configuration.xml
 nbactions-jrebel.xml
-#	src/main/resources/rebel.xml
 .settings
 src/main/resources/javarebel.lic
 src/main/resources/rebel.xml
 *.*~
-snaps.iml
-snaps.ipr
-snaps.iws
+.idea
+*.iml
+*.ipr
+*.iws
 logs
 project/project
 project/target
