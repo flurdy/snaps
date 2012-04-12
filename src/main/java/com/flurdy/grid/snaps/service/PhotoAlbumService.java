@@ -2,13 +2,13 @@ package com.flurdy.grid.snaps.service;
 
 import com.flurdy.grid.snaps.domain.*;
 import com.flurdy.grid.snaps.exception.*;
-import com.google.api.client.googleapis.GoogleHeaders;
-import com.google.api.client.googleapis.GoogleTransport;
-import com.google.api.client.googleapis.json.*;
-import com.google.api.client.http.*;
-import com.google.api.client.util.*;
-import com.google.api.client.xml.XmlNamespaceDictionary;
-import com.google.api.client.xml.atom.AtomParser;
+//import com.google.api.client.googleapis.GoogleHeaders;
+//import com.google.api.client.googleapis.GoogleTransport;
+//import com.google.api.client.googleapis.json.*;
+//import com.google.api.client.http.*;
+//import com.google.api.client.util.*;
+//import com.google.api.client.xml.XmlNamespaceDictionary;
+//import com.google.api.client.xml.atom.AtomParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -234,49 +234,49 @@ public class PhotoAlbumService extends AbstractService implements IPhotoAlbumSer
 	}
 
 
-
-
-
-
-	private String findPicasaAlbumIdWithAtom(final PhotoAlbum photoAlbum) {
-		final String userId = photoAlbum.getSharingProvider().parsePicasaUsername(photoAlbum.getUrl());
-
-		HttpTransport transport2 = GoogleTransport.create();
-		GoogleHeaders headers = (GoogleHeaders) transport2.defaultHeaders;
-		headers.setApplicationName("Snaps/0.0.1");
-		//transport2.defaultHeaders.put("GData-Version", "2");
-//		transport2.addParser(new JsonCParser());
-		headers.gdataVersion = "2";
-		AtomParser parser = new AtomParser();
-		parser.namespaceDictionary = new XmlNamespaceDictionary();
-		Map<String, String> map = parser.namespaceDictionary.namespaceAliasToUriMap;
-		map.put("", "http://www.w3.org/2005/Atom");
-		map.put("atom", "http://www.w3.org/2005/Atom");
-		map.put("exif", "http://schemas.google.com/photos/exif/2007");
-		map.put("gd", "http://schemas.google.com/g/2005");
-		map.put("geo", "http://www.w3.org/2003/01/geo/wgs84_pos#");
-		map.put("georss", "http://www.georss.org/georss");
-		map.put("gml", "http://www.opengis.net/gml");
-		map.put("gphoto", "http://schemas.google.com/photos/2007");
-		map.put("media", "http://search.yahoo.com/mrss/");
-		map.put("openSearch", "http://a9.com/-/spec/opensearch/1.1/");
-		map.put("xml", "http://www.w3.org/XML/1998/namespace");
-		transport2.addParser(parser);
-		HttpRequest request = transport2.buildGetRequest();
-		String userAlbumsURL = "https://picasaweb.google.com/data/feed/api/user/" + userId;
-		request.setUrl(userAlbumsURL);
-		try {
-			HttpResponse response = request.execute();
-
-			log.debug("GDATA: " + response.parseAsString());
-
-		} catch (IOException e) {
-			e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-		}
-
-
-		return null;
-	}
+//
+//
+//
+//
+//	private String findPicasaAlbumIdWithAtom(final PhotoAlbum photoAlbum) {
+//		final String userId = photoAlbum.getSharingProvider().parsePicasaUsername(photoAlbum.getUrl());
+//
+//		HttpTransport transport2 = GoogleTransport.create();
+//		GoogleHeaders headers = (GoogleHeaders) transport2.defaultHeaders;
+//		headers.setApplicationName("Snaps/0.0.1");
+//		//transport2.defaultHeaders.put("GData-Version", "2");
+////		transport2.addParser(new JsonCParser());
+//		headers.gdataVersion = "2";
+//		AtomParser parser = new AtomParser();
+//		parser.namespaceDictionary = new XmlNamespaceDictionary();
+//		Map<String, String> map = parser.namespaceDictionary.namespaceAliasToUriMap;
+//		map.put("", "http://www.w3.org/2005/Atom");
+//		map.put("atom", "http://www.w3.org/2005/Atom");
+//		map.put("exif", "http://schemas.google.com/photos/exif/2007");
+//		map.put("gd", "http://schemas.google.com/g/2005");
+//		map.put("geo", "http://www.w3.org/2003/01/geo/wgs84_pos#");
+//		map.put("georss", "http://www.georss.org/georss");
+//		map.put("gml", "http://www.opengis.net/gml");
+//		map.put("gphoto", "http://schemas.google.com/photos/2007");
+//		map.put("media", "http://search.yahoo.com/mrss/");
+//		map.put("openSearch", "http://a9.com/-/spec/opensearch/1.1/");
+//		map.put("xml", "http://www.w3.org/XML/1998/namespace");
+//		transport2.addParser(parser);
+//		HttpRequest request = transport2.buildGetRequest();
+//		String userAlbumsURL = "https://picasaweb.google.com/data/feed/api/user/" + userId;
+//		request.setUrl(userAlbumsURL);
+//		try {
+//			HttpResponse response = request.execute();
+//
+//			log.debug("GDATA: " + response.parseAsString());
+//
+//		} catch (IOException e) {
+//			e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//		}
+//
+//
+//		return null;
+//	}
 
 
 	/*

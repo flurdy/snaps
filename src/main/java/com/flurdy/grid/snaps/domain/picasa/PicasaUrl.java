@@ -1,7 +1,7 @@
 package com.flurdy.grid.snaps.domain.picasa;
 
-import com.google.api.client.googleapis.GoogleUrl;
 import com.google.api.client.util.Key;
+import com.google.api.client.googleapis.GoogleUrl;
 
 public class PicasaUrl extends GoogleUrl {
 

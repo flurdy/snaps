@@ -8,4 +8,6 @@ nbactions-jrebel.xml
 src/main/resources/javarebel.lic
 src/main/resources/rebel.xml
 *.*~
-
+snaps.iml
+snaps.ipr
+snaps.iws

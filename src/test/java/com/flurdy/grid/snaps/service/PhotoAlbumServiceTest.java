@@ -16,6 +16,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.transaction.annotation.Transactional;
+import static org.mockito.Mockito.*;
+import static org.junit.Assert.*;
 
 import javax.annotation.Resource;
 import java.util.Collection;
@@ -211,7 +213,7 @@ public class PhotoAlbumServiceTest extends AbstractServiceTest {
 
 
 
-		Assert.fail("not tested");
+		fail("not tested");
 	}
 
 
