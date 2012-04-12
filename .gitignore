@@ -11,3 +11,10 @@ src/main/resources/rebel.xml
 snaps.iml
 snaps.ipr
 snaps.iws
+logs
+project/project
+project/target
+target
+tmp
+.history
+dist
