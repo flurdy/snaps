@@ -1,0 +1,26 @@
+@()
+
+@import helper._
+@import helper.twitterBootstrap._
+
+@main(" snaps | edit event") {
+
+
+
+@form(action = routes.EventController.updateEvent(1), 'class -> "well form-horizontal"){
+<fieldset>
+    <legend>Event name</legend>
+    <input type="text" name="eventName" class="span3 input-medium" value="Christmas">
+</fieldset>
+<fieldset>
+    <legend>Event date</legend>
+    <input type="text" name="eventName" class="span3 input-medium" value="2012-12-25">
+</fieldset>
+<div class="form-actions">
+    <button type="submit" class="btn btn-success">Update</button>
+    <a href="@routes.EventController.viewEvent(1)"><button type="button" class="btn">View</button></a>
+</div>
+}
+
+
+}

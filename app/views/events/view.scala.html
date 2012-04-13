@@ -3,7 +3,7 @@
 @import helper._
 @import helper.twitterBootstrap._
 
-@main(" snaps @ flurdy") {
+@main(" snaps | view event") {
 
 
 
@@ -12,4 +12,40 @@
         <p class="description">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
 
 
+<br/><br/>
+
+        <h3>Photo albums</h3>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Publisher</th>
+                <th>Link</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>John Smith</td>
+                <td><a href="#">flickr.com/photos/johnysmith/christmas</a></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Sue Smith</td>
+                <td><a href="#">picasaweb.com/photos/suesmith/christmas</a></td>
+                <td><i class="icon-lock"></i></td>
+            </tr>
+        </tbody>
+    </table>
+
+<br/><br/>
+
+    <div class="form-actions">
+
+        @form(action = routes.EventController.showEditEvent(1), 'class -> "form-inline"){
+            <button type="submit" class="btn btn-success btn-small">Add album</button>
+        }
+        @form(action = routes.EventController.showEditEvent(1), 'class -> "form-inline"){
+            <button type="submit" class="btn btn-warning btn-small">Edit event</button>
+        }
+    </div>
 }

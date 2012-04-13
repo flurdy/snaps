@@ -20,21 +20,25 @@
                 <td><a href="@routes.EventController.viewEvent(1)">Christmas</a></td>
                 <td>December 2011</td>
                 <td>John Smith</td>
+                <td><i class="icon-lock"></i></td>
             </tr>
             <tr>
                 <td><a href="@routes.EventController.viewEvent(2)">Adams at Barbados</a></td>
                 <td>May 2010</td>
                 <td>Jay Adam</td>
+                <td></td>
             </tr>
             <tr>
                 <td><a href="@routes.EventController.viewEvent(3)">Skiing in Meribel</a></td>
                 <td>February 2012</td>
                 <td>Sue Banks</td>
+                <td><i class="icon-lock"></i></td>
             </tr>
             <tr>
                 <td><a href="@routes.EventController.viewEvent(4)">Christmas 2010 Jones</a></td>
                 <td>December 2010</td>
                 <td>John Jones, Mark Jones</td>
+                <td></td>
             </tr>
         </tbody>
     </table>
@@ -42,7 +46,7 @@
     @form(action = routes.EventController.search(), 'class -> "well form-search"){
     <fieldset>
         <legend>Find event</legend>
-        <input type="text" name="searchText" class="span3 input-medium search-query" value="@searchText">
+        <input type="text" name="searchText" class="span3 input-medium search-query" value="@searchText" placeholder="Event name or organiser">
         <button type="submit" class="btn btn-primary">search</button>
     </fieldset>
     }

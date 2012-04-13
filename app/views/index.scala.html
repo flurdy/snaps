@@ -1,24 +1,38 @@
-@(searchForm: Form[String])
+@(searchForm: Form[String],createForm: Form[String])
 
 @import helper._
 @import helper.twitterBootstrap._
 
 @main(" snaps @ flurdy") {
 
-    @searchForm.globalError.map { error =>
-    <p class="alert alert-error">
-        Oh dear: @error.message
-    </p>
-    }
+@searchForm.globalError.map { error =>
+<p class="alert alert-error">
+    Oh dear: @error.message
+</p>
+}
+
+@createForm.globalError.map { error =>
+<p class="alert alert-error">
+    Oh dear: @error.message
+</p>
+}
 
 
-    @form(action = routes.EventController.search(), 'class -> "well form-search"){
-        <fieldset>
-            <legend>Find event</legend>
-            <input type="text" name="searchText" class="span3 input-medium search-query" placeholder="event name or organiser">
-            <button type="submit" class="btn btn-primary">search</button>
-        </fieldset>
-    }
+@form(action = routes.EventController.search(), 'class -> "well form-search"){
+<fieldset>
+    <legend>Find event</legend>
+    <input type="text" name="searchText" class="span3 input-medium search-query" placeholder="Event name or organiser">
+    <button type="submit" class="btn btn-primary">search</button>
+</fieldset>
+}
+
+@form(action = routes.EventController.createEvent(), 'class -> "well form-horizontal"){
+<fieldset>
+    <legend>Create event</legend>
+    <input type="text" name="eventName" class="span3 input-medium" placeholder="Event name">
+    <button type="submit" class="btn btn-success">create</button>
+</fieldset>
+}
 
     
 }

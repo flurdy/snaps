@@ -5,8 +5,11 @@
 # Home page
 GET     /                           controllers.Application.index
 
-POST     /events                           controllers.EventController.search
+GET     /events                 controllers.EventController.search
+POST     /events                controllers.EventController.createEvent
 GET     /events/:id/           controllers.EventController.viewEvent(id: Long)
+GET     /events/:id/edit.html           controllers.EventController.showEditEvent(id: Long)
+POST     /events/:id/           controllers.EventController.updateEvent(id: Long)
 
 # Map static resources from the /public folder to the /assets URL path
 # GET     /images/*imgFile               controllers.Assets.at(path="/public/images", imgFile)
