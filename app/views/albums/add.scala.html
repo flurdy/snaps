@@ -1,0 +1,32 @@
+@(albumForm: Form[String])
+
+@import helper._
+@import helper.twitterBootstrap._
+
+@main(" snaps | add album") {
+
+    <h2>Add album</h2>
+
+    <br/>
+
+    <h3>Event: Christmas</h3>
+
+    <br/>
+
+    @form(action = routes.AlbumController.addAlbum(1), 'class -> "well form-horizontal"){
+        <fieldset>
+            <legend>Publisher</legend>
+            <input type="text" name="publisher" class="span2" placeholder="name of album owner">
+        </fieldset>
+        <fieldset>
+            <legend>URL Link</legend>
+            <input type="text" name="url" class="span3" placeholder="http://www.example.com/album/123">
+        </fieldset>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-success">Add album</button>
+            <a href="@routes.EventController.viewEvent(1)"><button type="button" class="btn">Cancel</button></a>
+        </div>
+    }
+
+
+}

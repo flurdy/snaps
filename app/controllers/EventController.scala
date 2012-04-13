@@ -60,7 +60,7 @@ object EventController extends Controller {
     updateForm.bindFromRequest.fold(
       errors => {
         Logger.warn("Bad request:"+errors)
-        BadRequest(views.html.index(errors,createForm))
+        BadRequest(views.html.index(updateForm,createForm))
       },
       eventName => {
         Logger.info("Update event")
@@ -69,10 +69,57 @@ object EventController extends Controller {
     )
   }
 
-  def showDeleteEvent(eventId: Long) = TODO
-  def deleteEvent(eventId: Long) = TODO
-  def showAddAlbum(eventId: Long) = TODO
-  def updateAlbum(eventId: Long,albumId: Long) = TODO
-  def removeAlbum(eventId: Long,albumId: Long) = TODO
+  def showDeleteEvent(eventId: Long) = Action {
+    Ok(views.html.events.delete())
+  }
+
+  def deleteEvent(eventId: Long) =  Action {
+    Logger.info("Delete event")
+    Redirect(routes.Application.index());
+  }
+
+}
+
+object AlbumController extends Controller {
+
+  val albumForm: Form[String] = Form(
+    "publisher" -> nonEmptyText(maxLength = 100)
+  )
+
+  def showAddAlbum(eventId: Long) = Action {
+    Ok(views.html.albums.add(albumForm))
+  }
+
+  def addAlbum(eventId: Long) = Action { implicit request =>
+    albumForm.bindFromRequest.fold(
+      errors => {
+        Logger.warn("Bad request:"+errors)
+        BadRequest(views.html.albums.add(errors))
+      },
+      album => {
+        Logger.info("Add album")
+        Redirect(routes.EventController.viewEvent(1));
+      }
+    )
+  }
+
+  def updateAlbum(eventId: Long,albumId: Long) = Action { implicit request =>
+    albumForm.bindFromRequest.fold(
+      errors => {
+        Logger.warn("Bad request:"+errors)
+        BadRequest(views.html.events.edit())
+      },
+      album => {
+        Logger.info("Update album")
+        Redirect(routes.EventController.viewEvent(1));
+      }
+    )
+  }
+
+  def removeAlbum(eventId: Long,albumId: Long) = Action {
+        Logger.info("Remove album")
+        Redirect(routes.EventController.viewEvent(1));
+  }
+
 
 }
