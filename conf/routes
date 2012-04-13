@@ -5,5 +5,11 @@
 # Home page
 GET     /                           controllers.Application.index
 
+POST     /events                           controllers.EventController.search
+GET     /events/:id/           controllers.EventController.viewEvent(id: Long)
+
 # Map static resources from the /public folder to the /assets URL path
+# GET     /images/*imgFile               controllers.Assets.at(path="/public/images", imgFile)
+# GET     /stylesheets/*cssfile               controllers.Assets.at(path="public/stylesheets/", cssfile)
+# GET     /javascripts/*jsfile               controllers.Assets.at(path="public/javascripts/", jsfile)
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

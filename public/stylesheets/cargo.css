@@ -1,8 +1,8 @@
 /* ### css by flurdy . Copyright: electric ray 2004, www.eray.co.uk ### */
 
-#bow { padding: 0 0 0 3em; }
+#bow { padding: 0.4em 0 0 3em; }
 img#fork-me {
-    float: right; width: 6em; margin-right: 0em; margin-top: -3em;
+    float: right; width: 6em; margin-right: 0em; margin-top: -5.4em;
     -webkit-transform: rotate(90deg);
     -moz-transform: rotate(90deg);
     -o-transform: rotate(90deg);
@@ -23,4 +23,14 @@ img#fork-me {
 	margin: 0;
 	padding: 0;
 	height: 1em;
+}
+
+
+ul.horizontal {
+	margin: 0;
+}
+ul.horizontal li {
+	display: inline;
+	padding-right: 20px;
+	list-style: none;
 }
