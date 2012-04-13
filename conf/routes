@@ -10,6 +10,16 @@ POST     /events                controllers.EventController.createEvent
 GET     /events/:id/           controllers.EventController.viewEvent(id: Long)
 GET     /events/:id/edit.html           controllers.EventController.showEditEvent(id: Long)
 POST     /events/:id/           controllers.EventController.updateEvent(id: Long)
+PUT     /events/:id/           controllers.EventController.updateEvent(id: Long)
+GET     /events/:id/delete.html           controllers.EventController.showDeleteEvent(id: Long)
+POST     /events/:id/delete           controllers.EventController.deleteEvent(id: Long)
+DELETE     /events/:id/           controllers.EventController.deleteEvent(id: Long)
+
+GET    /events/:eventId/album/new.html             controllers.EventController.showAddAlbum(eventId: Long)
+POST     /events/:eventId/album/:albumId/           controllers.EventController.updateAlbum(eventId: Long, albumId: Long)
+PUT     /events/:eventId/album/:albumId/           controllers.EventController.updateAlbum(eventId: Long, albumId: Long)
+POST     /events/:eventId/album/:albumId/delete           controllers.EventController.removeAlbum(eventId: Long, albumId: Long)
+DELETE     /events/:eventId/album/:albumId/           controllers.EventController.removeAlbum(eventId: Long, albumId: Long)
 
 # Map static resources from the /public folder to the /assets URL path
 # GET     /images/*imgFile               controllers.Assets.at(path="/public/images", imgFile)

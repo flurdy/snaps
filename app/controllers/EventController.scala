@@ -69,4 +69,10 @@ object EventController extends Controller {
     )
   }
 
+  def showDeleteEvent(eventId: Long) = TODO
+  def deleteEvent(eventId: Long) = TODO
+  def showAddAlbum(eventId: Long) = TODO
+  def updateAlbum(eventId: Long,albumId: Long) = TODO
+  def removeAlbum(eventId: Long,albumId: Long) = TODO
+
 }

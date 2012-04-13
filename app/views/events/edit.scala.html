@@ -14,13 +14,49 @@
 </fieldset>
 <fieldset>
     <legend>Event date</legend>
-    <input type="text" name="eventName" class="span3 input-medium" value="2012-12-25">
+    <input type="text" name="eventName" class="input-small" value="2012-12-25">
 </fieldset>
 <div class="form-actions">
-    <button type="submit" class="btn btn-success">Update</button>
-    <a href="@routes.EventController.viewEvent(1)"><button type="button" class="btn">View</button></a>
+    <a href="@routes.EventController.viewEvent(1)"><button type="button" class="btn">View event</button></a>
+    <button type="submit" class="btn btn-primary">Update event</button>
+    <a href="@routes.EventController.showDeleteEvent(1)"><button type="button" class="btn btn-danger">Delete event</button></a>
 </div>
 }
+
+
+<h3>Photo albums</h3>
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>Publisher</th>
+        <th>Link</th>
+        <th colspan="2">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        @form(action = routes.EventController.updateAlbum(1,1), 'class -> "well form-horizontal"){
+        <td><input type="text" name="publisher" class="input-small" value="John Smith"></td>
+        <td><input type="text" name="url" class="span3" value="flickr.com/photos/johnysmith/christmas"></td>
+        <td><button type="submit" class="btn btn-primary btn-mini">Update album</button></td>
+        }
+        @form(action = routes.EventController.removeAlbum(1,12), 'class -> "well form-horizontal"){
+        <td><button type="submit" class="btn btn-danger btn-mini">Remove album</button></td>
+        }
+    </tr>
+    <tr>
+        @form(action = routes.EventController.updateAlbum(1,2), 'class -> "well form-horizontal"){
+        <td><input type="text" name="publisher" class="input-small" value="Sue Smith"></td>
+        <td><input type="text" name="url" class="span3" value="picasaweb.com/photos/suesmith/christmas"></td>
+        <td><button type="submit" class="btn btn-primary btn-mini">Update album</button></td>
+        }
+        @form(action = routes.EventController.removeAlbum(1,2), 'class -> "well form-horizontal"){
+        <td><button type="submit" class="btn btn-danger btn-mini">Remove album</button></td>
+        }
+    </tr>
+    </tbody>
+</table>
 
 
 }
