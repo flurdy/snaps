@@ -1,4 +1,4 @@
-@(title: String)(content: Html)
+@(title: String)(breadcrumb: Html)(content: Html)
 
 <!DOCTYPE html>
 
@@ -35,28 +35,34 @@
                         </div>
                         <div id="keel" class="structure">
                             <div id="innerhull" class="structure">
+                                <div id="jib" class="compartment">
+                                    <ul class="breadcrumb">
+                                        <li>
+                                            <a href="@routes.Application.index()">Home</a>
+                                        </li>
+                                        @breadcrumb
+                                    </ul>
+                                    <a href="http://github.com/flurdy/snaps" target="_blank"><img id="fork-me" alt="Fork me on github"
+                                                                                                  title="Fork me on github" src="@routes.Assets.at("images/ForkMe_Blk.png")" /></a>
+                                </div>
                                 <div id="bulkhead" class="structure">
-                                    <a href="http://github.com/flurdy/snaps"><img id="fork-me" alt="Fork me on github"
-                                                                                    title="Fork me on github" src="@routes.Assets.at("images/ForkMe_Blk.png")" /></a>
                                     <div id="ballast" class="structure compartment">
                                         <section id="cargo" class="compartment">
                                             @content
                                         </section>
                                     </div>
                                 </div>
-                                <div id="bridge" class="compartment">
-                                </div>
                             </div>
                         </div>
                         <div id="aft" class="compartment">
                             <ul class="horizontal">
                                 <li><a href="@routes.Application.index()">Home</a></li>
-                                <li><a href="http://github.com/flurdy/snaps">About</a></li>
-                                <li><a href="http://flurdy.com/contact/">Contact</a></li>
+                                <li><a href="http://github.com/flurdy/snaps" target="_blank">About</a></li>
+                                <li><a href="http://flurdy.com/contact/" target="_blank">Contact</a></li>
                             </ul>
                         </div>
                         <div id="stern" class="compartment">
-                            <div id="flurdy"><a href="http://flurdy.com"><img
+                            <div id="flurdy"><a href="http://flurdy.com" target="_blank"><img
                                     alt="flurdy" title="made by flurdy" border="0"
                                     src="@routes.Assets.at("images/flurdy_warped_dual_small.png")" /></a></div>
                         </div>

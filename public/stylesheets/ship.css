@@ -51,7 +51,7 @@ body {  }
 #ocean { margin-left: 0em; }
 #fleet { padding: 1em; }
 #ship { max-width: 60em; }
-#ballast { padding: 1.5em 1em; min-height: 25em; min-width: 40em; max-width: 60em; }
+#ballast { padding: 0.5em 1em; min-height: 25em; min-width: 40em; max-width: 60em; }
 #cargo { padding: 0 0; }
 #bow { padding: 0 1em; }
 #lookout { padding: 0; margin: 0; }

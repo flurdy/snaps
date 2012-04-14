@@ -22,7 +22,7 @@ body { width: 97%; height: 99%; padding: 0; margin: 0; }
 #lookout { }
 #port { display: table-cell; }
 #starboard { display: table-cell; }
-#jib { }
+#jib {  }
 #foremast { }
 #hatch { display: table-cell; }
 #deck { display: table-cell; }

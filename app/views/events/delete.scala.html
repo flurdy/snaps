@@ -3,7 +3,12 @@
 @import helper._
 @import helper.twitterBootstrap._
 
-@main(" snaps | delete event") {
+@main(" snaps | delete event"){
+<li>
+    <span class="divider">/</span>
+    <a href="@routes.EventController.viewEvent(1)">Event</a>
+</li>
+} {
 
        <h2>Delete event</h2>
          <br/>

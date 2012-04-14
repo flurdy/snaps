@@ -3,7 +3,12 @@
 @import helper._
 @import helper.twitterBootstrap._
 
-@main(" snaps | view event") {
+@main(" snaps | view event"){
+<li>
+    <span class="divider">/</span>
+    <a href="@routes.EventController.viewEvent(1)">Event</a>
+</li>
+} {
 
 
 
@@ -26,12 +31,12 @@
         <tbody>
             <tr>
                 <td>John Smith</td>
-                <td><a href="#">flickr.com/photos/johnysmith/christmas</a></td>
+                <td><a href="#" target="_blank">flickr.com/photos/johnysmith/christmas <img class="external-link" src="@routes.Assets.at("images/external-link-ltr-icon.png")"/></a></td>
                 <td></td>
             </tr>
             <tr>
                 <td>Sue Smith</td>
-                <td><a href="#">picasaweb.com/photos/suesmith/christmas</a></td>
+                <td><a href="#" target="_blank">picasaweb.com/photos/suesmith/christmas <img class="external-link" src="@routes.Assets.at("images/external-link-ltr-icon.png")"/></a></td>
                 <td><i class="icon-lock"></i></td>
             </tr>
         </tbody>

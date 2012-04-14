@@ -1,9 +1,14 @@
-@()
+@(updateForm: Form[(String,String) ])
 
 @import helper._
 @import helper.twitterBootstrap._
 
 @main(" snaps | edit event") {
+<li>
+    <span class="divider">/</span>
+    <a href="@routes.EventController.viewEvent(1)">Event</a>
+</li>
+}{
 
 
 
@@ -14,7 +19,7 @@
 </fieldset>
 <fieldset>
     <legend>Event date</legend>
-    <input type="text" name="eventName" class="input-small" value="2012-12-25">
+    <input type="text" name="eventDate" class="input-small" value="2011-12-24">
 </fieldset>
 <div class="form-actions">
     <button type="submit" class="btn btn-primary">Update event</button>

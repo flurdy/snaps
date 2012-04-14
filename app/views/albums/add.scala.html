@@ -1,9 +1,18 @@
-@(albumForm: Form[String])
+@(albumForm: Form[(String,String)])
 
 @import helper._
 @import helper.twitterBootstrap._
 
 @main(" snaps | add album") {
+<li>
+    <span class="divider">/</span>
+    <a href="@routes.EventController.viewEvent(1)">Event</a>
+</li>
+<li>
+    <span class="divider">/</span>
+    Album
+</li>
+}{
 
     <h2>Add album</h2>
 
