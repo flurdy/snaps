@@ -1,27 +1,28 @@
-@()
+@(event: Event)
 
 @import helper._
 @import helper.twitterBootstrap._
+@import models._
 
-@main(" snaps | delete event"){
+@main(" snaps | delete event | " + event.eventName){
 <li>
     <span class="divider">/</span>
-    <a href="@routes.EventController.viewEvent(1)">Event</a>
+    <a href="@routes.EventController.viewEvent(event.eventId)">Event</a>
 </li>
 } {
 
        <h2>Delete event</h2>
          <br/>
-        <h3>Event: Christmas</h3>
+        <h3>Event: @event.eventName: </h3>
     <br/>
     <div class="alert alert-block">
             Please confirm you want to delete this event
     </div>
 
-@form(action = routes.EventController.deleteEvent(1), 'class -> "form-horizontal"){
+@form(action = routes.EventController.deleteEvent(event.eventId), 'class -> "form-horizontal"){
 <div class="form-actions">
     <button type="submit" class="btn btn-danger">Delete event</button>
-    <a href="@routes.EventController.viewEvent(1)"><button type="button" class="btn">Cancel</button></a>
+    <a href="@routes.EventController.viewEvent(event.eventId)"><button type="button" class="btn">Cancel</button></a>
 </div>
 }
 

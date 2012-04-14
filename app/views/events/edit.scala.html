@@ -1,30 +1,31 @@
-@(updateForm: Form[(String,String) ])
+@(event: Event, updateForm: Form[(String,String) ])
 
 @import helper._
 @import helper.twitterBootstrap._
+@import models._
 
-@main(" snaps | edit event") {
+@main(" snaps | edit event | " + event.eventName) {
 <li>
     <span class="divider">/</span>
-    <a href="@routes.EventController.viewEvent(1)">Event</a>
+    <a href="@routes.EventController.viewEvent(event.eventId)">Event</a>
 </li>
 }{
 
 
 
-@form(action = routes.EventController.updateEvent(1), 'class -> "well form-horizontal"){
+@form(action = routes.EventController.updateEvent(event.eventId), 'class -> "well form-horizontal"){
 <fieldset>
     <legend>Event name</legend>
-    <input type="text" name="eventName" class="span3 input-medium" value="Christmas">
+    <input type="text" name="eventName" class="span3 input-medium" value="Christmas" placeholder="Event name">
 </fieldset>
 <fieldset>
     <legend>Event date</legend>
-    <input type="text" name="eventDate" class="input-small" value="2011-12-24">
+    <input type="text" name="eventDate" class="input-small" value="2011-12-24" placeholder="Event date">
 </fieldset>
 <div class="form-actions">
     <button type="submit" class="btn btn-primary">Update event</button>
-    <a href="@routes.EventController.showDeleteEvent(1)"><button type="button" class="btn btn-danger">Delete event</button></a>
-    <a href="@routes.EventController.viewEvent(1)"><button type="button" class="btn">Cancel</button></a>
+    <a href="@routes.EventController.showDeleteEvent(event.eventId)"><button type="button" class="btn btn-danger">Delete event</button></a>
+    <a href="@routes.EventController.viewEvent(event.eventId)"><button type="button" class="btn">Cancel</button></a>
 </div>
 }
 
@@ -41,29 +42,29 @@
     </thead>
     <tbody>
     <tr>
-        @form(action = routes.AlbumController.updateAlbum(1,1), 'class -> "well form-horizontal"){
+        @form(action = routes.AlbumController.updateAlbum(event.eventId,1), 'class -> "well form-horizontal"){
         <td><input type="text" name="publisher" class="input-small" value="John Smith"></td>
         <td><input type="text" name="url" class="span3" value="flickr.com/photos/johnysmith/christmas"></td>
         <td><button type="submit" class="btn btn-primary btn-mini">Update album</button></td>
         }
-        @form(action = routes.AlbumController.removeAlbum(1,12), 'class -> "well form-horizontal"){
+        @form(action = routes.AlbumController.removeAlbum(event.eventId,1), 'class -> "well form-horizontal"){
         <td><button type="submit" class="btn btn-danger btn-mini">Remove album</button></td>
         }
     </tr>
     <tr>
-        @form(action = routes.AlbumController.updateAlbum(1,2), 'class -> "well form-horizontal"){
+        @form(action = routes.AlbumController.updateAlbum(event.eventId,2), 'class -> "well form-horizontal"){
         <td><input type="text" name="publisher" class="input-small" value="Sue Smith"></td>
         <td><input type="text" name="url" class="span3" value="picasaweb.com/photos/suesmith/christmas"></td>
         <td><button type="submit" class="btn btn-primary btn-mini">Update album</button></td>
         }
-        @form(action = routes.AlbumController.removeAlbum(1,2), 'class -> "well form-horizontal"){
+        @form(action = routes.AlbumController.removeAlbum(event.eventId,2), 'class -> "well form-horizontal"){
         <td><button type="submit" class="btn btn-danger btn-mini">Remove album</button></td>
         }
     </tr>
     </tbody>
 </table>
 
-@form(action = routes.AlbumController.showAddAlbum(1), 'class -> "form-inline"){
+@form(action = routes.AlbumController.showAddAlbum(event.eventId), 'class -> "form-inline"){
 <button type="submit" class="btn btn-info btn-small">Add album</button>
 }
 

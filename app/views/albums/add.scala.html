@@ -1,12 +1,13 @@
-@(albumForm: Form[(String,String)])
+@(event: Event, albumForm: Form[(String,String)])
 
 @import helper._
 @import helper.twitterBootstrap._
+@import models._
 
 @main(" snaps | add album") {
 <li>
     <span class="divider">/</span>
-    <a href="@routes.EventController.viewEvent(1)">Event</a>
+    <a href="@routes.EventController.viewEvent(event.eventId)">Event</a>
 </li>
 <li>
     <span class="divider">/</span>
@@ -18,11 +19,11 @@
 
     <br/>
 
-    <h3>Event: Christmas</h3>
+    <h3>Event: @event.eventName</h3>
 
     <br/>
 
-    @form(action = routes.AlbumController.addAlbum(1), 'class -> "well form-horizontal"){
+    @form(action = routes.AlbumController.addAlbum(event.eventId), 'class -> "well form-horizontal"){
         <fieldset>
             <legend>Publisher</legend>
             <input type="text" name="publisher" class="span2" placeholder="name of album owner">
@@ -33,7 +34,7 @@
         </fieldset>
         <div class="form-actions">
             <button type="submit" class="btn btn-success">Add album</button>
-            <a href="@routes.EventController.viewEvent(1)"><button type="button" class="btn">Cancel</button></a>
+            <a href="@routes.EventController.viewEvent(event.eventId)"><button type="button" class="btn">Cancel</button></a>
         </div>
     }
 

@@ -40,8 +40,8 @@ object EventController extends Controller {
   }
 
   def viewEvent(eventId: Long) = Action {
-    // TODO: find event
-    Ok(views.html.events.view())
+    val event = Event.findEvent(eventId);
+    Ok(views.html.events.view(event))
   }
 
 
@@ -54,16 +54,17 @@ object EventController extends Controller {
       eventName => {
         Logger.info("Create event")
         val event = new Event(eventName)
+        // TODO: logic
         // TODO: persist event
-        Redirect(routes.EventController.showEditEvent(1));
+        Redirect(routes.EventController.showEditEvent(event.eventId));
       }
     )
   }
 
   def showEditEvent(eventId: Long) = Action {
-    // TODO: find event
-//    val event = new Event("Crhistmas","2012-01-01")
-    Ok(views.html.events.edit(updateForm))//.fill(event)))
+    val event = Event.findEvent(eventId);
+    // TODO: transform
+    Ok(views.html.events.edit(event,updateForm))//.fill(event)))
   }
 
 
@@ -72,25 +73,27 @@ object EventController extends Controller {
     updateForm.bindFromRequest.fold(
       errors => {
         Logger.warn("Bad request:"+errors)
-        BadRequest(views.html.events.edit(updateForm))
+        val event = Event.findEvent(eventId);
+        BadRequest(views.html.events.edit(event,updateForm))
       },
       eventName => {
         Logger.info("Update event")
-        // TODO: find event
+        val event = Event.findEvent(eventId);
+        // TODO: logic
         // TODO: persist changes
-        Redirect(routes.EventController.viewEvent(1));
+        Redirect(routes.EventController.viewEvent(eventId));
       }
     )
   }
 
   def showDeleteEvent(eventId: Long) = Action {
-    // TODO: find event
-    Ok(views.html.events.delete())
+    val event = Event.findEvent(eventId);
+    Ok(views.html.events.delete(event))
   }
 
   def deleteEvent(eventId: Long) =  Action {
     Logger.info("Delete event")
-    // TODO: find event
+    val event = Event.findEvent(eventId);
     // TODO: persist delete
     Redirect(routes.Application.index());
   }
@@ -108,22 +111,24 @@ object AlbumController extends Controller {
   )
 
   def showAddAlbum(eventId: Long) = Action {
-    // TODO: find event
-    Ok(views.html.albums.add(albumForm))
+    val event = Event.findEvent(eventId);
+    Ok(views.html.albums.add(event,albumForm))
   }
 
   def addAlbum(eventId: Long) = Action { implicit request =>
     albumForm.bindFromRequest.fold(
       errors => {
         Logger.warn("Bad request:"+errors)
-        BadRequest(views.html.albums.add(albumForm))
+        val event = Event.findEvent(eventId);
+        BadRequest(views.html.albums.add(event,albumForm))
       },
       album => {
         Logger.info("Add album")
-        // TODO: find event
-        // TODO: Create album
+        val event = Event.findEvent(eventId);
+        val album = event.createAlbum(new Album("publisher","url"))
+        // TODO: Logic
         // TODO: persist changes
-        Redirect(routes.EventController.viewEvent(1));
+        Redirect(routes.EventController.viewEvent(eventId));
       }
     )
   }
@@ -132,22 +137,27 @@ object AlbumController extends Controller {
     albumForm.bindFromRequest.fold(
       errors => {
         Logger.warn("Bad request:"+errors)
-        BadRequest(views.html.events.edit(EventController.updateForm))
+        val event = Event.findEvent(eventId);
+        BadRequest(views.html.events.edit(event,EventController.updateForm))
       },
       album => {
         Logger.info("Update album")
-        // TODO: find album
+        val event = Event.findEvent(eventId);
+        val album = event.findAlbum(albumId);
+        // TODO: Logic
         // TODO: persist changes
-        Redirect(routes.EventController.showEditEvent(1));
+        Redirect(routes.EventController.showEditEvent(eventId));
       }
     )
   }
 
   def removeAlbum(eventId: Long,albumId: Long) = Action {
       Logger.info("Remove album")
-      // TODO: find album
+      val event = Event.findEvent(eventId);
+      val album = event.findAlbum(albumId);
+      // TODO: Logic
       // TODO: persist delete
-      Redirect(routes.EventController.showEditEvent(1));
+      Redirect(routes.EventController.showEditEvent(eventId));
   }
 
 

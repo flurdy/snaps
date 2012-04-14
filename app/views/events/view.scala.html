@@ -1,20 +1,25 @@
-@()
+@(event: Event)
 
 @import helper._
 @import helper.twitterBootstrap._
+@import models._
 
-@main(" snaps | view event"){
+@main("snaps | view event | " + event.eventName){
 <li>
     <span class="divider">/</span>
-    <a href="@routes.EventController.viewEvent(1)">Event</a>
+    <a href="@routes.EventController.viewEvent(event.eventId)">Event</a>
 </li>
 } {
 
+    <h2>@event.eventName</h2>
 
+<br/>
 
-        <h2>Christmas</h2>
+    <p>Event date: @event.eventDate</p>
 
-        <p class="description">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+<br/>
+
+    <p class="description">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
 
 
 <br/><br/>
@@ -46,10 +51,10 @@
 
     <div class="form-actions">
 
-        @form(action = routes.AlbumController.showAddAlbum(1), 'class -> "form-inline"){
+        @form(action = routes.AlbumController.showAddAlbum(event.eventId), 'class -> "form-inline"){
             <button type="submit" class="btn btn-info btn-small">Add album</button>
         }
-        @form(action = routes.EventController.showEditEvent(1), 'class -> "form-inline"){
+        @form(action = routes.EventController.showEditEvent(event.eventId), 'class -> "form-inline"){
             <button type="submit" class="btn btn-warning btn-small">Edit event</button>
         }
     </div>
