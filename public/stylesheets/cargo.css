@@ -2,9 +2,9 @@
 
 #bow { padding: 0.4em 0 0 3em; }
 #jib { padding: 0; }
-#jib ul { margin: 0.8em 0.8em; clear: both; }
+#jib ul { margin: 0.4em 0.8em;  }
 img#fork-me {
-    float: right; width: 6em; margin-right: 0em; margin-top: -9.6em;
+    float: right; width: 6em; margin-right: 0em; margin-top: -0.4em;
     -webkit-transform: rotate(90deg);
     -moz-transform: rotate(90deg);
     -o-transform: rotate(90deg);

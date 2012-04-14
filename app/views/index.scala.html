@@ -7,6 +7,8 @@
 
 }{
 
+        <br/>
+
 @searchForm.globalError.map { error =>
 <p class="alert alert-error">
     Oh dear: @error.message
@@ -35,6 +37,8 @@
     <button type="submit" class="btn btn-success">Create event</button>
 </fieldset>
 }
-
+<style>
+    #jib .breadcrumb { display: none; }
+</style>
     
 }

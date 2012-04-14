@@ -25,6 +25,7 @@ object EventController extends Controller {
     ) //(Event.apply)(Event.unapply)
   )
 
+
   def search = Action {  implicit request =>
     searchForm.bindFromRequest.fold(
       errors => {
@@ -38,6 +39,7 @@ object EventController extends Controller {
       }
     )
   }
+
 
   def viewEvent(eventId: Long) = Action {
     val event = Event.findEvent(eventId);
@@ -53,13 +55,14 @@ object EventController extends Controller {
       },
       eventName => {
         Logger.info("Create event")
-        val event = new Event(eventName)
-        // TODO: logic
+        val orphanEvent = new Event(eventName)
+        val realEvent = new Event(Event.insertEvent(orphanEvent),orphanEvent);
         // TODO: persist event
-        Redirect(routes.EventController.showEditEvent(event.eventId));
+        Redirect(routes.EventController.showEditEvent(realEvent.eventId));
       }
     )
   }
+
 
   def showEditEvent(eventId: Long) = Action {
     val event = Event.findEvent(eventId);
