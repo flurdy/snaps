@@ -12,8 +12,7 @@ case class Event (
   eventName: String,
   eventDate: Option[String]
 ){
-
-  // require(eventName.trim.length > 1)
+  require(eventName.trim.length > 1)
 
   var albums: List[Album] = List()
 
@@ -50,7 +49,11 @@ object Event {
     }
   }
 
-  def insertEventAndReturnId(event: Event) : Long = {
+  def createEvent(eventName: String) = {
+    insertEvent(new Event(eventName))
+  }
+
+  def insertEvent(event: Event) = {
     DB.withConnection { implicit connection =>
       Logger.info("Inserting : " + event)
       val eventId = SQL("SELECT NEXTVAL('snapevent_seq')").as(scalar[Long].single)
@@ -65,7 +68,7 @@ object Event {
         'eventname -> event.eventName,
         'eventdate -> event.eventDate.getOrElse("")
       ).executeInsert()
-      eventId
+      new Event(eventId,event)
     }
   }
 
@@ -108,6 +111,7 @@ object Event {
   }
 
   def updateEvent(event: Event) = {
+    assert(event.eventName.trim.length > 1)
     DB.withConnection { implicit connection =>
       SQL(
         """

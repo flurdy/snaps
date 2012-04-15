@@ -11,8 +11,14 @@ case class Album (
   publisher: String,
   url: String
 ){
+  require(publisher.trim.length > 2)
+
+  require(url.trim.length > 9)
+
   def this(publisher: String, url: String) = this(0,publisher,url)
+
   def this(albumId: Long, that: Album) = this(albumId,that.publisher,that.url)
+
 }
 
 

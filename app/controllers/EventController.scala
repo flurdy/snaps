@@ -59,9 +59,8 @@ object EventController extends Controller {
         BadRequest(views.html.index(errors,createForm))
       },
       eventName => {
-        val event = new Event(eventName)
-        val eventId = Event.insertEventAndReturnId(event)
-        Redirect(routes.EventController.showEditEvent(eventId))
+        val event = Event.createEvent(eventName)
+        Redirect(routes.EventController.showEditEvent(event.eventId))
       }
     )
   }
@@ -74,8 +73,7 @@ object EventController extends Controller {
         NotFound
       }
       case Some(event) => {
-        val editForm:  Form[(String,String)] = updateForm
-        val editForm2 = editForm.fill((event.eventName,event.eventDate.getOrElse("")))
+        val editForm2 = updateForm.fill((event.eventName,event.eventDate.getOrElse("")))
         val albums = Album.findAlbums(eventId)
         Ok(views.html.events.edit(event,albums,editForm2))
       }
@@ -86,28 +84,27 @@ object EventController extends Controller {
   def updateEvent(eventId: Long) = Action { implicit request =>
     Event.findEvent(eventId) match {
       case None => {
-        Logger.warn("Not found")
+        Logger.warn("Event not found om updateEvent")
         NotFound
       }
-      case Some(event) => {
+      case Some(event) =>  {
         updateForm.bindFromRequest.fold(
           errors => {
             Logger.warn("Bad request:"+errors)
-            val albums = Album.findAlbums(eventId)
+            val albums = Album.findAlbums(event.eventId)
             BadRequest(views.html.events.edit(event,albums,updateForm))
           },
           updatedForm => {
             val updatedEvent = event.copy(
-                  eventName = updatedForm._1,
-                  eventDate = Option(updatedForm._2) )
+              eventName = updatedForm._1,
+              eventDate = Option(updatedForm._2) )
             Event.updateEvent(updatedEvent)
-            Redirect(routes.EventController.viewEvent(eventId));
+            Redirect(routes.EventController.viewEvent(event.eventId));
           }
         )
       }
     }
   }
-
 
 
   def showDeleteEvent(eventId: Long) = Action {
