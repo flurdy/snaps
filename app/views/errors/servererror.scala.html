@@ -1,4 +1,4 @@
-@()
+@(exception: Throwable)
 
 @import helper._
 @import helper.twitterBootstrap._
@@ -10,5 +10,7 @@
 <br/>
 
         <h2>Server error!</h2>
+
+        <code>@exception.getMessage</code>
 
 }

@@ -66,7 +66,6 @@ object Event {
         'eventdate -> event.eventDate.getOrElse("")
       ).executeInsert()
       eventId
-      // SQL("SELECT CURRVAL('snapevent_seq')").as(scalar[Long].single)
     }
   }
 

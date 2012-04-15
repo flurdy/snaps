@@ -8,7 +8,7 @@ object Global extends GlobalSettings  {
   override def onHandlerNotFound(request: RequestHeader) = {
     if (request.path != "/favicon.ico" && Logger.isInfoEnabled)
       Logger.info("Not found: " + request.path)
-    NotFound(views.html.errors.notfound())
+    NotFound(views.html.errors.notfound(request.path))
   }
 
   //override def onBadRequest(request: RequestHeader, error: String) = {
@@ -17,7 +17,7 @@ object Global extends GlobalSettings  {
 
   override def onError(request: RequestHeader, ex: Throwable) = {
     Logger.error("Server error: " + request.path,ex)
-    InternalServerError(views.html.errors.servererror())
+    InternalServerError(views.html.errors.servererror(ex))
   }
 
 

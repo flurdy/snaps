@@ -1,4 +1,4 @@
-@()
+@(requestPath: String)
 
 @import helper._
 @import helper.twitterBootstrap._
@@ -9,6 +9,8 @@
 
 <br/>
 
-        <h2>Not found!</h2>
+    <h1>404</h1>
+    <h2>Not found!</h2>
+    <p>@requestPath</p>
 
 }
