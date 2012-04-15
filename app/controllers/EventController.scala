@@ -33,7 +33,6 @@ object EventController extends Controller {
         BadRequest(views.html.index(errors,createForm))
       },
       searchText => {
-        Logger.debug("Find events")
         val events = Event.findAll
         // TODO: search for events
         Ok(views.html.events.list(searchText,events))
