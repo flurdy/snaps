@@ -58,18 +58,17 @@ object Album {
   def insertAlbum(eventId: Long, album: Album) = {
     DB.withConnection { implicit connection =>
       Logger.info("Inserting : " + album)
-      val albumId: Long = SQL("select next value for snapalbum_seq").as(scalar[Long].single)
       SQL(
         """
           INSERT INTO snapalbum (albumid,publisher,url,eventid)
-          VALUES ({albumid},{publisher},{url},{eventid})
+          VALUES ( DEFAULT,{publisher},{url},{eventid} )
         """
       ).on(
-        'albumid -> albumId,
         'publisher -> album.publisher,
         'url -> album.url,
         'eventid -> eventId
       ).executeInsert()
+      val albumId = SQL("SELECT CURRVAL(snapalbum_seq)").as(scalar[Long].single)
       new Album(albumId,album)
     }
   }

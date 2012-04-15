@@ -53,19 +53,17 @@ object Event {
   def insertEventAndReturnId(event: Event) : Long = {
     DB.withConnection { implicit connection =>
       Logger.info("Inserting : " + event)
-      val eventId: Long = SQL("select next value for snapevent_seq").as(scalar[Long].single)
       SQL(
         """
-          INSERT INTO snapevent (eventid,eventname, eventdate) VALUES (
-            {eventid}, {eventname}, {eventdate}
-          )
+          INSERT INTO snapevent (eventid,eventname, eventdate) VALUES
+          (DEFAULT, {eventname}, {eventdate})
+
         """
       ).on(
-        'eventid -> eventId,
         'eventname -> event.eventName,
         'eventdate -> event.eventDate.getOrElse("")
       ).executeInsert()
-      eventId
+      SQL("SELECT CURRVAL('snapevent_seq')").as(scalar[Long].single)
     }
   }
 

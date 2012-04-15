@@ -44,7 +44,10 @@ object EventController extends Controller {
 
   def viewEvent(eventId: Long) = Action {
     Event.findEventWithAlbums(eventId) match {
-      case None => NotFound
+      case None => {
+        Logger.warn("Not found")
+        NotFound
+      }
       case Some(event) => Ok(views.html.events.view(event))
     }
   }
@@ -67,7 +70,10 @@ object EventController extends Controller {
 
   def showEditEvent(eventId: Long) = Action {
     Event.findEvent(eventId) match {
-      case None => NotFound
+      case None => {
+        Logger.warn("Not found")
+        NotFound
+      }
       case Some(event) => {
         val editForm:  Form[(String,String)] = updateForm
         val editForm2 = editForm.fill((event.eventName,event.eventDate.getOrElse("")))
@@ -79,36 +85,38 @@ object EventController extends Controller {
 
 
   def updateEvent(eventId: Long) = Action { implicit request =>
-    updateForm.bindFromRequest.fold(
-      errors => {
-        Logger.warn("Bad request:"+errors)
-        Event.findEvent(eventId) match {
-          case None => NotFound
-          case Some(event) => {
+    Event.findEvent(eventId) match {
+      case None => {
+        Logger.warn("Not found")
+        NotFound
+      }
+      case Some(event) => {
+        updateForm.bindFromRequest.fold(
+          errors => {
+            Logger.warn("Bad request:"+errors)
             val albums = Album.findAlbums(eventId)
             BadRequest(views.html.events.edit(event,albums,updateForm))
-          }
-        }
-      },
-      updatedForm => {
-        Event.findEvent(eventId) match {
-          case None => NotFound
-          case Some(event) => {
+          },
+          updatedForm => {
             val updatedEvent = event.copy(
                   eventName = updatedForm._1,
                   eventDate = Option(updatedForm._2) )
             Event.updateEvent(updatedEvent)
             Redirect(routes.EventController.viewEvent(eventId));
           }
-        }
+        )
       }
-    )
+    }
   }
+
 
 
   def showDeleteEvent(eventId: Long) = Action {
     Event.findEvent(eventId) match {
-      case None => NotFound
+      case None => {
+        Logger.warn("Not found")
+        NotFound
+      }
       case Some(event) => Ok(views.html.events.delete(event))
     }
   }
@@ -117,7 +125,10 @@ object EventController extends Controller {
   def deleteEvent(eventId: Long) =  Action {
     Logger.info("Deleting event: " + eventId)
     Event.findEvent(eventId) match {
-      case None => NotFound
+      case None => {
+        Logger.warn("Not found")
+        NotFound
+      }
       case Some(event) => {
         Event.deleteEvent(eventId)
         Redirect(routes.Application.index());
