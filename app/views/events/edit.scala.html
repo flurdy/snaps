@@ -1,4 +1,4 @@
-@(event: Event, albums: Seq[Album], updateForm: Form[(String,String) ])
+@(event: Event, albums: Seq[Album], updateForm: Form[(String,String,String,String) ])
 
 @import helper._
 @import helper.twitterBootstrap._
@@ -15,10 +15,18 @@
 @form(action = routes.EventController.updateEvent(event.eventId), 'class -> "well form-horizontal"){
 <fieldset>
     <legend>Event name</legend>
-    <input type="text" name="eventName" class="span3 input-medium" value="@updateForm("eventName").value" avalue="Christmas" placeholder="Event name"></fieldset>
+    <input type="text" name="eventName" class="span3 input-large" value="@updateForm("eventName").value" placeholder="Event name"></fieldset>
 <fieldset>
     <legend>Event date</legend>
-    <input type="text" name="eventDate" class="input-small" value="@updateForm("eventDate").value" avalue="2011-12-24" placeholder="Event date">
+    <input type="text" name="eventDate" class="input-small" value="@updateForm("eventDate").value" placeholder="Event date">
+</fieldset>
+<fieldset>
+    <legend>Organiser</legend>
+    <input type="text" name="organiser" class="input-medium" value="@updateForm("organiser").value" placeholder="Main organiser">
+</fieldset>
+<fieldset>
+    <legend>Description</legend>
+    <textarea name="description" class="input-xlarge" rows="8">@updateForm("description").value</textarea>
 </fieldset>
 <div class="form-actions">
     <button type="submit" class="btn btn-primary">Update event</button>

@@ -22,6 +22,11 @@
     <h3>Event: @event.eventName</h3>
 
     <br/>
+    @for(error <- albumForm.errors){
+        <p class="alert alert-error">
+            Oh dear: @error.message: @error.key
+        </p>
+    }
 
     @form(action = routes.AlbumController.addAlbum(event.eventId), 'class -> "well form-horizontal"){
         <fieldset>

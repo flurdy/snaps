@@ -15,27 +15,38 @@
 
     <h2>@event.eventName</h2>
 
-<br/>
+    @if(event.eventDate.isDefined){
+    <br/>
 
     <p>Event date: @event.eventDate</p>
+    }
 
-<br/>
+    @if(event.organiser.isDefined){
+    <br/>
 
-    <p class="description">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    <p>Event organiser: @event.organiser</p>
+    }
+
+    <br/>
+
+    <p class="description">@event.description</p>
 
     </div>
 
 <br/><br/>
 
+@if(event.albums.isEmpty){
+<p></p>
+} else {
     <div class="well">
 
         <h3>Photo albums</h3>
-
     <table class="table table-striped">
         <thead>
             <tr>
                 <th>Publisher</th>
                 <th>Link</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -43,25 +54,13 @@
             <tr>
                 <td>@album.publisher</td>
                 <td><a href="@album.url" target="_blank">@album.url <img class="external-link" src="@routes.Assets.at("images/external-link-ltr-icon.png")"/></a></td>
-                <td></td>
-            </tr>
-        }
-        <!--
-            <tr>
-                <td>John Smith</td>
-                <td><a href="http://picasaweb.google.com/flurdy/Industrigata" target="_blank">http://picasaweb.google.com/flurdy/Industrigata <img class="external-link" src="@routes.Assets.at("images/external-link-ltr-icon.png")"/></a></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>Sue Smith</td>
-                <td><a href="http://www.flickr.com/photos/flurdy/sets/72157624009834665/" target="_blank">http://www.flickr.com/photos/flurdy/sets/72157624009834665/ <img class="external-link" src="@routes.Assets.at("images/external-link-ltr-icon.png")"/></a></td>
                 <td><i class="icon-lock"></i></td>
             </tr>
-            -->
+        }
         </tbody>
     </table>
-
     </div>
+}
 
 <br/><br/>
 

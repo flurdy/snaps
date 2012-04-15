@@ -18,60 +18,60 @@ object AlbumController extends Controller {
     )
   )
 
+
   def showAddAlbum(eventId: Long) = Action {
     Event.findEvent(eventId) match {
       case None => {
-        Logger.warn("Not found")
+        Logger.warn("Event not found on show album")
         NotFound
       }
       case Some(event) => Ok(views.html.albums.add(event,albumForm))
     }
   }
 
+
   def addAlbum(eventId: Long) = Action { implicit request =>
-    albumForm.bindFromRequest.fold(
-      errors => {
-        Logger.warn("Bad request:"+errors)
-        Event.findEvent(eventId) match {
-          case None => {
-            Logger.warn("Not found")
-            NotFound
-          }
-          case Some(event) => BadRequest(views.html.albums.add(event,albumForm))
-        }
-      },
-      submittedAlbumForm => {
-        Event.findEvent(eventId) match {
-          case None => {
-            Logger.warn("Not found")
-            NotFound
-          }
-          case Some(event) => {
+    Event.findEvent(eventId) match {
+      case None => {
+        Logger.warn("Event not found on add album ")
+        NotFound
+      }
+      case Some(event) => {
+        albumForm.bindFromRequest.fold(
+          errors => {
+            for(error<-errors.errors){
+              Logger.warn("Bad add album request:"+error.key + " " + error.message)
+            }
+            BadRequest(views.html.albums.add(event,errors))
+          },
+          submittedAlbumForm => {
             val album = new Album(submittedAlbumForm._1,submittedAlbumForm._2)
             event.addAlbum(album)
             Redirect(routes.EventController.viewEvent(eventId));
           }
-        }
+        )
       }
-    )
+    }
   }
+
+
 
   def updateAlbum(eventId: Long,albumId: Long) = Action { implicit request =>
     Event.findEvent(eventId) match {
       case None => {
-        Logger.warn("Not found")
+        Logger.warn("Event not found on update album")
         NotFound
       }
       case Some(event) => {
         event.findAlbum(albumId) match {
           case None => {
-            Logger.warn("Not found")
+            Logger.warn("Album not found on update album")
             NotFound
           }
         case Some(album) => {
           albumForm.bindFromRequest.fold(
             errors => {
-              Logger.warn("Bad request:"+errors)
+              Logger.warn("Bad update album request: "+errors)
               val albums = Album.findAlbums(eventId)
               BadRequest(views.html.events.edit(event,albums,EventController.updateForm))
             },
@@ -89,17 +89,18 @@ object AlbumController extends Controller {
     }
   }
 
+
   def removeAlbum(eventId: Long,albumId: Long) = Action {
     Logger.info("Remove album: "+albumId)
     Event.findEvent(eventId) match {
       case None => {
-        Logger.warn("Not found")
+        Logger.warn("Event not found for remove album")
         NotFound
       }
       case Some(event) => {
         event.findAlbum(albumId) match {
           case None => {
-            Logger.warn("Not found")
+            Logger.warn("Album not found for remove album")
             NotFound
           }
           case Some(album) => {

@@ -15,14 +15,17 @@ object EventController extends Controller {
   )
 
   val createForm: Form[String] = Form(
-    "eventName" -> nonEmptyText(maxLength = 100)
+      "eventName" -> nonEmptyText(maxLength = 100)
   )
 
-  val updateForm:  Form[(String,String)] = Form(
+
+  val updateForm:  Form[(String,String,String,String)] = Form(
     tuple(
       "eventName" -> nonEmptyText(maxLength = 100),
-      "eventDate" -> text
-    ) //(Event.apply)(Event.unapply)
+      "organiser" -> text,
+      "eventDate" -> text,
+      "description" -> text
+    )//(Event.apply)(Event.unapply)
   )
 
 
@@ -41,10 +44,11 @@ object EventController extends Controller {
   }
 
 
+
   def viewEvent(eventId: Long) = Action {
     Event.findEventWithAlbums(eventId) match {
       case None => {
-        Logger.warn("Not found")
+        Logger.warn("Event not found on view")
         NotFound
       }
       case Some(event) => Ok(views.html.events.view(event))
@@ -73,9 +77,12 @@ object EventController extends Controller {
         NotFound
       }
       case Some(event) => {
-        val editForm2 = updateForm.fill((event.eventName,event.eventDate.getOrElse("")))
+        val editForm = updateForm.fill((event.eventName,
+              event.organiser.getOrElse(""),
+              event.eventDate.getOrElse(""),
+              event.description.getOrElse("")))
         val albums = Album.findAlbums(eventId)
-        Ok(views.html.events.edit(event,albums,editForm2))
+        Ok(views.html.events.edit(event,albums,editForm))
       }
     }
   }
@@ -97,7 +104,9 @@ object EventController extends Controller {
           updatedForm => {
             val updatedEvent = event.copy(
               eventName = updatedForm._1,
-              eventDate = Option(updatedForm._2) )
+              organiser = Option(updatedForm._2),
+              eventDate = Option(updatedForm._3),
+              description = Option(updatedForm._4) )
             Event.updateEvent(updatedEvent)
             Redirect(routes.EventController.viewEvent(event.eventId));
           }

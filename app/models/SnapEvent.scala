@@ -10,20 +10,24 @@ import play.Logger
 case class Event (
   eventId: Long,
   eventName: String,
-  eventDate: Option[String]
+  organiser: Option[String],
+  eventDate: Option[String],
+  description: Option[String]
 ){
   require(eventName.trim.length > 1)
 
   var albums: List[Album] = List()
 
-  def this(eventName: String) = this(0,eventName,None)
+  def this(eventName: String) = this(0,eventName,None,None,None)
 
-  def this(eventId: Long, that: Event) = this(eventId,that.eventName,that.eventDate)
+  def this(eventName: String, organiser: Option[String], eventDate: Option[String], description: Option[String]) = this(0,eventName,organiser,eventDate,description)
 
-  def this(eventId: Long, eventName: String, eventDate: Option[String], albums: List[Album]) {
-    this(eventId, eventName, eventDate)
-    this.albums = albums;
-  }
+  def this(eventId: Long, that: Event) = this(eventId,that.eventName, that.organiser, that.eventDate, that.description)
+
+//  def this(eventId: Long, eventName: String, organiser: Option[String], eventDate: Option[String], description: Option[String], albums: List[Album]) {
+//    this(eventId, eventName, organiser, eventDate, description)
+//    this.albums = albums;
+//  }
 
   def findAlbum(albumId: Long) = {
     Album.findAlbum(eventId,albumId)
@@ -44,8 +48,10 @@ object Event {
   val simple = {
     get[Long]("eventid") ~
       get[String]("eventname") ~
-      get[String]("eventdate") map {
-      case eventid~eventname~eventdate => Event( eventid, eventname, Option(eventdate) )
+      get[Option[String]]("organiser") ~
+      get[Option[String]]("eventdate") ~
+      get[Option[String]]("description") map {
+      case eventid~eventname~organiser~eventdate~description => Event( eventid, eventname, organiser, eventdate, description )
     }
   }
 
@@ -59,14 +65,17 @@ object Event {
       val eventId = SQL("SELECT NEXTVAL('snapevent_seq')").as(scalar[Long].single)
       SQL(
         """
-          INSERT INTO snapevent (eventid,eventname, eventdate) VALUES
-          ({eventid}, {eventname}, {eventdate})
-
+          INSERT INTO snapevent
+          (eventid, eventname, organiser, eventdate, description) VALUES
+          ({eventid}, {eventname}, {organiser},
+              {eventdate}, {description})
         """
       ).on(
         'eventid -> eventId,
         'eventname -> event.eventName,
-        'eventdate -> event.eventDate.getOrElse("")
+        'organiser -> event.organiser,
+        'eventdate -> event.eventDate,
+        'description -> event.description
       ).executeInsert()
       new Event(eventId,event)
     }
@@ -77,7 +86,7 @@ object Event {
     DB.withConnection { implicit connection =>
       SQL(
         """
-          SELECT eventid,eventname,eventdate FROM snapevent
+          SELECT * FROM snapevent
             WHERE eventid = {eventid}
         """
       ).on(
@@ -102,7 +111,7 @@ object Event {
     DB.withConnection { implicit connection =>
       SQL(
         """
-          SELECT eventid,eventname,eventdate FROM snapevent
+          SELECT * FROM snapevent
           ORDER BY eventid
         """
       ).on(
@@ -117,13 +126,17 @@ object Event {
         """
           UPDATE snapevent
           SET eventname = {eventname},
-            eventdate = {eventdate}
+            organiser = {organiser},
+            eventdate = {eventdate},
+            description = {description}
           WHERE eventid = {eventid}
         """
       ).on(
         'eventid -> event.eventId,
         'eventname -> event.eventName,
-        'eventdate -> event.eventDate.getOrElse("")
+        'organiser -> event.organiser,
+        'eventdate -> event.eventDate,
+        'description -> event.description
       ).executeUpdate()
       event
     }

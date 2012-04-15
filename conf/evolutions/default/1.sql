@@ -4,8 +4,10 @@
 
 CREATE TABLE snapevent (
     eventid               SERIAL PRIMARY KEY,
-    eventname             VARCHAR(255) NOT NULL ,
-    eventDate             VARCHAR(255) NOT NULL
+    eventname             VARCHAR(128) NOT NULL,
+    organiser             VARCHAR(128),
+    eventDate             VARCHAR(255),
+    description           CLOB
 );
 
 
