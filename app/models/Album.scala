@@ -12,6 +12,7 @@ case class Album (
   url: String
 ){
   def this(publisher: String, url: String) = this(0,publisher,url)
+  def this(albumId: Long, that: Album) = this(albumId,that.publisher,that.url)
 }
 
 
@@ -25,7 +26,20 @@ object Album {
     }
   }
 
-  def findAlbum(eventId: Long, albumId: Long) = Album(0L,"John Smith","http://flickr.com")
+  def findAlbum(eventId: Long, albumId: Long) : Option[Album] = {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          SELECT * FROM snapalbum
+          WHERE eventid = {eventid}
+          AND albumid = {albumid}
+        """
+      ).on(
+        'eventid -> eventId,
+        'albumid -> albumId
+      ).as(Album.simple.singleOpt)
+    }
+  }
 
   def findAlbums(eventId: Long) = {
     DB.withConnection { implicit connection =>
@@ -40,4 +54,54 @@ object Album {
       ).as(Album.simple *)
     }
   }
+
+  def insertAlbum(eventId: Long, album: Album) = {
+    DB.withConnection { implicit connection =>
+      Logger.info("Inserting : " + album)
+      val albumId: Long = SQL("select next value for snapalbum_seq").as(scalar[Long].single)
+      SQL(
+        """
+          INSERT INTO snapalbum (albumid,publisher,url,eventid)
+          VALUES ({albumid},{publisher},{url},{eventid})
+        """
+      ).on(
+        'albumid -> albumId,
+        'publisher -> album.publisher,
+        'url -> album.url,
+        'eventid -> eventId
+      ).executeInsert()
+      new Album(albumId,album)
+    }
+  }
+
+  def updateAlbum(album: Album) {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          UPDATE snapalbum
+          SET  publisher = {publisher},
+            url = {url}
+          WHERE albumid = {albumid}
+        """
+      ).on(
+        'albumid -> album.albumId,
+        'publisher -> album.publisher,
+        'url -> album.url
+      ).executeUpdate()
+    }
+  }
+
+  def deleteAlbum(albumId: Long) {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          DELETE FROM snapalbum
+          WHERE albumid = {albumid}
+        """
+      ).on(
+        'albumid -> albumId
+      ).execute()
+    }
+  }
+
 }

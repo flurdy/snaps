@@ -94,7 +94,9 @@ object EventController extends Controller {
         Event.findEvent(eventId) match {
           case None => NotFound
           case Some(event) => {
-            val updatedEvent = event.copy(eventName = updatedForm._1, eventDate = Option(updatedForm._2))
+            val updatedEvent = event.copy(
+                  eventName = updatedForm._1,
+                  eventDate = Option(updatedForm._2) )
             Event.updateEvent(updatedEvent)
             Redirect(routes.EventController.viewEvent(eventId));
           }

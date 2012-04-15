@@ -30,9 +30,12 @@ case class Event (
     Album.findAlbum(eventId,albumId)
   }
 
-  def createAlbum(album: Album)={
-    albums = album :: albums
-    album
+  def addAlbum(album: Album) = {
+    Album.insertAlbum(eventId,album)
+  }
+
+  def removeAlbum(album: Album) = {
+    Album.deleteAlbum(album.albumId)
   }
 }
 

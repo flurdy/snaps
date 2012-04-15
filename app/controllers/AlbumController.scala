@@ -34,14 +34,12 @@ object AlbumController extends Controller {
           case Some(event) => BadRequest(views.html.albums.add(event,albumForm))
         }
       },
-      album => {
-        Logger.info("Add album")
+      submittedAlbumForm => {
         Event.findEvent(eventId) match {
           case None => NotFound
           case Some(event) => {
-            val album = event.createAlbum(new Album("publisher","url"))
-            // TODO: Logic
-            // TODO: persist changes
+            val album = new Album(submittedAlbumForm._1,submittedAlbumForm._2)
+            event.addAlbum(album)
             Redirect(routes.EventController.viewEvent(eventId));
           }
         }
@@ -61,15 +59,20 @@ object AlbumController extends Controller {
           }
         }
       },
-      album => {
-        Logger.info("Update album")
+      submittedAlbumForm => {
         Event.findEvent(eventId) match {
           case None => NotFound
           case Some(event) => {
-            val album = event.findAlbum(albumId);
-            // TODO: Logic
-            // TODO: persist changes
-            Redirect(routes.EventController.showEditEvent(eventId));
+            event.findAlbum(albumId) match {
+              case None => NotFound
+              case Some(album) => {
+                val updatedAlbum = album.copy(
+                    publisher = submittedAlbumForm._1,
+                    url = submittedAlbumForm._2)
+                Album.updateAlbum(updatedAlbum)
+                Redirect(routes.EventController.showEditEvent(eventId));
+              }
+            }
           }
         }
       }
@@ -77,14 +80,17 @@ object AlbumController extends Controller {
   }
 
   def removeAlbum(eventId: Long,albumId: Long) = Action {
-    Logger.info("Remove album")
+    Logger.info("Remove album: "+albumId)
     Event.findEvent(eventId) match {
       case None => NotFound
       case Some(event) => {
-        val album = event.findAlbum(albumId);
-        // TODO: Logic
-        // TODO: persist delete
-        Redirect(routes.EventController.showEditEvent(eventId));
+        event.findAlbum(albumId) match {
+          case None => NotFound
+          case Some(album) => {
+            event.removeAlbum(album)
+            Redirect(routes.EventController.showEditEvent(eventId));
+          }
+        }
       }
     }
   }
