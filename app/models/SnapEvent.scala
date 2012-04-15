@@ -10,14 +10,21 @@ import play.Logger
 case class Event (
   eventId: Long,
   eventName: String,
-  eventDate: Option[String],
-  var albums : List[Album] = List()
+  eventDate: Option[String]
 ){
+
   // require(eventName.trim.length > 1)
+
+  var albums: List[Album] = List()
 
   def this(eventName: String) = this(0,eventName,None)
 
   def this(eventId: Long, that: Event) = this(eventId,that.eventName,that.eventDate)
+
+  def this(eventId: Long, eventName: String, eventDate: Option[String], albums: List[Album]) {
+    this(eventId, eventName, eventDate)
+    this.albums = albums;
+  }
 
   def findAlbum(albumId: Long) = {
     Album.findAlbum(eventId,albumId)
@@ -27,53 +34,105 @@ case class Event (
     albums = album :: albums
     album
   }
-
 }
 
 
 object Event {
 
-  def findEvent(eventId : Long) = Event(1L,"Christmas",Option("2011-12-24"))
-
-  def insertEvent(event: Event) : Long = {
-    DB.withConnection { implicit connection =>
-      SQL(
-        """
-          INSERT INTO snapevent (eventname, eventdate) VALUES (
-            {eventname}, {eventdate}
-          )
-        """
-      ).on(
-        'eventname -> event.eventName,
-        'eventdate -> event.eventDate.getOrElse("")
-      ).executeInsert()
-      SQL(
-        """
-          SELECT eventid FROM snapevent
-            WHERE eventname = {eventname}
-            AND eventdate = {eventdate}
-            ORDER BY eventid DESC
-        """
-      ).on(
-        'eventname -> event.eventName,
-        'eventdate -> event.eventDate.getOrElse("")
-      ).as(scalar[Long].single)
+  val simple = {
+    get[Long]("eventid") ~
+      get[String]("eventname") ~
+      get[String]("eventdate") map {
+      case eventid~eventname~eventdate => Event( eventid, eventname, Option(eventdate) )
     }
   }
 
-}
+  def insertEventAndReturnId(event: Event) : Long = {
+    DB.withConnection { implicit connection =>
+      Logger.info("Inserting : " + event)
+      val eventId: Long = SQL("select next value for snapevent_seq").as(scalar[Long].single)
+      SQL(
+        """
+          INSERT INTO snapevent (eventid,eventname, eventdate) VALUES (
+            {eventid}, {eventname}, {eventdate}
+          )
+        """
+      ).on(
+        'eventid -> eventId,
+        'eventname -> event.eventName,
+        'eventdate -> event.eventDate.getOrElse("")
+      ).executeInsert()
+      eventId
+    }
+  }
 
 
+  def findEvent(eventId : Long): Option[Event] = {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          SELECT eventid,eventname,eventdate FROM snapevent
+            WHERE eventid = {eventid}
+        """
+      ).on(
+        'eventid -> eventId
+      ).as(Event.simple.singleOpt)
+    }
+  }
 
-case class Album (
-  albumId: Long = 0,
-  publisher: String,
-  url: String
-){
-  def this(publisher: String, url: String) = this(0,publisher,url)
-}
+
+  def findEventWithAlbums(eventId : Long): Option[Event] = {
+    findEvent(eventId) match {
+      case None => None
+      case Some(event) => {
+        event.albums = Album.findAlbums(eventId)
+        Option(event)
+      }
+    }
+  }
 
 
-object Album {
-  def findAlbum(eventId: Long, albumId: Long) = Album(0L,"John Smith","http://flickr.com")
+  def findAll: Seq[Event] = {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          SELECT eventid,eventname,eventdate FROM snapevent
+          ORDER BY eventid
+        """
+      ).on(
+      ).as(Event.simple *)
+    }
+  }
+
+  def updateEvent(event: Event) = {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          UPDATE snapevent
+          SET eventname = {eventname},
+            eventdate = {eventdate}
+          WHERE eventid = {eventid}
+        """
+      ).on(
+        'eventid -> event.eventId,
+        'eventname -> event.eventName,
+        'eventdate -> event.eventDate.getOrElse("")
+      ).executeUpdate()
+      event
+    }
+  }
+
+  def deleteEvent(eventId: Long){
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          DELETE FROM snapevent
+          WHERE eventid = {eventid}
+        """
+      ).on(
+        'eventid -> eventId
+      ).execute()
+    }
+  }
+
 }

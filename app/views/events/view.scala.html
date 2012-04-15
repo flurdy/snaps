@@ -39,6 +39,14 @@
             </tr>
         </thead>
         <tbody>
+        @for(album <- event.albums){
+            <tr>
+                <td>@album.publisher</td>
+                <td><a href="@album.url" target="_blank">@album.url <img class="external-link" src="@routes.Assets.at("images/external-link-ltr-icon.png")"/></a></td>
+                <td></td>
+            </tr>
+        }
+        <!--
             <tr>
                 <td>John Smith</td>
                 <td><a href="http://picasaweb.google.com/flurdy/Industrigata" target="_blank">http://picasaweb.google.com/flurdy/Industrigata <img class="external-link" src="@routes.Assets.at("images/external-link-ltr-icon.png")"/></a></td>
@@ -49,6 +57,7 @@
                 <td><a href="http://www.flickr.com/photos/flurdy/sets/72157624009834665/" target="_blank">http://www.flickr.com/photos/flurdy/sets/72157624009834665/ <img class="external-link" src="@routes.Assets.at("images/external-link-ltr-icon.png")"/></a></td>
                 <td><i class="icon-lock"></i></td>
             </tr>
+            -->
         </tbody>
     </table>
 

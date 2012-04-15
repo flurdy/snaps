@@ -1,4 +1,4 @@
-@(event: Event, updateForm: Form[(String,String) ])
+@(event: Event, albums: Seq[Album], updateForm: Form[(String,String) ])
 
 @import helper._
 @import helper.twitterBootstrap._
@@ -12,15 +12,13 @@
 }{
 
 
-
 @form(action = routes.EventController.updateEvent(event.eventId), 'class -> "well form-horizontal"){
 <fieldset>
     <legend>Event name</legend>
-    <input type="text" name="eventName" class="span3 input-medium" value="Christmas" placeholder="Event name">
-</fieldset>
+    <input type="text" name="eventName" class="span3 input-medium" value="@updateForm("eventName").value" avalue="Christmas" placeholder="Event name"></fieldset>
 <fieldset>
     <legend>Event date</legend>
-    <input type="text" name="eventDate" class="input-small" value="2011-12-24" placeholder="Event date">
+    <input type="text" name="eventDate" class="input-small" value="@updateForm("eventDate").value" avalue="2011-12-24" placeholder="Event date">
 </fieldset>
 <div class="form-actions">
     <button type="submit" class="btn btn-primary">Update event</button>
@@ -42,6 +40,19 @@
     </tr>
     </thead>
     <tbody>
+    @for(album <- albums){
+        <tr>
+            @form(action = routes.AlbumController.updateAlbum(event.eventId,album.albumId), 'class -> "well form-horizontal"){
+            <td><input type="text" name="publisher" class="input-small" value="@album.publisher"></td>
+            <td><input type="text" name="url" class="span3" value="@album.url"></td>
+            <td><button type="submit" class="btn btn-primary btn-mini">Update album</button></td>
+            }
+            @form(action = routes.AlbumController.removeAlbum(event.eventId,album.albumId), 'class -> "well form-horizontal"){
+            <td><button type="submit" class="btn btn-danger btn-mini">Remove album</button></td>
+            }
+        </tr>
+    }
+    <!--
     <tr>
         @form(action = routes.AlbumController.updateAlbum(event.eventId,1), 'class -> "well form-horizontal"){
         <td><input type="text" name="publisher" class="input-small" value="John Smith"></td>
@@ -62,6 +73,7 @@
         <td><button type="submit" class="btn btn-danger btn-mini">Remove album</button></td>
         }
     </tr>
+    -->
     </tbody>
 </table>
 
