@@ -36,9 +36,13 @@ object EventController extends Controller {
         BadRequest(views.html.index(errors,createForm))
       },
       searchText => {
-        val events = Event.findAll
-        // TODO: search for events
-        Ok(views.html.events.list(searchText,events))
+        if (searchText.trim.length==0){
+          Ok(views.html.events.list(searchText, Event.findAll))
+        } else {
+          val events = Event.findAllEventsContaining(searchText)
+          val organisersEvents = Event.findAllEventsByOrganisersContaining(searchText)
+          Ok(views.html.events.list(searchText,events ::: organisersEvents))
+        }
       }
     )
   }

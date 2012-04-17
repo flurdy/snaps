@@ -45,6 +45,7 @@ case class Event (
 
 object Event {
 
+
   val simple = {
     get[Long]("eventid") ~
       get[String]("eventname") ~
@@ -112,7 +113,7 @@ object Event {
       SQL(
         """
           SELECT * FROM snapevent
-          ORDER BY eventid
+          ORDER BY eventdate DESC,eventname ASC
         """
       ).on(
       ).as(Event.simple *)
@@ -152,6 +153,36 @@ object Event {
       ).on(
         'eventid -> eventId
       ).execute()
+    }
+  }
+
+  def findAllEventsContaining(searchText: String) = {
+    val sqlSearch = "%" + searchText +"%"
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          SELECT * FROM snapevent
+          WHERE eventname like {searchtext}
+          ORDER BY eventdate DESC,eventname ASC
+        """
+      ).on(
+        'searchtext -> sqlSearch
+      ).as(Event.simple *)
+    }
+  }
+
+  def findAllEventsByOrganisersContaining(searchText: String) = {
+    val sqlSearch = "%" + searchText +"%"
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          SELECT * FROM snapevent
+          WHERE organiser like {searchtext}
+          ORDER BY organiser ASC,eventdate DESC,eventname ASC
+        """
+      ).on(
+        'searchtext -> sqlSearch
+      ).as(Event.simple *)
     }
   }
 
