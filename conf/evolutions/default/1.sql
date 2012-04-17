@@ -7,7 +7,7 @@ CREATE TABLE snapevent (
     eventname             VARCHAR(128) NOT NULL,
     organiser             VARCHAR(128),
     eventDate             VARCHAR(255),
-    description           CLOB
+    description           VARCHAR(4000)
 );
 
 
