@@ -7,7 +7,8 @@ CREATE TABLE snapevent (
     eventname             VARCHAR(128) NOT NULL,
     organiser             VARCHAR(128),
     eventDate             VARCHAR(255),
-    description           VARCHAR(4000)
+    description           VARCHAR(4000),
+    publicevent           BOOLEAN DEFAULT TRUE
 );
 
 
@@ -21,6 +22,7 @@ CREATE TABLE snapalbum (
 
 
 CREATE SEQUENCE snapevent_seq START WITH 1000;
+
 CREATE SEQUENCE snapalbum_seq START WITH 1000;
 
 

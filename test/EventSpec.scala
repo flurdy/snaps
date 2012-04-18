@@ -19,7 +19,8 @@ class EventModelSpec extends Specification {
 
     "not be able to be created if null name" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        Event.createEvent(null) must throwAn[NullPointerException]
+        val eventName : String = null
+        Event.createEvent(eventName) must throwAn[NullPointerException]
       }
     }
 
@@ -74,6 +75,16 @@ class EventModelSpec extends Specification {
         Event.deleteEvent(event.eventId)
         Event.findEvent(event.eventId) must beNone
       }
+    }
+//    "not have a huge description" in {
+//      running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
+//        val longDescription = new StringBuilder("")
+//        for(i <- 0 until 4000 ){
+//          longDescription.append(' ')
+//        }
+//        val event = new Event("abc").copy(description = Some(longDescription.toString()))
+//        Event.createEvent(event) must throwAn[IllegalArgumentException]
+//      }
     }
 
   }

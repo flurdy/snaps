@@ -9,7 +9,7 @@ import play.Logger
 import models._
 
 
-object AlbumController extends Controller {
+object AlbumController extends Controller with Secured {
 
   val albumForm = Form(
     tuple(
@@ -19,18 +19,18 @@ object AlbumController extends Controller {
   )
 
 
-  def showAddAlbum(eventId: Long) = Action {
+  def showAddAlbum(eventId: Long) = withParticipant { participant => implicit request =>
     Event.findEvent(eventId) match {
       case None => {
         Logger.warn("Event not found on show album")
         NotFound
       }
-      case Some(event) => Ok(views.html.albums.add(event,albumForm))
+      case Some(event) => Ok(views.html.albums.add(event,albumForm.fill(participant.fullName,"")))
     }
   }
 
 
-  def addAlbum(eventId: Long) = Action { implicit request =>
+  def addAlbum(eventId: Long) = isAuthenticated { username => implicit request =>
     Event.findEvent(eventId) match {
       case None => {
         Logger.warn("Event not found on add album ")
@@ -56,7 +56,7 @@ object AlbumController extends Controller {
 
 
 
-  def updateAlbum(eventId: Long,albumId: Long) = Action { implicit request =>
+  def updateAlbum(eventId: Long,albumId: Long) = isAuthenticated { username => implicit request =>
     Event.findEvent(eventId) match {
       case None => {
         Logger.warn("Event not found on update album")

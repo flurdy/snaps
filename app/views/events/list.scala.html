@@ -25,7 +25,7 @@
                 <td><a href="@routes.EventController.viewEvent(event.eventId)">@event.eventName</a></td>
                 <td>@event.eventDate</td>
                 <td>@event.organiser</td>
-                <!-- <td><i class="icon-lock"></i></td>  -->
+                <td>@if(!event.public){<i class="icon-lock"></i>}</td>
             </tr>
         }
         </tbody>

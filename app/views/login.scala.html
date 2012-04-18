@@ -1,0 +1,29 @@
+@(loginForm: Form[(String,String)])
+
+@import helper._
+@import helper.twitterBootstrap._
+@import models._
+
+@main("snaps | Login"){
+    <span class="divider">/</span>
+    Login
+}{
+
+<h2>Log into Snaps</h2>
+
+@form(action = routes.Application.login(), 'class -> "well"){
+<fieldset>
+    <legend>Username</legend>
+    <input type="text" name="username" class="span3" placeholder="your username or email address" value="@loginForm("username").value" />
+</fieldset>
+<fieldset>
+    <legend>Password</legend>
+    <input type="password" name="password" class="span3" placeholder="your password" />
+</fieldset>
+<div class="form-actions">
+    <button type="submit" class="btn btn-primary">Log in</button>
+</div>
+}
+
+
+}

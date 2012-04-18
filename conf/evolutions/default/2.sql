@@ -16,9 +16,9 @@ INSERT INTO snapevent (eventid,eventname,organiser,eventdate) VALUES (
         (SELECT NEXTVAL('snapevent_seq')),
          'Sue''s birthday party', 'John', '2010-12-13' );
 
-INSERT INTO snapevent (eventid,eventname,organiser,eventdate) VALUES (
+INSERT INTO snapevent (eventid,eventname,organiser,eventdate,publicevent) VALUES (
         (SELECT NEXTVAL('snapevent_seq')),
-         'Dieter''s birthday party', '', '2010-12-13' );
+         'Dieter''s birthday party', '', '2010-12-13', FALSE );
 
 INSERT INTO snapevent (eventid,eventname,organiser,eventdate) VALUES (
         (SELECT NEXTVAL('snapevent_seq')),
@@ -28,18 +28,18 @@ INSERT INTO snapevent (eventid,eventname,organiser,eventdate) VALUES (
         (SELECT NEXTVAL('snapevent_seq')),
          'Lucy Ann''s birthday party', 'Shawn', '2010-12-13' );
 
-INSERT INTO snapevent (eventid,eventname,organiser,eventdate) VALUES (
+INSERT INTO snapevent (eventid,eventname,organiser,eventdate, publicevent) VALUES (
         (SELECT NEXTVAL('snapevent_seq')),
-         'New Year', '', '2008-12-31' );
+         'New Year', '', '2008-12-31', TRUE );
 
 INSERT INTO snapevent (eventid,eventname,organiser,eventdate) VALUES (
         (SELECT NEXTVAL('snapevent_seq')),
          'New Year', '', '2010-12-31' );
 
 
-INSERT INTO snapevent (eventid,eventname,organiser,eventdate) VALUES (
+INSERT INTO snapevent (eventid,eventname,organiser,eventdate,publicevent) VALUES (
         (SELECT NEXTVAL('snapevent_seq')),
-         'Adams at Barbados', 'Barbara Adams', 'Summer 2010' );
+         'Adams at Barbados', 'Barbara Adams', 'Summer 2010',FALSE );
 
 
 INSERT INTO snapevent (eventid,eventname,organiser,eventdate) VALUES (

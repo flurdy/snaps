@@ -12,13 +12,18 @@ case class Event (
   eventName: String,
   organiser: Option[String],
   eventDate: Option[String],
-  description: Option[String]
+  description: Option[String],
+  public: Boolean = true
 ){
   require(eventName.trim.length > 1)
+//  require(description == None || description.get.trim.length < 3900)
+
 
   var albums: List[Album] = List()
 
   def this(eventName: String) = this(0,eventName,None,None,None)
+
+  def this(eventName: String,organiser: String) = this(0,eventName,Some(organiser),None,None)
 
   def this(eventName: String, organiser: Option[String], eventDate: Option[String], description: Option[String]) = this(0,eventName,organiser,eventDate,description)
 
@@ -51,32 +56,35 @@ object Event {
       get[String]("eventname") ~
       get[Option[String]]("organiser") ~
       get[Option[String]]("eventdate") ~
-      get[Option[String]]("description") map {
-      case eventid~eventname~organiser~eventdate~description => Event( eventid, eventname, organiser, eventdate, description )
+      get[Option[String]]("description") ~
+      get[Boolean]("publicevent") map {
+      case eventid~eventname~organiser~eventdate~description~publicevent => Event( eventid, eventname, organiser, eventdate, description, publicevent )
     }
   }
 
-  def createEvent(eventName: String) = {
-    insertEvent(new Event(eventName))
+  def createEvent(eventName: String) : Event = {
+    createEvent(new Event(eventName))
   }
 
-  def insertEvent(event: Event) = {
+  def createEvent(event: Event) : Event = {
     DB.withConnection { implicit connection =>
       Logger.info("Inserting : " + event)
       val eventId = SQL("SELECT NEXTVAL('snapevent_seq')").as(scalar[Long].single)
       SQL(
         """
           INSERT INTO snapevent
-          (eventid, eventname, organiser, eventdate, description) VALUES
+          (eventid, eventname, organiser, eventdate, description, publicevent)
+          VALUES
           ({eventid}, {eventname}, {organiser},
-              {eventdate}, {description})
+              {eventdate}, {description},{publicevent})
         """
       ).on(
         'eventid -> eventId,
         'eventname -> event.eventName,
         'organiser -> event.organiser,
         'eventdate -> event.eventDate,
-        'description -> event.description
+        'description -> event.description,
+        'publicevent -> event.public
       ).executeInsert()
       new Event(eventId,event)
     }
@@ -129,7 +137,8 @@ object Event {
           SET eventname = {eventname},
             organiser = {organiser},
             eventdate = {eventdate},
-            description = {description}
+            description = {description},
+            publicevent = {publicevent}
           WHERE eventid = {eventid}
         """
       ).on(
@@ -137,7 +146,8 @@ object Event {
         'eventname -> event.eventName,
         'organiser -> event.organiser,
         'eventdate -> event.eventDate,
-        'description -> event.description
+        'description -> event.description,
+        'publicevent -> event.public
       ).executeUpdate()
       event
     }

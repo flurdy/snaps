@@ -1,9 +1,10 @@
 Website:    http://code.flurdy.com/grid/snaps/
 Source:     http://github.com/flurdy/snaps
 Wiki:       http://wiki.github.com/flurdy/snaps
-Tasks:      http://www.pivotaltracker.com/projects/99451
+Tasks <0.3: http://www.pivotaltracker.com/projects/99451
+Tasks >0.3: https://www.kanbanpad.com/projects/5d046a2a199f6a005720
 Issues:     http://flurdy.lighthouseapp.com/projects/56859-snaps
-CI:         http://code.flurdy.com/hudson/job/grid%20snaps/
+CI:         http://code.flurdy.com/jenkins/job/grid%20snaps/
 Contact:    http://flurdy.com/contact/
 
 Demo/Test:  http://snaps.flurdy.com

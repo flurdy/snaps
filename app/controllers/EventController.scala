@@ -8,7 +8,7 @@ import play.api.data.validation.Constraints._
 import play.Logger
 import models._
 
-object EventController extends Controller {
+object EventController extends Controller with Secured {
 
   val searchForm: Form[String] = Form(
     "searchText" -> text(maxLength = 100)
@@ -18,13 +18,13 @@ object EventController extends Controller {
       "eventName" -> nonEmptyText(minLength = 3 , maxLength = 100)
   )
 
-
-  val updateForm:  Form[(String,String,String,String)] = Form(
+  val updateForm:  Form[(String,String,String,String,Boolean)] = Form(
     tuple(
       "eventName" -> nonEmptyText(maxLength = 100),
       "organiser" -> text(maxLength = 100),
       "eventDate" -> text(maxLength = 100),
-      "description" -> text (maxLength = 3900)
+      "description" -> text (maxLength = 3900),
+      "public"  -> boolean
     )//(Event.apply)(Event.unapply)
   )
 
@@ -33,7 +33,7 @@ object EventController extends Controller {
     searchForm.bindFromRequest.fold(
       errors => {
         Logger.warn("Bad search request:"+errors)
-        BadRequest(views.html.index(errors,createForm)).flashing("formerror" -> errors.toString())
+        BadRequest(views.html.index(errors,createForm))
       },
       searchText => {
         if (searchText.trim.length==0){
@@ -49,7 +49,7 @@ object EventController extends Controller {
 
 
 
-  def viewEvent(eventId: Long) = Action {
+  def viewEvent(eventId: Long) = Action { implicit request =>
     Event.findEventWithAlbums(eventId) match {
       case None => {
         Logger.warn("Event not found on view")
@@ -60,31 +60,32 @@ object EventController extends Controller {
   }
 
 
-  def createEvent = Action { implicit request =>
+  def createEvent = withParticipant { participant => implicit request =>
     createForm.bindFromRequest.fold(
       errors => {
         Logger.warn("Bad create event request:"+errors)
-        BadRequest(views.html.index(searchForm,errors)).flashing("formerror" -> "EEEORR")
+        BadRequest(views.html.index(searchForm,errors))
       },
       eventName => {
-        val event = Event.createEvent(eventName)
+        val event = participant.createEvent(eventName)
         Redirect(routes.EventController.showEditEvent(event.eventId))
       }
     )
   }
 
 
-  def showEditEvent(eventId: Long) = Action {
+  def showEditEvent(eventId: Long) = isAuthenticated { username => implicit request =>
     Event.findEvent(eventId) match {
       case None => {
-        Logger.warn("Not found")
+        Logger.warn("No event found on show edit")
         NotFound
       }
       case Some(event) => {
         val editForm = updateForm.fill((event.eventName,
-              event.organiser.getOrElse(""),
-              event.eventDate.getOrElse(""),
-              event.description.getOrElse("")))
+            event.organiser.getOrElse(""),
+            event.eventDate.getOrElse(""),
+            event.description.getOrElse(""),
+            event.public))
         val albums = Album.findAlbums(eventId)
         Ok(views.html.events.edit(event,albums,editForm))
       }
@@ -92,16 +93,16 @@ object EventController extends Controller {
   }
 
 
-  def updateEvent(eventId: Long) = Action { implicit request =>
+  def updateEvent(eventId: Long) = isAuthenticated { username => implicit request =>
     Event.findEvent(eventId) match {
       case None => {
-        Logger.warn("Event not found om updateEvent")
+        Logger.warn("Event not found om update event")
         NotFound
       }
       case Some(event) =>  {
         updateForm.bindFromRequest.fold(
           errors => {
-            Logger.warn("Bad request:"+errors)
+            Logger.warn("Bad update event request:"+errors)
             val albums = Album.findAlbums(event.eventId)
             BadRequest(views.html.events.edit(event,albums,updateForm))
           },
@@ -120,10 +121,10 @@ object EventController extends Controller {
   }
 
 
-  def showDeleteEvent(eventId: Long) = Action {
+  def showDeleteEvent(eventId: Long) = isAuthenticated { username => implicit request =>
     Event.findEvent(eventId) match {
       case None => {
-        Logger.warn("Not found")
+        Logger.warn("No event found on show delete event")
         NotFound
       }
       case Some(event) => Ok(views.html.events.delete(event))
@@ -131,11 +132,11 @@ object EventController extends Controller {
   }
 
 
-  def deleteEvent(eventId: Long) =  Action {
+  def deleteEvent(eventId: Long) =  isAuthenticated { username => implicit request =>
     Logger.info("Deleting event: " + eventId)
     Event.findEvent(eventId) match {
       case None => {
-        Logger.warn("Not found")
+        Logger.warn("No event found on delete event")
         NotFound
       }
       case Some(event) => {
@@ -143,6 +144,10 @@ object EventController extends Controller {
         Redirect(routes.Application.index());
       }
     }
+  }
+
+  implicit def participant(implicit session : Session): Option[Participant] = {
+    Participant.findByUsername(session.get(Security.username).getOrElse(""))
   }
 
 }

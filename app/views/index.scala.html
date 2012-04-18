@@ -3,7 +3,7 @@
 @import helper._
 @import helper.twitterBootstrap._
 
-@main(" snaps @ flurdy") {
+@main("snaps @ flurdy") {
 
 }{
 
@@ -18,7 +18,7 @@
 @form(action = routes.EventController.search(), 'class -> "well form-search"){
 <fieldset>
     <legend>Find event</legend>
-    <input type="text" name="searchText" class="span3 input-medium search-query" placeholder="Event name or organiser">
+    <input type="text" name="searchText" class="span3 input-medium search-query" placeholder="Event name or organiser"/>
     <button type="submit" class="btn btn-primary">Search</button>
 </fieldset>
 }
@@ -32,7 +32,7 @@
 @form(action = routes.EventController.createEvent(), 'class -> "well form-horizontal"){
 <fieldset>
     <legend>Create event</legend>
-    <input type="text" name="eventName" id="eventName" class="span3 input-medium" placeholder="Event name" value="@createForm("eventName").value">
+    <input type="text" name="eventName" id="eventName" class="span3 input-medium" placeholder="Event name" value="@createForm("eventName").value"/>
     <button type="submit" class="btn btn-success">Create event</button>
 </fieldset>
 }

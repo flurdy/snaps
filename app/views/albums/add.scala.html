@@ -31,11 +31,11 @@
     @form(action = routes.AlbumController.addAlbum(event.eventId), 'class -> "well form-horizontal"){
         <fieldset>
             <legend>Publisher</legend>
-            <input type="text" name="publisher" class="span3" placeholder="name of album owner" value="@albumForm("publisher").value">
+            <input type="text" name="publisher" class="span3" placeholder="name of album owner" value="@albumForm("publisher").value"/>
         </fieldset>
         <fieldset>
             <legend>URL Link</legend>
-            <input type="text" name="url" class="span4" placeholder="http://www.example.com/album/123"v alue="@albumForm("url").value">
+            <input type="text" name="url" class="span4" placeholder="http://www.example.com/album/123"v alue="@albumForm("url").value"/>
         </fieldset>
         <div class="form-actions">
             <button type="submit" class="btn btn-success">Add album</button>

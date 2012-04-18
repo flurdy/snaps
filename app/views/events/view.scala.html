@@ -1,4 +1,4 @@
-@(event: Event)
+@(event: Event)(implicit participant: Option[Participant])
 
 @import helper._
 @import helper.twitterBootstrap._
@@ -62,15 +62,17 @@
     </div>
 }
 
-<br/><br/>
+<br/>
 
     <div class="form-actions">
 
         @form(action = routes.AlbumController.showAddAlbum(event.eventId), 'class -> "form-inline"){
             <button type="submit" class="btn btn-info btn-small">Add album</button>
         }
-        @form(action = routes.EventController.showEditEvent(event.eventId), 'class -> "form-inline"){
-            <button type="submit" class="btn btn-warning btn-small">Edit event</button>
+        @if(participant.isDefined){
+            @form(action = routes.EventController.showEditEvent(event.eventId), 'class -> "form-inline"){
+                <button type="submit" class="btn btn-warning btn-small">Edit event</button>
+            }
         }
     </div>
 

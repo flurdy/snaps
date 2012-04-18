@@ -1,4 +1,4 @@
-@(event: Event, albums: Seq[Album], updateForm: Form[(String,String,String,String) ])
+@(event: Event, albums: Seq[Album], updateForm: Form[(String,String,String,String,Boolean) ])
 
 @import helper._
 @import helper.twitterBootstrap._
@@ -21,14 +21,14 @@
 @form(action = routes.EventController.updateEvent(event.eventId), 'class -> "well form-horizontal"){
 <fieldset>
     <legend>Event name</legend>
-    <input type="text" name="eventName" class="span4" value="@updateForm("eventName").value" placeholder="Event name"></fieldset>
+    <input type="text" name="eventName" class="span4" value="@updateForm("eventName").value" placeholder="Event name"/></fieldset>
 <fieldset>
     <legend>Event date</legend>
-    <input type="text" name="eventDate" class="span2" value="@updateForm("eventDate").value" placeholder="Event date">
+    <input type="text" name="eventDate" class="span2" value="@updateForm("eventDate").value" placeholder="Event date"/>
 </fieldset>
 <fieldset>
     <legend>Organiser</legend>
-    <input type="text" name="organiser" class="span4" value="@updateForm("organiser").value" placeholder="Main organiser">
+    <input type="text" name="organiser" class="span4" value="@updateForm("organiser").value" placeholder="Main organiser"/>
 </fieldset>
 <fieldset>
     <legend>Description</legend>
@@ -57,8 +57,8 @@
     @for(album <- albums){
         <tr>
             @form(action = routes.AlbumController.updateAlbum(event.eventId,album.albumId), 'class -> "well form-horizontal"){
-            <td><input type="text" name="publisher" class="input-small" value="@album.publisher"></td>
-            <td><input type="text" name="url" class="span3" value="@album.url"></td>
+            <td><input type="text" name="publisher" class="input-small" value="@album.publisher"/></td>
+            <td><input type="text" name="url" class="span3" value="@album.url"/></td>
             <td><button type="submit" class="btn btn-primary btn-mini">Update album</button></td>
             }
             @form(action = routes.AlbumController.removeAlbum(event.eventId,album.albumId), 'class -> "well form-horizontal"){
