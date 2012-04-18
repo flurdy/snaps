@@ -12,21 +12,27 @@
 }{
 
 
+@for(error <- updateForm.errors){
+<p class="alert alert-error">
+    Oh dear: @error.message: @error.key
+</p>
+ }
+
 @form(action = routes.EventController.updateEvent(event.eventId), 'class -> "well form-horizontal"){
 <fieldset>
     <legend>Event name</legend>
-    <input type="text" name="eventName" class="span3 input-large" value="@updateForm("eventName").value" placeholder="Event name"></fieldset>
+    <input type="text" name="eventName" class="span4" value="@updateForm("eventName").value" placeholder="Event name"></fieldset>
 <fieldset>
     <legend>Event date</legend>
-    <input type="text" name="eventDate" class="input-small" value="@updateForm("eventDate").value" placeholder="Event date">
+    <input type="text" name="eventDate" class="span2" value="@updateForm("eventDate").value" placeholder="Event date">
 </fieldset>
 <fieldset>
     <legend>Organiser</legend>
-    <input type="text" name="organiser" class="input-medium" value="@updateForm("organiser").value" placeholder="Main organiser">
+    <input type="text" name="organiser" class="span4" value="@updateForm("organiser").value" placeholder="Main organiser">
 </fieldset>
 <fieldset>
     <legend>Description</legend>
-    <textarea name="description" class="input-xlarge" rows="8">@updateForm("description").value</textarea>
+    <textarea name="description" class="span6" rows="8">@updateForm("description").value</textarea>
 </fieldset>
 <div class="form-actions">
     <button type="submit" class="btn btn-primary">Update event</button>

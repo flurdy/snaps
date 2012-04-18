@@ -13,8 +13,8 @@ object AlbumController extends Controller {
 
   val albumForm = Form(
     tuple(
-      "publisher" -> nonEmptyText(maxLength = 100),
-      "url" -> nonEmptyText(maxLength = 150)
+      "publisher" -> nonEmptyText(minLength = 3, maxLength = 100),
+      "url" -> nonEmptyText(minLength = 8, maxLength = 150)
     )
   )
 

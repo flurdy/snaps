@@ -9,18 +9,11 @@
 
         <br/>
 
-@searchForm.globalError.map { error =>
+@for(error <- searchForm.errors){
 <p class="alert alert-error">
-    Oh dear: @error.message
+    Oh dear: @error.message: @error.key
 </p>
 }
-
-@createForm.globalError.map { error =>
-<p class="alert alert-error">
-    Oh dear: @error.message
-</p>
-}
-
 
 @form(action = routes.EventController.search(), 'class -> "well form-search"){
 <fieldset>
@@ -30,10 +23,16 @@
 </fieldset>
 }
 
+@for(error <- createForm.errors){
+<p class="alert alert-error">
+    Oh dear: @error.message: @error.key
+</p>
+}
+
 @form(action = routes.EventController.createEvent(), 'class -> "well form-horizontal"){
 <fieldset>
     <legend>Create event</legend>
-    <input type="text" name="eventName" class="span3 input-medium" placeholder="Event name">
+    <input type="text" name="eventName" id="eventName" class="span3 input-medium" placeholder="Event name" value="@createForm("eventName").value">
     <button type="submit" class="btn btn-success">Create event</button>
 </fieldset>
 }

@@ -15,16 +15,16 @@ object EventController extends Controller {
   )
 
   val createForm: Form[String] = Form(
-      "eventName" -> nonEmptyText(maxLength = 100)
+      "eventName" -> nonEmptyText(minLength = 3 , maxLength = 100)
   )
 
 
   val updateForm:  Form[(String,String,String,String)] = Form(
     tuple(
       "eventName" -> nonEmptyText(maxLength = 100),
-      "organiser" -> text,
-      "eventDate" -> text,
-      "description" -> text
+      "organiser" -> text(maxLength = 100),
+      "eventDate" -> text(maxLength = 100),
+      "description" -> text (maxLength = 3900)
     )//(Event.apply)(Event.unapply)
   )
 
@@ -32,8 +32,8 @@ object EventController extends Controller {
   def search = Action {  implicit request =>
     searchForm.bindFromRequest.fold(
       errors => {
-        Logger.warn("Bad request:"+errors)
-        BadRequest(views.html.index(errors,createForm))
+        Logger.warn("Bad search request:"+errors)
+        BadRequest(views.html.index(errors,createForm)).flashing("formerror" -> errors.toString())
       },
       searchText => {
         if (searchText.trim.length==0){
@@ -63,8 +63,8 @@ object EventController extends Controller {
   def createEvent = Action { implicit request =>
     createForm.bindFromRequest.fold(
       errors => {
-        Logger.warn("Bad request:"+errors)
-        BadRequest(views.html.index(errors,createForm))
+        Logger.warn("Bad create event request:"+errors)
+        BadRequest(views.html.index(searchForm,errors)).flashing("formerror" -> "EEEORR")
       },
       eventName => {
         val event = Event.createEvent(eventName)

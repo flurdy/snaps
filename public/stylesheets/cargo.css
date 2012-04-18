@@ -39,3 +39,4 @@ ul.horizontal li {
 
 #cargo .form-actions form { display: inline; }
 .external-link { vertical-align: top; margin: 0.1em;}
+#cargo .description { max-width: 40em; }
