@@ -1,4 +1,4 @@
-@(loginForm: Form[(String,String)])
+@(loginForm: Form[(String,String)])(implicit currentParticipant: Option[Participant])
 
 @import helper._
 @import helper.twitterBootstrap._

@@ -146,8 +146,4 @@ object EventController extends Controller with Secured {
     }
   }
 
-  implicit def participant(implicit session : Session): Option[Participant] = {
-    Participant.findByUsername(session.get(Security.username).getOrElse(""))
-  }
-
 }

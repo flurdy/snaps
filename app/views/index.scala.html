@@ -1,4 +1,4 @@
-@(searchForm: Form[String],createForm: Form[String])
+@(searchForm: Form[String],createForm: Form[String])(implicit currentParticipant: Option[Participant])
 
 @import helper._
 @import helper.twitterBootstrap._

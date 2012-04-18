@@ -1,4 +1,4 @@
-@(title: String)(breadcrumb: Html)(content: Html)
+@(title: String)(breadcrumb: Html)(content: Html)(implicit currentParticipant: Option[Participant]=None)
 
 <!DOCTYPE html>
 
@@ -59,6 +59,14 @@
                                 <li><a href="@routes.Application.index()">Home</a></li>
                                 <li><a href="http://github.com/flurdy/snaps" target="_blank">About</a></li>
                                 <li><a href="http://flurdy.com/contact/" target="_blank">Contact</a></li>
+                                <li class="login-link">
+                                @currentParticipant match {
+                                case Some(participant) => {<a href="#" target="_blank">Log out: @participant.username</a></li>
+                                }
+                                case None => {<a href="#" target="_blank">Log in</a>
+                                }
+                                }
+                                </li>
                             </ul>
                         </div>
                         <div id="stern" class="compartment">

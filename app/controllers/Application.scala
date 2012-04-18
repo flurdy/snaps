@@ -7,7 +7,7 @@ import play.api.data.Forms._
 import models._
 import javax.swing.AbstractAction
 
-object Application extends Controller {
+object Application extends Controller with Secured {
 
   val loginForm = Form(
     tuple(
@@ -66,11 +66,14 @@ trait Secured {
     }
   }
 
-
   def withParticipant(f: Participant => Request[AnyContent] => Result) = isAuthenticated { username => implicit request =>
     Participant.findByUsername(username).map { participant =>
       f(participant)(request)
     }.getOrElse(onUnauthorised(request))
+  }
+
+  implicit def currentParticipant(implicit session : Session): Option[Participant] = {
+    Participant.findByUsername(session.get(Security.username).getOrElse(""))
   }
 
 

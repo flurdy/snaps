@@ -1,4 +1,4 @@
-@(event: Event, albumForm: Form[(String,String)])
+@(event: Event, albumForm: Form[(String,String)])(implicit currentParticipant: Option[Participant])
 
 @import helper._
 @import helper.twitterBootstrap._
