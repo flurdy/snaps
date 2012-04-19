@@ -111,7 +111,9 @@ object EventController extends Controller with Secured {
               eventName = updatedForm._1,
               organiser = Option(updatedForm._2),
               eventDate = Option(updatedForm._3),
-              description = Option(updatedForm._4) )
+              description = Option(updatedForm._4) ,
+              public = updatedForm._5 )
+            Logger.warn("P:"+updatedEvent.public)
             Event.updateEvent(updatedEvent)
             Redirect(routes.EventController.viewEvent(event.eventId));
           }

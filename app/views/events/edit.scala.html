@@ -34,6 +34,18 @@
     <legend>Description</legend>
     <textarea name="description" class="span6" rows="8">@updateForm("description").value</textarea>
 </fieldset>
+<fieldset>
+    <legend>Visibility:@updateForm("public").value</legend>
+    <label class="radio" for="publictrue">
+        <input type="radio" name="public" id="publictrue" value="true" @if(updateForm("public").value.getOrElse("") == "true"){ checked="checked" } />
+        Public event. Anyone can view it
+    </label>
+    <label class="radio" for="publicfalse">
+        <input type="radio" name="public" id="publicfalse"  value="false" @if(updateForm("public").value.getOrElse("") == "false"){ checked="checked" } />
+        Private event. Authorised participants only
+    </label>
+</fieldset>
+
 <div class="form-actions">
     <button type="submit" class="btn btn-primary">Update event</button>
     <a href="@routes.EventController.showDeleteEvent(event.eventId)"><button type="button" class="btn btn-danger">Delete event</button></a>

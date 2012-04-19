@@ -29,6 +29,15 @@
 
     <br/>
 
+    @if(!event.public){
+
+       <p>
+            <i class="icon-lock"></i>
+           Restricted event. Not viewable by all</p>
+
+       <br/>
+    }
+
     <p class="description">@event.description</p>
 
     </div>
@@ -54,7 +63,9 @@
             <tr>
                 <td>@album.publisher</td>
                 <td><a href="@album.url" target="_blank">@album.url <img class="external-link" src="@routes.Assets.at("images/external-link-ltr-icon.png")"/></a></td>
-                <td><i class="icon-lock"></i></td>
+                <td>
+                   <!-- <i class="icon-lock"></i> -->
+                </td>
             </tr>
         }
         </tbody>
