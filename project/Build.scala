@@ -1,4 +1,4 @@
-import sbt._
+  import sbt._
 import Keys._
 import PlayProject._
 
@@ -9,7 +9,9 @@ object ApplicationBuild extends Build {
 
     val appDependencies = Seq(
       // Add your project dependencies here,
-      "postgresql" % "postgresql" % "9.1-901-1.jdbc4"
+      "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
+      //"ua.t3hnar.bcrypt" % "scala-bcrypt" % "10.4.1.3"
+      "org.mindrot" % "jbcrypt" % "0.3m"
 
     )
 

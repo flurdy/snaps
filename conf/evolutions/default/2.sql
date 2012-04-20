@@ -7,6 +7,16 @@ DELETE FROM snapalbum;
 
 DELETE FROM snapevent;
 
+DELETE FROM participant;
+
+INSERT INTO participant (participantid,username,fullname,email,password) VALUES (
+      (SELECT NEXTVAL('participant_seq')),
+       'testuser', 'Test User', 'test@example.com', '123456789' );
+
+INSERT INTO participant (participantid,username,fullname,email,password) VALUES (
+      (SELECT NEXTVAL('participant_seq')),
+       'anotheruser', 'Another User', 'another@example.com', '123456789' );
+
 
 INSERT INTO snapevent (eventid,eventname,eventdate) VALUES (
         (SELECT NEXTVAL('snapevent_seq')),
@@ -75,4 +85,5 @@ DELETE FROM snapalbum;
 
 DELETE FROM snapevent;
 
+DELETE FROM participant;
 

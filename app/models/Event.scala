@@ -45,6 +45,14 @@ case class Event (
   def removeAlbum(album: Album) = {
     Album.deleteAlbum(album.albumId)
   }
+
+  def isParticipant(participant: Participant): Option[Participant] = {
+    None // Some(participant)
+  }
+
+  def isOrganiser(participant: Participant) : Option[Participant] = {
+    None // Some(participant)
+  }
 }
 
 

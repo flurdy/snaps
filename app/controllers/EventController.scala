@@ -55,7 +55,23 @@ object EventController extends Controller with Secured {
         Logger.warn("Event not found on view")
         NotFound
       }
-      case Some(event) => Ok(views.html.events.view(event))
+      case Some(event) => {
+        if(event.public){
+          Ok(views.html.events.view(event))
+        } else {
+          currentParticipant match {
+            case None => {
+              Logger.warn("Event requires participant")
+              Unauthorized(views.html.login(Application.loginForm)).flashing("message"->"Event private, please log in")
+            }
+            case Some(participant) => {
+              event.isParticipant(participant).map { _ =>
+                Ok(views.html.events.view(event))
+              }.getOrElse(Forbidden)
+            }
+          }
+        }
+      }
     }
   }
 
@@ -66,8 +82,7 @@ object EventController extends Controller with Secured {
         Logger.warn("Bad create event request:"+errors)
         BadRequest(views.html.index(searchForm,errors))
       },
-      eventName => {
-        val event = participant.createEvent(eventName)
+      eventName => {        val event = participant.createEvent(eventName)
         Redirect(routes.EventController.showEditEvent(event.eventId))
       }
     )
@@ -81,22 +96,30 @@ object EventController extends Controller with Secured {
         NotFound
       }
       case Some(event) => {
-        val editForm = updateForm.fill((event.eventName,
-            event.organiser.getOrElse(""),
-            event.eventDate.getOrElse(""),
-            event.description.getOrElse(""),
-            event.public))
-        val albums = Album.findAlbums(eventId)
-        Ok(views.html.events.edit(event,albums,editForm))
+         event.isOrganiser(currentParticipant.get) match {
+           case None => {
+             Logger.warn("Not an organiser")
+             Forbidden
+           }
+           case Some(organiser) => {
+             val editForm = updateForm.fill((event.eventName,
+               event.organiser.getOrElse(""),
+               event.eventDate.getOrElse(""),
+               event.description.getOrElse(""),
+               event.public))
+             val albums = Album.findAlbums(eventId)
+             Ok(views.html.events.edit(event,albums,editForm))
+           }
+        }
       }
     }
   }
 
 
-  def updateEvent(eventId: Long) = isAuthenticated { username => implicit request =>
+  def updateEvent(eventId: Long) = withParticipant { participant => implicit request =>
     Event.findEvent(eventId) match {
       case None => {
-        Logger.warn("Event not found om update event")
+        Logger.warn("Event not found on update event")
         NotFound
       }
       case Some(event) =>  {
@@ -107,15 +130,23 @@ object EventController extends Controller with Secured {
             BadRequest(views.html.events.edit(event,albums,updateForm))
           },
           updatedForm => {
-            val updatedEvent = event.copy(
-              eventName = updatedForm._1,
-              organiser = Option(updatedForm._2),
-              eventDate = Option(updatedForm._3),
-              description = Option(updatedForm._4) ,
-              public = updatedForm._5 )
-            Logger.warn("P:"+updatedEvent.public)
-            Event.updateEvent(updatedEvent)
-            Redirect(routes.EventController.viewEvent(event.eventId));
+             event.isOrganiser(participant) match {
+               case None => {
+                 Logger.warn("Not an organiser")
+                 Forbidden
+               }
+               case Some(organiser) => {
+                 val updatedEvent = event.copy(
+                   eventName = updatedForm._1,
+                   organiser = Option(updatedForm._2),
+                   eventDate = Option(updatedForm._3),
+                   description = Option(updatedForm._4) ,
+                   public = updatedForm._5 )
+                 Logger.warn("P:"+updatedEvent.public)
+                 Event.updateEvent(updatedEvent)
+                 Redirect(routes.EventController.viewEvent(event.eventId));
+               }
+             }
           }
         )
       }
@@ -123,18 +154,28 @@ object EventController extends Controller with Secured {
   }
 
 
-  def showDeleteEvent(eventId: Long) = isAuthenticated { username => implicit request =>
+  def showDeleteEvent(eventId: Long) = withParticipant { participant => implicit request =>
     Event.findEvent(eventId) match {
       case None => {
         Logger.warn("No event found on show delete event")
         NotFound
       }
-      case Some(event) => Ok(views.html.events.delete(event))
+      case Some(event) => {
+        event.isOrganiser(participant) match {
+          case None => {
+            Logger.warn("Not an organiser")
+            Forbidden
+          }
+          case Some(organiser) => {
+            Ok(views.html.events.delete(event))
+          }
+        }
+      }
     }
   }
 
 
-  def deleteEvent(eventId: Long) =  isAuthenticated { username => implicit request =>
+  def deleteEvent(eventId: Long) =  withParticipant { participant => implicit request =>
     Logger.info("Deleting event: " + eventId)
     Event.findEvent(eventId) match {
       case None => {
@@ -142,8 +183,16 @@ object EventController extends Controller with Secured {
         NotFound
       }
       case Some(event) => {
-        Event.deleteEvent(eventId)
-        Redirect(routes.Application.index());
+        event.isOrganiser(participant) match {
+          case None => {
+            Logger.warn("Not an organiser")
+            Forbidden
+          }
+          case Some(organiser) => {
+            Event.deleteEvent(eventId)
+            Redirect(routes.Application.index()).flashing("message" -> "Event deleted");
+          }
+        }
       }
     }
   }

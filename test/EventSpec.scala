@@ -89,6 +89,8 @@ class EventModelSpec extends Specification {
 
   }
 
+class AlbumSpec extends Specification {
+
   "An Album" should {
 
     "be able to be added to event" in {

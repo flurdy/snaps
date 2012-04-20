@@ -1,4 +1,4 @@
-@(loginForm: Form[(String,String)])(implicit currentParticipant: Option[Participant])
+@(loginForm: Form[(String,String)])(implicit currentParticipant: Option[Participant], flash: Flash)
 
 @import helper._
 @import helper.twitterBootstrap._
@@ -10,6 +10,19 @@
 }{
 
 <h2>Log into Snaps</h2>
+        <br/>
+
+    @flash.get("message").map { message =>
+    <p class="alert alert-warning">
+        Log in reason: @message
+    </p>
+    }
+
+    @for(error <- loginForm.errors){
+    <p class="alert alert-error">
+        Oh dear: @error.message: @error.key
+    </p>
+    }
 
 @form(action = routes.Application.login(), 'class -> "well"){
 <fieldset>

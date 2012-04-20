@@ -28,7 +28,8 @@ object Application extends Controller with Secured {
   }
 
   def showLogin = Action { implicit request =>
-    Ok(views.html.login(loginForm))
+    // Logger.debug("message:"+flash.get("message").getOrElse(""))
+    Ok(views.html.login(loginForm))// .flashing("message"->flash.get("message").getOrElse(""))
   }
 
   def login = Action { implicit request =>
