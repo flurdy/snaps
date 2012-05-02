@@ -12,17 +12,14 @@ import org.mindrot.jbcrypt.BCrypt
 case class Participant(
                   participantId: Long = 0,
                   username: String,
-                  fullName: String,
-                  email: String,
+                  fullName: Option[String],
+                  email: Option[String],
                   password: Option[String] ){
-  // require(Participant.usernameExists(username))
-  //  private lazy val salt = scala.util.Random.nextInt
 
-  private lazy val salt = BCrypt.gensalt()
-  lazy val encryptedPassword = Participant.encrypt(password,salt)
+  lazy val encryptedPassword = Participant.encrypt(password)
 
-  def createEvent(eventName: String) = {
-    Event.createEvent(new Event(eventName,fullName))
+  def createAndSaveEvent(eventName: String) = {
+    Event.createAndSaveEvent(new Event(eventName,fullName.getOrElse("")))
   }
 }
 
@@ -41,26 +38,19 @@ object Participant {
   val simple = {
     get[Long]("participantid") ~
       get[String]("username") ~
-      get[String]("fullname") ~
-      get[String]("email")  map {
+      get[Option[String]]("fullname") ~
+      get[Option[String]]("email")  map {
       case participantid~username~fullname~email => Participant( participantid, username, fullname, email, None )
     }
   }
 
-  def encrypt(passwordOption: Option[String], salt: String) = {
+  def encrypt(passwordOption: Option[String]) = {
     passwordOption.map { password =>
-      val encryptedPassword = BCrypt.hashpw(password,salt)
+      val encryptedPassword = BCrypt.hashpw(password,BCrypt.gensalt())
       Some(encryptedPassword)
     }.getOrElse(None)
   }
 
-  def findByUsername1(username: String) = {
-    if (username != null && username.length > 3)  {
-      Logger.debug("Looking up "+username)
-      Some(Participant(0,"testuser","Test User","test@example.com",None))
-    }  else
-      None
-  }
 
   def findByUsername(username: String) = {
     DB.withConnection { implicit connection =>
@@ -75,14 +65,6 @@ object Participant {
     }
   }
 
-  def authenticate1(username: String, password: String) = {
-//    if (new Random().nextInt(10) > 5 ){
-      Some(Participant(1,"testuser","Test User","test@example.com",None))
-//    } else {
-//      None
-//    }
-  }
-
   def authenticate(username: String, password: String) : Option[Participant]  = {
     DB.withConnection { implicit connection =>
       SQL(
@@ -94,7 +76,7 @@ object Participant {
         'username -> username
       ).as(Participant.authenticationMapper.singleOpt) match {
         case Some(participant) => {
-          if(BCrypt.checkpw(password,participant.password.get)){
+          if(BCrypt.checkpw(password,participant.password.getOrElse(""))){
             Some(participant)
           } else {
             None

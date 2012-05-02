@@ -25,7 +25,7 @@ object AlbumController extends Controller with Secured {
         Logger.warn("Event not found on show album")
         NotFound
       }
-      case Some(event) => Ok(views.html.albums.add(event,albumForm.fill(participant.fullName,"")))
+      case Some(event) => Ok(views.html.albums.add(event,albumForm.fill(participant.username,"")))
     }
   }
 

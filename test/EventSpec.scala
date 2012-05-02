@@ -5,13 +5,13 @@ import play.api.test._
 import play.api.test.Helpers._
 import models._
 
-class EventModelSpec extends Specification {
+class EventSpec extends Specification {
 
   "An Event" should {
 
     "be able to be created and persisted" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        val event = Event.createEvent("asasasa")
+        val event = Event.createAndSaveEvent("asasasa")
         event.eventId.toInt must beGreaterThan(0)
         Event.findEvent(event.eventId).get.eventName must beEqualTo("asasasa")
       }
@@ -20,32 +20,32 @@ class EventModelSpec extends Specification {
     "not be able to be created if null name" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
         val eventName : String = null
-        Event.createEvent(eventName) must throwAn[NullPointerException]
+        Event.createAndSaveEvent(eventName) must throwAn[NullPointerException]
       }
     }
 
     "not be able to be created if no name" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        Event.createEvent("") must throwAn[IllegalArgumentException]
+        Event.createAndSaveEvent("") must throwAn[IllegalArgumentException]
       }
     }
 
     "not be able to be created if space name" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        Event.createEvent(" ") must throwAn[IllegalArgumentException]
+        Event.createAndSaveEvent(" ") must throwAn[IllegalArgumentException]
       }
     }
 
     "be able to be found" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        val event = Event.createEvent("asasasa")
+        val event = Event.createAndSaveEvent("asasasa")
         Event.findEvent(event.eventId) must beSome
       }
     }
 
     "not be able to be find non existant" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        val event = Event.createEvent("asasasa")
+        val event = Event.createAndSaveEvent("asasasa")
         Event.findEvent(event.eventId) must beSome
         Event.findEvent(event.eventId+1) must beNone
       }
@@ -53,7 +53,7 @@ class EventModelSpec extends Specification {
 
     "be able to be update its name" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        val event1 = Event.createEvent("Christmas")
+        val event1 = Event.createAndSaveEvent("Christmas")
         Event.findEvent(event1.eventId).get.eventName must beEqualTo("Christmas")
         val event2 = event1.copy(eventName="Easter")
         Event.updateEvent(event2)
@@ -63,14 +63,14 @@ class EventModelSpec extends Specification {
 
     "not be able to be update its name to nothing" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        val event1 = Event.createEvent("Christmas")
+        val event1 = Event.createAndSaveEvent("Christmas")
         event1.copy(eventName="") must throwAn[IllegalArgumentException]
       }
     }
 
     "be able to be deleted" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        val event = Event.createEvent("Christmas")
+        val event = Event.createAndSaveEvent("Christmas")
         Event.findEvent(event.eventId) must beSome
         Event.deleteEvent(event.eventId)
         Event.findEvent(event.eventId) must beNone
@@ -83,7 +83,7 @@ class EventModelSpec extends Specification {
 //          longDescription.append(' ')
 //        }
 //        val event = new Event("abc").copy(description = Some(longDescription.toString()))
-//        Event.createEvent(event) must throwAn[IllegalArgumentException]
+//        Event.createAndSaveEvent(event) must throwAn[IllegalArgumentException]
 //      }
     }
 
@@ -95,7 +95,7 @@ class AlbumSpec extends Specification {
 
     "be able to be added to event" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        val event = Event.createEvent("asasasa")
+        val event = Event.createAndSaveEvent("asasasa")
         event.addAlbum(new Album("John","http://bbb.com"))
         val event2 = Event.findEventWithAlbums(event.eventId).get
         event2.albums must have size(1)
@@ -106,7 +106,7 @@ class AlbumSpec extends Specification {
 
     "not be able to be add with invalid data" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        val event = Event.createEvent("asasasa")
+        val event = Event.createAndSaveEvent("asasasa")
         event.addAlbum(new Album("","http://bbb.com")) must throwAn[IllegalArgumentException]
         event.addAlbum(new Album("John","http://")) must throwAn[IllegalArgumentException]
       }
@@ -114,7 +114,7 @@ class AlbumSpec extends Specification {
 
     "be able to be find event with albums" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        val event = Event.createEvent("asasasa")
+        val event = Event.createAndSaveEvent("asasasa")
         event.addAlbum(new Album("John","http://bbb.com"))
         event.addAlbum(new Album("Sue","http://aaa.com"))
         Event.findEventWithAlbums(event.eventId).get.albums must have size(2)
@@ -124,7 +124,7 @@ class AlbumSpec extends Specification {
 
     "be able to be find album" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        val event1 = Event.createEvent("asasasa")
+        val event1 = Event.createAndSaveEvent("asasasa")
         event1.addAlbum(new Album("John","http://bbb.com"))
         val event2 = Event.findEventWithAlbums(event1.eventId).get
         event1.findAlbum(event2.albums.head.albumId) must beSome
@@ -135,7 +135,7 @@ class AlbumSpec extends Specification {
 
     "be able to be update album" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        val event1 = Event.createEvent("asasasa")
+        val event1 = Event.createAndSaveEvent("asasasa")
         event1.addAlbum(new Album("John","http://bbb.com"))
         val event2 = Event.findEventWithAlbums(event1.eventId).get
         var album = event2.albums.head
@@ -149,7 +149,7 @@ class AlbumSpec extends Specification {
 
     "not be able to be update with invalid data" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        val event = Event.createEvent("asasasa")
+        val event = Event.createAndSaveEvent("asasasa")
         event.addAlbum(new Album("John","http://bbb.com"))
         val album = Event.findEventWithAlbums(event.eventId).get.albums.head
         album.copy(publisher = "") must throwAn[IllegalArgumentException]
@@ -160,7 +160,7 @@ class AlbumSpec extends Specification {
 
     "be able to be remove album" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        val event1 = Event.createEvent("asasasa")
+        val event1 = Event.createAndSaveEvent("asasasa")
         event1.addAlbum(new Album("John","http://bbb.com"))
         Event.findEventWithAlbums(event1.eventId).get.albums must have size(1)
         val event2 = Event.findEventWithAlbums(event1.eventId).get

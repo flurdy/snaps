@@ -7,6 +7,8 @@ GET     /                           controllers.Application.index
 GET     /login.html                 controllers.Application.showLogin
 POST     /login                 controllers.Application.login
 GET     /logout                 controllers.Application.logout
+GET     /register.html                 controllers.Application.showRegister
+POST     /register                 controllers.Application.register
 
 GET     /events                 controllers.EventController.search
 POST     /events                controllers.EventController.createEvent

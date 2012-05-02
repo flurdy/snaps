@@ -13,7 +13,7 @@ class ParticipantSpec extends Specification {
 
     "be able to be created and persisted" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        val participant = Participant(0,"tester","Test User", "test@example.com", Some("testpassword"));
+        val participant = Participant(0,"tester",Some("Test User"), Some("test@example.com"), Some("testpassword"));
         participant.participantId.toInt must beEqualTo(0)
         Participant.save(participant).participantId.toInt must beGreaterThan(0)
       }
@@ -22,9 +22,9 @@ class ParticipantSpec extends Specification {
 
     "cannot have the same username" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        val participant1 = Participant(0,"tester","Test User", "test@example.com", Some("testpassword"));
+        val participant1 = Participant(0,"tester",Some("Test User"), Some("test@example.com"), Some("testpassword"));
         Participant.save(participant1)
-        val participant2 = Participant(0,"tester","Test User", "test@example.com", Some("testpassword"))
+        val participant2 = Participant(0,"tester",Some("Test User"), Some("test@example.com"), Some("testpassword"))
         Participant.save(participant2) must throwAn[IllegalArgumentException];
       }
     }
@@ -32,14 +32,14 @@ class ParticipantSpec extends Specification {
 
     "have the password encrypted" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        val participant1 = Participant(0,"tester","Test User", "test@example.com", Some("testpassword"));
+        val participant1 = Participant(0,"tester",Some("Test User"), Some("test@example.com"), Some("testpassword"));
         participant1.encryptedPassword must beSome[String]
       }
     }
 
     "no bother encrypting empty passwords" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        val participant1 = Participant(0,"tester","Test User", "test@example.com", None);
+        val participant1 = Participant(0,"tester",Some("Test User"), Some("test@example.com"), None);
         participant1.encryptedPassword must beNone
       }
     }
@@ -49,7 +49,7 @@ class ParticipantSpec extends Specification {
 
     "be able to authenticate" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        val participant1 = Participant(0,"tester","Test User", "test@example.com", Some("testpassword"));
+        val participant1 = Participant(0,"tester",Some("Test User"), Some("test@example.com"), Some("testpassword"));
         Participant.save(participant1)
         Participant.authenticate("tester","testpassword") must beSome[Participant]
       }
@@ -59,7 +59,7 @@ class ParticipantSpec extends Specification {
 
     "not be able to authenticate with wrong password" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        val participant1 = Participant(0,"tester","Test User", "test@example.com", Some("testpassword"));
+        val participant1 = Participant(0,"tester",Some("Test User"), Some("test@example.com"), Some("testpassword"));
         Participant.save(participant1)
         Participant.authenticate("tester","wrongpassword") must beNone
       }

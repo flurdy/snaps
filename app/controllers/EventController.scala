@@ -33,7 +33,7 @@ object EventController extends Controller with Secured {
     searchForm.bindFromRequest.fold(
       errors => {
         Logger.warn("Bad search request:"+errors)
-        BadRequest(views.html.index(errors,createForm))
+        BadRequest(views.html.index(errors,createForm,Application.registerForm))
       },
       searchText => {
         if (searchText.trim.length==0){
@@ -80,9 +80,10 @@ object EventController extends Controller with Secured {
     createForm.bindFromRequest.fold(
       errors => {
         Logger.warn("Bad create event request:"+errors)
-        BadRequest(views.html.index(searchForm,errors))
+        BadRequest(views.html.index(searchForm,errors,Application.registerForm))
       },
-      eventName => {        val event = participant.createEvent(eventName)
+      eventName => {
+        val event = participant.createAndSaveEvent(eventName)
         Redirect(routes.EventController.showEditEvent(event.eventId))
       }
     )

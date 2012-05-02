@@ -1,13 +1,14 @@
 # --- First database schema
 
 # --- !Ups
-SET REFERENTIAL_INTEGRITY FALSE;
 
-DROP TABLE IF EXISTS participant;
+SET REFERENTIAL_INTEGRITY FALSE;
 
 DROP TABLE IF EXISTS snapalbum;
 
 DROP TABLE IF EXISTS snapevent;
+
+DROP TABLE IF EXISTS participant;
 
 DROP SEQUENCE IF EXISTS snapevent_seq;
 
@@ -38,8 +39,8 @@ CREATE TABLE snapalbum (
 CREATE TABLE PARTICIPANT (
     participantid         SERIAL PRIMARY KEY,
     username              VARCHAR(100) UNIQUE,
-    fullname              VARCHAR(100) NOT NULL,
-    email                 VARCHAR(100) NOT NULL,
+    fullname              VARCHAR(100),
+    email                 VARCHAR(100),
     password              VARCHAR(100) NOT NULL
 );
 

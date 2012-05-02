@@ -70,11 +70,11 @@ object Event {
     }
   }
 
-  def createEvent(eventName: String) : Event = {
-    createEvent(new Event(eventName))
+  def createAndSaveEvent(eventName: String) : Event = {
+    createAndSaveEvent(new Event(eventName))
   }
 
-  def createEvent(event: Event) : Event = {
+  def createAndSaveEvent(event: Event) : Event = {
     DB.withConnection { implicit connection =>
       Logger.info("Inserting : " + event)
       val eventId = SQL("SELECT NEXTVAL('snapevent_seq')").as(scalar[Long].single)

@@ -1,4 +1,4 @@
-@(searchForm: Form[String],createForm: Form[String])(implicit currentParticipant: Option[Participant])
+@(searchForm: Form[String],createForm: Form[String], registerForm: Form[(String,Option[String],Option[String],String,String)])(implicit currentParticipant: Option[Participant], flash: Flash)
 
 @import helper._
 @import helper.twitterBootstrap._
@@ -6,7 +6,6 @@
 @main("snaps @ flurdy") {
 
 }{
-
         <br/>
 
 @for(error <- searchForm.errors){
@@ -16,11 +15,11 @@
 }
 
 @form(action = routes.EventController.search(), 'class -> "well form-search"){
-<fieldset>
-    <legend>Find event</legend>
-    <input type="text" name="searchText" class="span3 input-medium search-query" placeholder="Event name or organiser"/>
-    <button type="submit" class="btn btn-primary">Search</button>
-</fieldset>
+    <h3>Find event</h3>
+    <fieldset>
+        <input type="text" name="searchText" class="span3 search-query" placeholder="Event name or organiser"/>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </fieldset>
 }
 
 @for(error <- createForm.errors){
@@ -30,12 +29,46 @@
 }
 
 @form(action = routes.EventController.createEvent(), 'class -> "well form-horizontal"){
-<fieldset>
-    <legend>Create event</legend>
-    <input type="text" name="eventName" id="eventName" class="span3 input-medium" placeholder="Event name" value="@createForm("eventName").value"/>
-    <button type="submit" class="btn btn-success">Create event</button>
-</fieldset>
+    <h3>Create event</h3>
+    <fieldset>
+        <input type="text" name="eventName" id="eventName" class="span3" placeholder="Event name" value="@createForm("eventName").value"/>
+        <button type="submit" class="btn btn-success">Create event</button>
+    </fieldset>
 }
+
+@if( ! currentParticipant ){
+
+
+
+
+    @form(action = routes.Application.register(), 'class -> "well"){
+        <h3>Register participant</h3>
+        <fieldset>
+            <!-- <legend>Username</legend>       -->
+            <input type="text" name="username" id="register-username" class="span3" placeholder="Your username or email address" value="@registerForm("username").value"/>
+        </fieldset>
+        <fieldset>
+            <!-- <legend>Password</legend> -->
+            <input type="text" name="password" id="register-password" class="span3" placeholder="Your password"/>
+        </fieldset>
+        <fieldset>
+            <!-- <legend>Confirm password</legend> -->
+            <input type="text" name="confirm" id="register-confirm" class="span3" placeholder="Confirm password"/>
+        </fieldset>
+        <fieldset>
+            <button type="submit" class="btn btn-warning">Register</button>
+        </fieldset>
+    }
+
+
+}
+
+@flash.get("message").map { message =>
+<p class="alert alert-warning">
+    @message
+</p>
+}
+
 <style>
     #jib .breadcrumb { display: none; }
 </style>

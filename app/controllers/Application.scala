@@ -1,7 +1,7 @@
 package controllers
 
 import play.api._
-import play.api.mvc._
+import mvc._
 import play.api.data._
 import play.api.data.Forms._
 import models._
@@ -9,10 +9,12 @@ import javax.swing.AbstractAction
 
 object Application extends Controller with Secured {
 
+  val ValidEmailAddress = """^[0-9a-zA-Z]([-\.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9}$""".r
+
   val loginForm = Form(
     tuple(
-      "username" -> nonEmptyText,
-      "password" -> text
+      "username" -> nonEmptyText(maxLength = 99),
+      "password" -> nonEmptyText(maxLength = 99)
     ) verifying("Log in failed. Username does not exist or password is invalid", fields => fields match {
         case (username,password) => Participant.authenticate(username,password).isDefined
       }
@@ -23,8 +25,33 @@ object Application extends Controller with Secured {
     )
   )
 
+  val registerForm = Form (
+    tuple(
+      "username" -> nonEmptyText(maxLength = 99),
+      "fullname" -> optional(text(maxLength = 99)),
+      "email" -> optional(text(maxLength = 99)),
+      "password" -> nonEmptyText(minLength = 4, maxLength = 99),
+      "confirm" -> nonEmptyText(minLength = 4, maxLength = 99)
+    ) verifying("Passwords does not match",fields => fields match {
+      case (username,fullname,email,password,confirmPassword) => {
+        password.trim == confirmPassword.trim
+      }
+    }) verifying("Username is already taken",fields => fields match {
+      case (username,fullname,email,password,confirmPassword) => {
+        !Participant.findByUsername(username.trim).isDefined
+       }
+    }) verifying("Email address is not valid",fields => fields match {
+        case (username,fullname,email,password,confirmPassword) => {
+          email match {
+            case Some(emailAddress) => ValidEmailAddress.findFirstIn(emailAddress.trim).isDefined
+            case None => true
+          }
+      }
+    })
+  )
+
   def index = Action {  implicit request =>
-    Ok(views.html.index(EventController.searchForm,EventController.createForm))
+    Ok(views.html.index(EventController.searchForm,EventController.createForm,registerForm))
   }
 
   def showLogin = Action { implicit request =>
@@ -40,17 +67,37 @@ object Application extends Controller with Secured {
       },
       loggedInForm => {
         if(Logger.isDebugEnabled) Logger.debug("Logging in: " + loggedInForm._1)
-        Redirect(routes.Application.index()).withSession("username" -> loggedInForm._1)
+        Redirect(routes.Application.index()).withSession("username" -> loggedInForm._1).flashing("message" -> "Logged in")
       }
     )
   }
 
   def logout = Action {
     if(Logger.isDebugEnabled) Logger.debug("Logging out")
-    Redirect(routes.Application.index).withNewSession
+    Redirect(routes.Application.index).withNewSession.flashing("message" -> "Logged out")
   }
 
   // implicit val participant: Participant = Participant.findByUsername("").get
+
+
+  def showRegister = Action { implicit request =>
+    Ok(views.html.register(registerForm))
+  }
+
+  def register  = Action { implicit request =>
+    registerForm.bindFromRequest.fold(
+      errors => {
+        Logger.warn("Registration failed: " + errors)
+        BadRequest(views.html.register(errors))
+      },
+      registeredForm => {
+        if(Logger.isDebugEnabled) Logger.debug("Registering: " + registeredForm._1)
+        val participant = Participant(0,registeredForm._1,registeredForm._2,registeredForm._3,Some(registeredForm._4))
+        Participant.save(participant)
+        Redirect(routes.Application.index()).withSession("username" -> participant.username).flashing("message" -> "Registered. Welcome")
+      }
+    )
+  }
 
 }
 

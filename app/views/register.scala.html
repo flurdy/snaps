@@ -1,0 +1,78 @@
+@(registerForm: Form[(String,Option[String],Option[String],String,String)])(implicit currentParticipant: Option[Participant], flash: Flash)
+
+@import helper._
+@import helper.twitterBootstrap._
+@import models._
+
+@main("snaps | Register"){
+    <span class="divider">/</span>
+    Register
+}{
+
+<h2>Register</h2>
+        <br/>
+
+    @flash.get("message").map { message =>
+    <p class="alert alert-warning">
+        @message
+    </p>
+    }
+
+    @for(error <- registerForm.errors){
+    <p class="alert alert-error">
+        Oh dear: @error.message: @error.key
+    </p>
+    }
+
+@form(action = routes.Application.register(), 'class -> "well form-horizontal"){
+<fieldset>
+    <div class="control-group">
+        <label class="control-label required" for="username">Username</label>
+        <div class="controls">
+    <input type="text" name="username" id="username" class="span3" placeholder="Your username or email address" value="@registerForm("username").value" />
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label required" for="fullname">Full name</label>
+        <div class="controls">
+    <input type="text" name="fullname" id="fullname" class="span3" placeholder="Your full name" value="@registerForm("fullname").value" />
+    </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label" for="email">Email</label>
+        <div class="controls">
+    <input type="text" name="email" id="email" class="span3" placeholder="Your email address" value="@registerForm("email").value" />
+    </div>
+    </div>
+
+</fieldset>
+<fieldset>
+
+    <div class="control-group">
+        <label class="control-label" for="password">Password</label>
+        <div class="controls">
+    <input type="password" name="password" id="password" class="span3" placeholder="Your password" />
+</div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label" for="confirm">Confirm password</label>
+        <div class="controls">
+    <input type="password" name="confirm" id="confirm" class="span3" placeholder="Confirm your password" />
+    </div>
+    </div>
+
+    <div class="form-actions">
+        <div class="control-group">
+            <div class="controls">
+                <button type="submit" class="btn btn-warning">Register</button>
+            </div>
+        </div>
+    </div>
+  </fieldset>
+}
+
+
+}
