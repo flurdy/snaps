@@ -21,7 +21,7 @@ SET REFERENTIAL_INTEGRITY TRUE;
 CREATE TABLE snapevent (
     eventid               SERIAL PRIMARY KEY,
     eventname             VARCHAR(128) NOT NULL,
-    organiser             VARCHAR(128),
+    organiserid           BIGINT,
     eventDate             VARCHAR(128),
     description           VARCHAR(4000),
     publicevent           BOOLEAN DEFAULT TRUE

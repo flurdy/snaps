@@ -65,9 +65,12 @@ object EventController extends Controller with Secured {
               Unauthorized(views.html.login(Application.loginForm)).flashing("message"->"Event private, please log in")
             }
             case Some(participant) => {
-              event.isParticipant(participant).map { _ =>
+              if(event.isParticipant(participant) ) {
                 Ok(views.html.events.view(event))
-              }.getOrElse(Forbidden)
+              } else {
+                  Logger.warn("Current participant is not a participant: " + participant )
+                  Forbidden
+              }
             }
           }
         }
@@ -97,20 +100,20 @@ object EventController extends Controller with Secured {
         NotFound
       }
       case Some(event) => {
-         event.isOrganiser(currentParticipant.get) match {
-           case None => {
-             Logger.warn("Not an organiser")
+         if( event.isOrganiser(currentParticipant.get) ){
+           val editForm = updateForm.fill((event.eventName,
+             event.organiser match {
+               case None => ""
+               case Some(participant) => participant.username
+             },
+             event.eventDate.getOrElse(""),
+             event.description.getOrElse(""),
+             event.public))
+           val albums = Album.findAlbums(eventId)
+           Ok(views.html.events.edit(event,albums,editForm))
+         } else {
+             Logger.warn("Not an organiser:" + currentParticipant.get + " | " + event.organiserId)
              Forbidden
-           }
-           case Some(organiser) => {
-             val editForm = updateForm.fill((event.eventName,
-               event.organiser.getOrElse(""),
-               event.eventDate.getOrElse(""),
-               event.description.getOrElse(""),
-               event.public))
-             val albums = Album.findAlbums(eventId)
-             Ok(views.html.events.edit(event,albums,editForm))
-           }
         }
       }
     }
@@ -131,22 +134,19 @@ object EventController extends Controller with Secured {
             BadRequest(views.html.events.edit(event,albums,updateForm))
           },
           updatedForm => {
-             event.isOrganiser(participant) match {
-               case None => {
+            if( event.isOrganiser(participant) ) {
+              val updatedEvent = event.copy(
+                eventName = updatedForm._1,
+                //organiser = Option(updatedForm._2),
+                eventDate = Option(updatedForm._3),
+                description = Option(updatedForm._4) ,
+                public = updatedForm._5 )
+              Logger.warn("P:"+updatedEvent.public)
+              Event.updateEvent(updatedEvent)
+              Redirect(routes.EventController.viewEvent(event.eventId));
+            } else {
                  Logger.warn("Not an organiser")
                  Forbidden
-               }
-               case Some(organiser) => {
-                 val updatedEvent = event.copy(
-                   eventName = updatedForm._1,
-                   organiser = Option(updatedForm._2),
-                   eventDate = Option(updatedForm._3),
-                   description = Option(updatedForm._4) ,
-                   public = updatedForm._5 )
-                 Logger.warn("P:"+updatedEvent.public)
-                 Event.updateEvent(updatedEvent)
-                 Redirect(routes.EventController.viewEvent(event.eventId));
-               }
              }
           }
         )
@@ -162,14 +162,11 @@ object EventController extends Controller with Secured {
         NotFound
       }
       case Some(event) => {
-        event.isOrganiser(participant) match {
-          case None => {
-            Logger.warn("Not an organiser")
-            Forbidden
-          }
-          case Some(organiser) => {
-            Ok(views.html.events.delete(event))
-          }
+        if( event.isOrganiser(participant) ) {
+          Ok(views.html.events.delete(event))
+       } else {
+          Logger.warn("Not an organiser")
+          Forbidden
         }
       }
     }
@@ -184,15 +181,12 @@ object EventController extends Controller with Secured {
         NotFound
       }
       case Some(event) => {
-        event.isOrganiser(participant) match {
-          case None => {
+        if( event.isOrganiser(participant) ) {
+          Event.deleteEvent(eventId)
+          Redirect(routes.Application.index()).flashing("message" -> "Event deleted");
+        } else {
             Logger.warn("Not an organiser")
             Forbidden
-          }
-          case Some(organiser) => {
-            Event.deleteEvent(eventId)
-            Redirect(routes.Application.index()).flashing("message" -> "Event deleted");
-          }
         }
       }
     }

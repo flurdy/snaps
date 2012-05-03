@@ -19,7 +19,7 @@ case class Participant(
   lazy val encryptedPassword = Participant.encrypt(password)
 
   def createAndSaveEvent(eventName: String) = {
-    Event.createAndSaveEvent(new Event(eventName,fullName.getOrElse("")))
+    Event.createAndSaveEvent(new Event(eventName,participantId))
   }
 }
 
@@ -61,6 +61,19 @@ object Participant {
         """
       ).on(
         'username -> username
+      ).as(Participant.simple.singleOpt)
+    }
+  }
+
+  def findById(participantId: Long) = {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          SELECT * FROM participant
+            WHERE participantid = {participantid}
+        """
+      ).on(
+        'participantid -> participantId
       ).as(Participant.simple.singleOpt)
     }
   }

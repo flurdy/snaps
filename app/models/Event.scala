@@ -10,7 +10,7 @@ import play.Logger
 case class Event (
   eventId: Long,
   eventName: String,
-  organiser: Option[String],
+  organiserId: Option[Long],
   eventDate: Option[String],
   description: Option[String],
   public: Boolean = true
@@ -23,11 +23,15 @@ case class Event (
 
   def this(eventName: String) = this(0,eventName,None,None,None)
 
-  def this(eventName: String,organiser: String) = this(0,eventName,Some(organiser),None,None)
+  def this(eventName: String,organiserId: Long) = this(0,eventName,Some(organiserId),None,None)
 
-  def this(eventName: String, organiser: Option[String], eventDate: Option[String], description: Option[String]) = this(0,eventName,organiser,eventDate,description)
+  def this(eventName: String, organiserId: Option[Long], eventDate: Option[String], description: Option[String]) = this(0,eventName,organiserId,eventDate,description)
 
-  def this(eventId: Long, that: Event) = this(eventId,that.eventName, that.organiser, that.eventDate, that.description)
+  def this(eventId: Long, that: Event) = this(eventId,that.eventName, that.organiserId, that.eventDate, that.description)
+
+  val organiser = organiserId.map { participantId =>
+    Participant.findById(participantId)
+  }.getOrElse(None)
 
 //  def this(eventId: Long, eventName: String, organiser: Option[String], eventDate: Option[String], description: Option[String], albums: List[Album]) {
 //    this(eventId, eventName, organiser, eventDate, description)
@@ -46,13 +50,14 @@ case class Event (
     Album.deleteAlbum(album.albumId)
   }
 
-  def isParticipant(participant: Participant): Option[Participant] = {
-    None // Some(participant)
+  def isParticipant(participant: Participant) = {
+    isOrganiser(participant)
   }
 
-  def isOrganiser(participant: Participant) : Option[Participant] = {
-    None // Some(participant)
+  def isOrganiser(participant: Participant) = {
+    organiser == participant
   }
+
 }
 
 
@@ -62,11 +67,11 @@ object Event {
   val simple = {
     get[Long]("eventid") ~
       get[String]("eventname") ~
-      get[Option[String]]("organiser") ~
+      get[Option[Long]]("organiserid") ~
       get[Option[String]]("eventdate") ~
       get[Option[String]]("description") ~
       get[Boolean]("publicevent") map {
-      case eventid~eventname~organiser~eventdate~description~publicevent => Event( eventid, eventname, organiser, eventdate, description, publicevent )
+      case eventid~eventname~organiserid~eventdate~description~publicevent => Event( eventid, eventname, organiserid, eventdate, description, publicevent )
     }
   }
 
@@ -89,7 +94,7 @@ object Event {
       ).on(
         'eventid -> eventId,
         'eventname -> event.eventName,
-        'organiser -> event.organiser,
+        'organiser -> event.organiserId,
         'eventdate -> event.eventDate,
         'description -> event.description,
         'publicevent -> event.public
@@ -152,7 +157,7 @@ object Event {
       ).on(
         'eventid -> event.eventId,
         'eventname -> event.eventName,
-        'organiser -> event.organiser,
+        'organiser -> event.organiserId,
         'eventdate -> event.eventDate,
         'description -> event.description,
         'publicevent -> event.public

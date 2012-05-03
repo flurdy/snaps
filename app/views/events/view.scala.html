@@ -24,7 +24,7 @@
     @if(event.organiser.isDefined){
     <br/>
 
-    <p>Event organiser: @event.organiser</p>
+    <p>Event organiser: @event.organiser.map { organiser => @organiser.username}</p>
     }
 
     <br/>

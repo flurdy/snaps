@@ -16,90 +16,88 @@ object Application extends Controller with Secured {
       "username" -> nonEmptyText(maxLength = 99),
       "password" -> nonEmptyText(maxLength = 99)
     ) verifying("Log in failed. Username does not exist or password is invalid", fields => fields match {
-        case (username,password) => Participant.authenticate(username,password).isDefined
-      }
-//      )(
-//      (username: String, password: String) => Participant.findByUsername(username)
-//    )(
-//      (participant:Option[Participant]) => Some(participant.get.username,"")
-    )
+      case (username, password) => Participant.authenticate(username, password).isDefined
+    })
   )
 
-  val registerForm = Form (
+  val registerForm = Form(
     tuple(
       "username" -> nonEmptyText(maxLength = 99),
       "fullname" -> optional(text(maxLength = 99)),
       "email" -> optional(text(maxLength = 99)),
       "password" -> nonEmptyText(minLength = 4, maxLength = 99),
       "confirm" -> nonEmptyText(minLength = 4, maxLength = 99)
-    ) verifying("Passwords does not match",fields => fields match {
-      case (username,fullname,email,password,confirmPassword) => {
+    ) verifying("Passwords does not match", fields => fields match {
+      case (username, fullname, email, password, confirmPassword) => {
         password.trim == confirmPassword.trim
       }
-    }) verifying("Username is already taken",fields => fields match {
-      case (username,fullname,email,password,confirmPassword) => {
+    }) verifying("Username is already taken", fields => fields match {
+      case (username, fullname, email, password, confirmPassword) => {
         !Participant.findByUsername(username.trim).isDefined
-       }
-    }) verifying("Email address is not valid",fields => fields match {
-        case (username,fullname,email,password,confirmPassword) => {
-          email match {
-            case Some(emailAddress) => ValidEmailAddress.findFirstIn(emailAddress.trim).isDefined
-            case None => true
-          }
+      }
+    }) verifying("Email address is not valid", fields => fields match {
+      case (username, fullname, email, password, confirmPassword) => {
+        email match {
+          case Some(emailAddress) => ValidEmailAddress.findFirstIn(emailAddress.trim).isDefined
+          case None => true
+        }
       }
     })
   )
 
-  def index = Action {  implicit request =>
-    Ok(views.html.index(EventController.searchForm,EventController.createForm,registerForm))
+  def index = Action {
+    implicit request =>
+      Ok(views.html.index(EventController.searchForm, EventController.createForm, registerForm))
   }
 
-  def showLogin = Action { implicit request =>
-    // Logger.debug("message:"+flash.get("message").getOrElse(""))
-    Ok(views.html.login(loginForm))// .flashing("message"->flash.get("message").getOrElse(""))
+  def showLogin = Action {
+    implicit request =>
+      Ok(views.html.login(loginForm))
   }
 
-  def login = Action { implicit request =>
-    loginForm.bindFromRequest.fold(
-      errors => {
-        Logger.warn("Log in failed: " + errors)
-        BadRequest(views.html.login(errors))
-      },
-      loggedInForm => {
-        if(Logger.isDebugEnabled) Logger.debug("Logging in: " + loggedInForm._1)
-        Redirect(routes.Application.index()).withSession("username" -> loggedInForm._1).flashing("message" -> "Logged in")
-      }
-    )
+  def login = Action {
+    implicit request =>
+      loginForm.bindFromRequest.fold(
+        errors => {
+          Logger.warn("Log in failed: " + errors)
+          BadRequest(views.html.login(errors))
+        },
+        loggedInForm => {
+          if (Logger.isDebugEnabled) Logger.debug("Logging in: " + loggedInForm._1)
+          Redirect(routes.Application.index()).withSession("username" -> loggedInForm._1).flashing("message" -> "Logged in")
+        }
+      )
   }
 
   def logout = Action {
-    if(Logger.isDebugEnabled) Logger.debug("Logging out")
+    if (Logger.isDebugEnabled) Logger.debug("Logging out")
     Redirect(routes.Application.index).withNewSession.flashing("message" -> "Logged out")
   }
 
-  // implicit val participant: Participant = Participant.findByUsername("").get
 
-
-  def showRegister = Action { implicit request =>
-    Ok(views.html.register(registerForm))
+  def showRegister = Action {
+    implicit request =>
+      Ok(views.html.register(registerForm))
   }
 
-  def register  = Action { implicit request =>
-    registerForm.bindFromRequest.fold(
-      errors => {
-        Logger.warn("Registration failed: " + errors)
-        BadRequest(views.html.register(errors))
-      },
-      registeredForm => {
-        if(Logger.isDebugEnabled) Logger.debug("Registering: " + registeredForm._1)
-        val participant = Participant(0,registeredForm._1,registeredForm._2,registeredForm._3,Some(registeredForm._4))
-        Participant.save(participant)
-        Redirect(routes.Application.index()).withSession("username" -> participant.username).flashing("message" -> "Registered. Welcome")
-      }
-    )
+  def register = Action {
+    implicit request =>
+      registerForm.bindFromRequest.fold(
+        errors => {
+          Logger.warn("Registration failed: " + errors)
+          BadRequest(views.html.register(errors))
+        },
+        registeredForm => {
+          if (Logger.isDebugEnabled) Logger.debug("Registering: " + registeredForm._1)
+          val participant = Participant(0, registeredForm._1, registeredForm._2, registeredForm._3, Some(registeredForm._4))
+          Participant.save(participant)
+          Redirect(routes.Application.index()).withSession("username" -> participant.username).flashing("message" -> "Registered. Welcome")
+        }
+      )
   }
 
 }
+
 
 
 trait Secured {
@@ -109,18 +107,21 @@ trait Secured {
   def onUnauthorised(request: RequestHeader) = Results.Redirect(routes.Application.showLogin)
 
   def isAuthenticated(f: => String => Request[AnyContent] => Result) = {
-    Security.Authenticated(username, onUnauthorised) { username =>
-      Action(request => f(username)(request))
+    Security.Authenticated(username, onUnauthorised) {
+      username =>
+        Action(request => f(username)(request))
     }
   }
 
-  def withParticipant(f: Participant => Request[AnyContent] => Result) = isAuthenticated { username => implicit request =>
-    Participant.findByUsername(username).map { participant =>
-      f(participant)(request)
-    }.getOrElse(onUnauthorised(request))
+  def withParticipant(f: Participant => Request[AnyContent] => Result) = isAuthenticated {
+    username => implicit request =>
+      Participant.findByUsername(username).map {
+        participant =>
+          f(participant)(request)
+      }.getOrElse(onUnauthorised(request))
   }
 
-  implicit def currentParticipant(implicit session : Session): Option[Participant] = {
+  implicit def currentParticipant(implicit session: Session): Option[Participant] = {
     Participant.findByUsername(session.get(Security.username).getOrElse(""))
   }
 

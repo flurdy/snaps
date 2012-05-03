@@ -24,7 +24,7 @@
             <tr>
                 <td><a href="@routes.EventController.viewEvent(event.eventId)">@event.eventName</a></td>
                 <td>@event.eventDate</td>
-                <td>@event.organiser</td>
+                <td>@event.organiser.map { organiser => @organiser.username }.getOrElse("")</td>
                 <td>@if(!event.public){<i class="icon-lock"></i>}</td>
             </tr>
         }
