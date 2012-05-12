@@ -56,7 +56,7 @@ object EventController extends Controller with Secured {
         NotFound
       }
       case Some(event) => {
-        if(event.public){
+        if(event.public || !event.organiser.isDefined){
           Ok(views.html.events.view(event))
         } else {
           currentParticipant match {
@@ -68,8 +68,10 @@ object EventController extends Controller with Secured {
               if(event.isParticipant(participant) ) {
                 Ok(views.html.events.view(event))
               } else {
-                  Logger.warn("Current participant is not a participant: " + participant )
-                  Forbidden
+                Logger.warn("Current participant is not a participant: " + participant.username )
+                Logger.warn("Event organiser: " + event.organiser.get.username )
+                //                Unauthorized(views.html.login(Application.loginForm)).flashing("message"->"Event private, and you do not have access to it")
+               Unauthorized(views.html.events.unauthorised(event)).flashing("message"->"Event private, and you do not have access to it")
               }
             }
           }
@@ -113,7 +115,7 @@ object EventController extends Controller with Secured {
            Ok(views.html.events.edit(event,albums,editForm))
          } else {
              Logger.warn("Not an organiser:" + currentParticipant.get + " | " + event.organiserId)
-             Forbidden
+             Unauthorized
         }
       }
     }
@@ -146,7 +148,7 @@ object EventController extends Controller with Secured {
               Redirect(routes.EventController.viewEvent(event.eventId));
             } else {
                  Logger.warn("Not an organiser")
-                 Forbidden
+                Unauthorized
              }
           }
         )
@@ -166,7 +168,7 @@ object EventController extends Controller with Secured {
           Ok(views.html.events.delete(event))
        } else {
           Logger.warn("Not an organiser")
-          Forbidden
+          Unauthorized
         }
       }
     }
@@ -186,7 +188,7 @@ object EventController extends Controller with Secured {
           Redirect(routes.Application.index()).flashing("message" -> "Event deleted");
         } else {
             Logger.warn("Not an organiser")
-            Forbidden
+          Unauthorized
         }
       }
     }

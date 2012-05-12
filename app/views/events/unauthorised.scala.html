@@ -1,0 +1,30 @@
+@(event: Event)(implicit currentParticipant: Option[Participant])
+
+@import helper._
+@import helper.twitterBootstrap._
+@import models._
+
+@main(" snaps | Private event "){
+<li>
+    <span class="divider">/</span>
+    <a href="@routes.EventController.viewEvent(event.eventId)">Event</a>
+</li>
+} {
+
+
+    <h3>Event: @event.eventName: </h3>
+
+    <br/>
+
+    <div class="alert alert-block">
+        This event is private and
+        unfortunately you do not have access to it.
+    </div>
+
+    <div class="alert alert-block">
+        You may contact the organiser @event.organiser.map{ organiser => , <em>@organiser.username</em>, }.getOrElse("") and ask to be a participant.
+    </div>
+
+
+
+}

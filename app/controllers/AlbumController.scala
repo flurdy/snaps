@@ -13,7 +13,7 @@ object AlbumController extends Controller with Secured {
 
   val albumForm = Form(
     tuple(
-      "publisher" -> nonEmptyText(minLength = 3, maxLength = 100),
+      "publisher" -> optional(text(minLength = 3, maxLength = 100)),
       "url" -> nonEmptyText(minLength = 8, maxLength = 150)
     )
   )
@@ -25,12 +25,12 @@ object AlbumController extends Controller with Secured {
         Logger.warn("Event not found on show album")
         NotFound
       }
-      case Some(event) => Ok(views.html.albums.add(event,albumForm.fill(participant.username,"")))
+      case Some(event) => Ok(views.html.albums.add(event,albumForm.fill(Some(participant.username),"")))
     }
   }
 
 
-  def addAlbum(eventId: Long) = isAuthenticated { username => implicit request =>
+  def addAlbum(eventId: Long) = withParticipant { participant => implicit request =>
     Event.findEvent(eventId) match {
       case None => {
         Logger.warn("Event not found on add album ")
@@ -45,7 +45,7 @@ object AlbumController extends Controller with Secured {
             BadRequest(views.html.albums.add(event,errors))
           },
           submittedAlbumForm => {
-            val album = new Album(submittedAlbumForm._1,submittedAlbumForm._2)
+            val album = new Album(participant.username,submittedAlbumForm._2)
             event.addAlbum(album)
             Redirect(routes.EventController.viewEvent(eventId));
           }
@@ -77,7 +77,7 @@ object AlbumController extends Controller with Secured {
             },
             submittedAlbumForm => {
                 val updatedAlbum = album.copy(
-                    publisher = submittedAlbumForm._1,
+                    publisher = submittedAlbumForm._1.getOrElse(username),
                     url = submittedAlbumForm._2)
                 Album.updateAlbum(updatedAlbum)
                 Redirect(routes.EventController.showEditEvent(eventId));

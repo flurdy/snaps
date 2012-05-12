@@ -16,6 +16,7 @@ case class Event (
   public: Boolean = true
 ){
   require(eventName.trim.length > 1)
+  require( organiserId.isDefined || public )
 //  require(description == None || description.get.trim.length < 3900)
 
 
@@ -29,14 +30,9 @@ case class Event (
 
   def this(eventId: Long, that: Event) = this(eventId,that.eventName, that.organiserId, that.eventDate, that.description)
 
-  val organiser = organiserId.map { participantId =>
+  val organiser : Option[Participant] = organiserId.map { participantId =>
     Participant.findById(participantId)
   }.getOrElse(None)
-
-//  def this(eventId: Long, eventName: String, organiser: Option[String], eventDate: Option[String], description: Option[String], albums: List[Album]) {
-//    this(eventId, eventName, organiser, eventDate, description)
-//    this.albums = albums;
-//  }
 
   def findAlbum(albumId: Long) = {
     Album.findAlbum(eventId,albumId)
@@ -51,14 +47,15 @@ case class Event (
   }
 
   def isParticipant(participant: Participant) = {
-    isOrganiser(participant)
+    Event.isParticipant(eventId,participant.participantId) || isOrganiser(participant)
   }
 
   def isOrganiser(participant: Participant) = {
-    organiser == participant
+    organiser.map { organiser => organiser == participant }.getOrElse(false)
   }
 
 }
+
 
 
 object Event {
@@ -206,6 +203,22 @@ object Event {
       ).on(
         'searchtext -> sqlSearch
       ).as(Event.simple *)
+    }
+  }
+
+  def isParticipant(eventId: Long, participantId: Long) : Boolean = {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          select count(participantid) = 1
+          from eventparticipant
+          where eventid = {eventid}
+          and participantid = {participantid}
+        """
+      ).on(
+        'participantid -> participantId,
+        'eventid -> eventId
+      ).as(scalar[Boolean].single)
     }
   }
 

@@ -20,17 +20,17 @@ INSERT INTO snapevent (eventid,eventname,organiserid,eventdate) VALUES (
 
 INSERT INTO snapevent (eventid,eventname,eventdate,publicevent) VALUES (
         (SELECT NEXTVAL('snapevent_seq')),
-         'Dieter''s birthday party', '2010-12-13', FALSE );
+         'Dieter''s birthday party', '2010-12-13', true );
 
 INSERT INTO snapevent (eventid,eventname, eventdate) VALUES (
         (SELECT NEXTVAL('snapevent_seq')),
          'Henriette''s birthday party', '2010-12-13' );
 
-INSERT INTO snapevent (eventid,eventname,organiserid,eventdate) VALUES (
+INSERT INTO snapevent (eventid,eventname,organiserid,eventdate,publicevent) VALUES (
         (SELECT NEXTVAL('snapevent_seq')),
          'Lucy Ann''s birthday party',
          (SELECT MAX(participantid) FROM participant WHERE username = 'anotheruser'),
-          '2010-12-13' );
+          '2010-12-13' , FALSE);
 
 INSERT INTO snapevent (eventid,eventname,eventdate,publicevent) VALUES (
         (SELECT NEXTVAL('snapevent_seq')),
@@ -66,6 +66,8 @@ INSERT INTO snapevent (eventid,eventname,eventdate,description) VALUES (
         (SELECT NEXTVAL('snapevent_seq')),
         'Christmas', 'Christmas 2011','Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.' );
 
+
+
 INSERT INTO snapalbum (albumid,publisher,url,eventid) VALUES (
         (SELECT NEXTVAL('snapalbum_seq')),
          'John Smith', 'http://flickr.com/photos/flurdy/set/12121eqweewqwqe',
@@ -75,6 +77,19 @@ INSERT INTO snapalbum (albumid,publisher,url,eventid) VALUES (
         (SELECT NEXTVAL('snapalbum_seq')),
          'Sue Smith', 'http://picasaweb.com/flurdy/12121eqweewqwqe',
         (SELECT MAX(eventid) FROM snapevent WHERE eventname = 'Christmas') );
+
+
+
+INSERT INTO eventparticipant (eventid,participantid) VALUES (
+         (SELECT MAX(eventid) FROM snapevent WHERE eventname = 'Christmas at Smiths'),
+          (SELECT MAX(participantid) FROM participant WHERE username = 'anotheruser')
+        );
+
+INSERT INTO eventparticipant (eventid,participantid) VALUES (
+         (SELECT MAX(eventid) FROM snapevent WHERE eventname = 'Christmas at Smiths'),
+          (SELECT MAX(participantid) FROM participant WHERE username = 'testuser')
+        );
+
 
 
 
