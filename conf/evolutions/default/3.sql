@@ -3,7 +3,6 @@
 # --- !Ups
 
 
-DELETE FROM snapalbum;
 
 DELETE FROM snapevent;
 
@@ -68,34 +67,9 @@ INSERT INTO snapevent (eventid,eventname,eventdate,description) VALUES (
 
 
 
-INSERT INTO snapalbum (albumid,publisher,url,eventid) VALUES (
-        (SELECT NEXTVAL('snapalbum_seq')),
-         'John Smith', 'http://flickr.com/photos/flurdy/set/12121eqweewqwqe',
-        (SELECT MAX(eventid) FROM snapevent WHERE eventname = 'Christmas') );
-
-INSERT INTO snapalbum (albumid,publisher,url,eventid) VALUES (
-        (SELECT NEXTVAL('snapalbum_seq')),
-         'Sue Smith', 'http://picasaweb.com/flurdy/12121eqweewqwqe',
-        (SELECT MAX(eventid) FROM snapevent WHERE eventname = 'Christmas') );
-
-
-
-INSERT INTO eventparticipant (eventid,participantid) VALUES (
-         (SELECT MAX(eventid) FROM snapevent WHERE eventname = 'Christmas at Smiths'),
-          (SELECT MAX(participantid) FROM participant WHERE username = 'anotheruser')
-        );
-
-INSERT INTO eventparticipant (eventid,participantid) VALUES (
-         (SELECT MAX(eventid) FROM snapevent WHERE eventname = 'Christmas at Smiths'),
-          (SELECT MAX(participantid) FROM participant WHERE username = 'testuser')
-        );
-
-
 
 
 # --- !Downs
 
-
-DELETE FROM snapalbum;
 
 DELETE FROM snapevent;

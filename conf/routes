@@ -27,6 +27,11 @@ PUT     /events/:eventId/album/:albumId/           controllers.AlbumController.u
 POST     /events/:eventId/album/:albumId/delete           controllers.AlbumController.removeAlbum(eventId: Long, albumId: Long)
 DELETE     /events/:eventId/album/:albumId/           controllers.AlbumController.removeAlbum(eventId: Long, albumId: Long)
 
+POST     /events/:eventId/participant/           controllers.EventController.addParticipant(eventId: Long)
+POST     /events/:eventId/participant/:participantId/delete    controllers.EventController.removeParticipant(eventId: Long, participantId: Long)
+DELETE     /events/:eventId/participant/:participantId/    controllers.EventController.removeParticipant(eventId: Long, participantId: Long)
+
+
 # Map static resources from the /public folder to the /assets URL path
 # GET     /images/*imgFile               controllers.Assets.at(path="/public/images", imgFile)
 # GET     /stylesheets/*cssfile               controllers.Assets.at(path="public/stylesheets/", cssfile)

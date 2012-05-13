@@ -28,6 +28,9 @@ object EventController extends Controller with Secured {
     )//(Event.apply)(Event.unapply)
   )
 
+  val participantForm = Form(
+    "username" -> nonEmptyText(maxLength = 99)
+  )
 
   def search = Action {  implicit request =>
     searchForm.bindFromRequest.fold(
@@ -112,10 +115,11 @@ object EventController extends Controller with Secured {
              event.description.getOrElse(""),
              event.public))
            val albums = Album.findAlbums(eventId)
-           Ok(views.html.events.edit(event,albums,editForm))
+           val participants = event.findParticipants
+           Ok(views.html.events.edit(event,albums,participants,editForm))
          } else {
              Logger.warn("Not an organiser:" + currentParticipant.get + " | " + event.organiserId)
-             Unauthorized
+           Unauthorized.flashing("message" -> "Participant is not an organiser")
         }
       }
     }
@@ -133,7 +137,8 @@ object EventController extends Controller with Secured {
           errors => {
             Logger.warn("Bad update event request:"+errors)
             val albums = Album.findAlbums(event.eventId)
-            BadRequest(views.html.events.edit(event,albums,updateForm))
+            val participants = event.findParticipants
+            BadRequest(views.html.events.edit(event,albums,participants,updateForm))
           },
           updatedForm => {
             if( event.isOrganiser(participant) ) {
@@ -148,7 +153,7 @@ object EventController extends Controller with Secured {
               Redirect(routes.EventController.viewEvent(event.eventId));
             } else {
                  Logger.warn("Not an organiser")
-                Unauthorized
+              Unauthorized.flashing("message" -> "Participant is not an organiser")
              }
           }
         )
@@ -168,7 +173,7 @@ object EventController extends Controller with Secured {
           Ok(views.html.events.delete(event))
        } else {
           Logger.warn("Not an organiser")
-          Unauthorized
+          Unauthorized.flashing("message" -> "Participant is not an organiser")
         }
       }
     }
@@ -189,6 +194,74 @@ object EventController extends Controller with Secured {
         } else {
             Logger.warn("Not an organiser")
           Unauthorized
+        }
+      }
+    }
+  }
+
+
+  def removeParticipant(eventId: Long, participantId: Long) = withParticipant { participant => implicit request =>
+    Logger.info("Remove participant: "+eventId)
+    Event.findEvent(eventId) match {
+      case None => {
+        Logger.warn("Event not found for remove participant")
+        NotFound.flashing("message" -> "Event not found")
+      }
+      case Some(event) => {
+        if( event.isOrganiser(participant) ) {
+          Participant.findById(participantId) match {
+            case None => {
+              Logger.warn("Participant not found for remove participant")
+              NotFound.flashing("error" -> "Participant not found")
+            }
+            case Some(participantToBeRemoved) => {
+              event.removeParticipant(participantToBeRemoved)
+              Redirect(routes.EventController.showEditEvent(eventId)).flashing("message" -> "Participant removed");
+            }
+          }
+        } else {
+          Logger.warn("Not an organiser")
+          Unauthorized.flashing("error" -> "Participant is not an organiser")
+        }
+      }
+    }
+  }
+
+  def addParticipant(eventId: Long) = withParticipant { participant => implicit request =>
+    Logger.info("Add participant: "+eventId)
+    Event.findEvent(eventId) match {
+      case None => {
+        Logger.warn("Event not found for add participant")
+        NotFound.flashing("message" -> "Event not found")
+      }
+      case Some(event) => {
+        if( event.isOrganiser(participant) ) {
+          participantForm.bindFromRequest.fold(
+            errors => {
+              for(error<-errors.errors){
+                Logger.warn("Bad add participant request:"+error.key + " " + error.message)
+              }
+              val albums = Album.findAlbums(event.eventId)
+              val participants = event.findParticipants
+              BadRequest(views.html.events.edit(event,albums,participants,updateForm)).flashing("errorMessage" -> "Invalid participant");
+            },
+            addParticipantForm => {
+              Participant.findByUsername(addParticipantForm) match {
+                case None => {
+                  Logger.info("Participant not found for add participant")
+                  NotFound.flashing("message" -> "Participant not found")
+                  Redirect(routes.EventController.showEditEvent(eventId)).flashing("errorMessage" -> "Participant not found");
+                }
+                case Some(participantToBeAdded) => {
+                  event.addParticipant(participantToBeAdded)
+                  Redirect(routes.EventController.showEditEvent(eventId)).flashing("message" -> "Participant added");
+                }
+              }
+            }
+          )
+        } else {
+          Logger.warn("Not an organiser")
+          Unauthorized.flashing("error" -> "Participant is not an organiser")
         }
       }
     }

@@ -73,7 +73,8 @@ object AlbumController extends Controller with Secured {
             errors => {
               Logger.warn("Bad update album request: "+errors)
               val albums = Album.findAlbums(eventId)
-              BadRequest(views.html.events.edit(event,albums,EventController.updateForm))
+              val participants = event.findParticipants
+              BadRequest(views.html.events.edit(event,albums,participants,EventController.updateForm))
             },
             submittedAlbumForm => {
                 val updatedAlbum = album.copy(
@@ -90,7 +91,7 @@ object AlbumController extends Controller with Secured {
   }
 
 
-  def removeAlbum(eventId: Long,albumId: Long) = Action {
+  def removeAlbum(eventId: Long,albumId: Long) = withParticipant { participant => implicit request =>
     Logger.info("Remove album: "+albumId)
     Event.findEvent(eventId) match {
       case None => {

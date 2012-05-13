@@ -54,6 +54,24 @@ case class Event (
     organiser.map { organiser => organiser == participant }.getOrElse(false)
   }
 
+  def findParticipants : Seq[Participant]= {
+    Participant.findParticipantsByEvent(eventId)
+  }
+
+  def removeParticipant(participant: Participant) = {
+    Event.removeParticipant(eventId,participant.participantId)
+    this
+  }
+
+  def addParticipant(participant: Participant) = {
+    if( !Event.isParticipant(eventId,participant.participantId) ) {
+      Event.addParticipant(eventId,participant.participantId)
+    } else {
+      Logger.info("Already event participant: " + participant.participantId)
+    }
+    this
+  }
+
 }
 
 
@@ -219,6 +237,38 @@ object Event {
         'participantid -> participantId,
         'eventid -> eventId
       ).as(scalar[Boolean].single)
+    }
+  }
+
+  def removeParticipant(eventId: Long, participantId: Long) = {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          delete from eventparticipant
+          where eventid = {eventid}
+          and participantid = {participantid}
+        """
+      ).on(
+        'participantid -> participantId,
+        'eventid -> eventId
+      ).execute()
+    }
+  }
+
+
+  def addParticipant(eventId: Long, participantId: Long) = {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          insert into eventparticipant
+          (eventid,participantid)
+          values
+          ({eventid},{participantid})
+        """
+      ).on(
+        'participantid -> participantId,
+        'eventid -> eventId
+      ).executeInsert()
     }
   }
 
