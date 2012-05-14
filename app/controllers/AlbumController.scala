@@ -37,26 +37,31 @@ object AlbumController extends Controller with Secured {
         NotFound
       }
       case Some(event) => {
-        albumForm.bindFromRequest.fold(
-          errors => {
-            for(error<-errors.errors){
-              Logger.warn("Bad add album request:"+error.key + " " + error.message)
+        if( event.isParticipant(participant) ) {
+          albumForm.bindFromRequest.fold(
+            errors => {
+              for(error<-errors.errors){
+                Logger.warn("Bad add album request:"+error.key + " " + error.message)
+              }
+              BadRequest(views.html.albums.add(event,errors))
+            },
+            submittedAlbumForm => {
+              val album = new Album(participant.username,submittedAlbumForm._2)
+              event.addAlbum(album)
+              Redirect(routes.EventController.viewEvent(eventId)).flashing("message" -> "Album added")
             }
-            BadRequest(views.html.albums.add(event,errors))
-          },
-          submittedAlbumForm => {
-            val album = new Album(participant.username,submittedAlbumForm._2)
-            event.addAlbum(album)
-            Redirect(routes.EventController.viewEvent(eventId));
-          }
-        )
+          )
+        } else {
+          Logger.warn("Not a participant: " + participant.participantId + " of " + event.eventId)
+          Unauthorized.flashing("message" -> "Not a participant of this event")
+        }
       }
     }
   }
 
 
 
-  def updateAlbum(eventId: Long,albumId: Long) = isAuthenticated { username => implicit request =>
+  def updateAlbum(eventId: Long,albumId: Long) = withParticipant { participant => implicit request =>
     Event.findEvent(eventId) match {
       case None => {
         Logger.warn("Event not found on update album")
@@ -69,21 +74,26 @@ object AlbumController extends Controller with Secured {
             NotFound
           }
         case Some(album) => {
-          albumForm.bindFromRequest.fold(
-            errors => {
-              Logger.warn("Bad update album request: "+errors)
-              val albums = Album.findAlbums(eventId)
-              val participants = event.findParticipants
-              BadRequest(views.html.events.edit(event,albums,participants,EventController.updateForm))
-            },
-            submittedAlbumForm => {
-                val updatedAlbum = album.copy(
-                    publisher = submittedAlbumForm._1.getOrElse(username),
-                    url = submittedAlbumForm._2)
-                Album.updateAlbum(updatedAlbum)
-                Redirect(routes.EventController.showEditEvent(eventId));
-              }
-            )
+          if( event.isParticipant(participant) ) {
+            albumForm.bindFromRequest.fold(
+              errors => {
+                Logger.warn("Bad update album request: "+errors)
+                val albums = Album.findAlbums(eventId)
+                val participants = event.findParticipants
+                BadRequest(views.html.events.edit(event,albums,participants,EventController.updateForm))
+              },
+              submittedAlbumForm => {
+                  val updatedAlbum = album.copy(
+                      publisher = submittedAlbumForm._1.getOrElse(participant.username),
+                      url = submittedAlbumForm._2)
+                  Album.updateAlbum(updatedAlbum)
+                  Redirect(routes.EventController.showEditEvent(eventId)).flashing("message" -> "Album updated")
+                }
+              )
+            } else {
+              Logger.warn("Not a participant: " + participant.participantId + " of " + event.eventId)
+              Unauthorized.flashing("message" -> "Not a participant of this event")
+            }
           }
         }
       }
@@ -99,15 +109,20 @@ object AlbumController extends Controller with Secured {
         NotFound
       }
       case Some(event) => {
-        event.findAlbum(albumId) match {
-          case None => {
-            Logger.warn("Album not found for remove album")
-            NotFound
+        if( event.isParticipant(participant) ) {
+          event.findAlbum(albumId) match {
+            case None => {
+              Logger.warn("Album not found for remove album")
+              NotFound
+            }
+            case Some(album) => {
+              event.removeAlbum(album)
+              Redirect(routes.EventController.showEditEvent(eventId)).flashing("message" -> "Album removed")
+            }
           }
-          case Some(album) => {
-            event.removeAlbum(album)
-            Redirect(routes.EventController.showEditEvent(eventId));
-          }
+        } else {
+          Logger.warn("Not a participant: " + participant.participantId + " of " + event.eventId)
+          Unauthorized.flashing("message" -> "Not a participant of this event")
         }
       }
     }

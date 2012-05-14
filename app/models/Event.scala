@@ -101,15 +101,15 @@ object Event {
       SQL(
         """
           INSERT INTO snapevent
-          (eventid, eventname, organiser, eventdate, description, publicevent)
+          (eventid, eventname, organiserid, eventdate, description, publicevent)
           VALUES
-          ({eventid}, {eventname}, {organiser},
+          ({eventid}, {eventname}, {organiserid},
               {eventdate}, {description},{publicevent})
         """
       ).on(
         'eventid -> eventId,
         'eventname -> event.eventName,
-        'organiser -> event.organiserId,
+        'organiserid -> event.organiserId,
         'eventdate -> event.eventDate,
         'description -> event.description,
         'publicevent -> event.public

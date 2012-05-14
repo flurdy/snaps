@@ -1,4 +1,4 @@
-@(event: Event)(implicit currentParticipant: Option[Participant])
+@(event: Event)(implicit currentParticipant: Option[Participant], flash: Flash)
 
 @import helper._
 @import helper.twitterBootstrap._
@@ -10,6 +10,24 @@
     <a href="@routes.EventController.viewEvent(event.eventId)">Event</a>
 </li>
 } {
+
+@flash.get("message").map { message =>
+<p class="alert alert-info">
+    @message
+</p>
+}
+
+@flash.get("warnMessage").map { message =>
+<p class="alert alert-warning">
+    @message
+</p>
+}
+
+@flash.get("errorMessage").map { message =>
+<p class="alert alert-error">
+    @message
+</p>
+}
 
     <div class="">
 
