@@ -38,6 +38,7 @@ CREATE TABLE snapalbum (
     foreign key(eventid) references snapevent(eventid) on delete cascade
 );
 
+/*
 CREATE TABLE participant (
     participantid         SERIAL PRIMARY KEY,
     username              VARCHAR(100) UNIQUE,
@@ -52,6 +53,7 @@ CREATE TABLE eventparticipant (
     foreign key(eventid) references snapevent(eventid) on delete cascade,
     foreign key(participantid) references participant(participantid) on delete cascade
 );
+*/
 
 CREATE SEQUENCE snapevent_seq START WITH 1000;
 
