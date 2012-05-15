@@ -5,7 +5,6 @@
 
 DELETE FROM eventparticipant;
 
-/*
 
 INSERT INTO eventparticipant (eventid,participantid) VALUES (
          (SELECT MAX(eventid) FROM snapevent WHERE eventname = 'Christmas at Smiths'),
@@ -23,7 +22,6 @@ INSERT INTO eventparticipant (eventid,participantid) VALUES (
           (SELECT MAX(participantid) FROM participant WHERE username = 'testuser')
         );
 
-*/
 
 
 # --- !Downs
