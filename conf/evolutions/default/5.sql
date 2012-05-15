@@ -1,4 +1,4 @@
-# --- Second database schema
+# --- Fifth database schema
 
 # --- !Ups
 

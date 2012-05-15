@@ -1,4 +1,4 @@
-# --- Second database schema
+# --- Third database schema
 
 # --- !Ups
 
@@ -7,23 +7,12 @@
 DELETE FROM snapevent;
 
 
-INSERT INTO snapevent (eventid,eventname,eventdate) VALUES (
-        (SELECT NEXTVAL('snapevent_seq')),
-         'Phil''s birthday party',  '2010-12-13' );
 
 INSERT INTO snapevent (eventid,eventname,organiserid,eventdate) VALUES (
         (SELECT NEXTVAL('snapevent_seq')),
          'Sue''s birthday party',
          (SELECT MAX(participantid) FROM participant WHERE username = 'johnsmith'),
          '2010-12-13' );
-
-INSERT INTO snapevent (eventid,eventname,eventdate,publicevent) VALUES (
-        (SELECT NEXTVAL('snapevent_seq')),
-         'Dieter''s birthday party', '2010-12-13', true );
-
-INSERT INTO snapevent (eventid,eventname, eventdate) VALUES (
-        (SELECT NEXTVAL('snapevent_seq')),
-         'Henriette''s birthday party', '2010-12-13' );
 
 INSERT INTO snapevent (eventid,eventname,organiserid,eventdate,publicevent) VALUES (
         (SELECT NEXTVAL('snapevent_seq')),
