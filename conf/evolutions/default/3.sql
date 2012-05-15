@@ -6,7 +6,7 @@
 
 DELETE FROM snapevent;
 
-
+/*
 
 INSERT INTO snapevent (eventid,eventname,organiserid,eventdate) VALUES (
         (SELECT NEXTVAL('snapevent_seq')),
@@ -56,7 +56,7 @@ INSERT INTO snapevent (eventid,eventname,eventdate,description) VALUES (
 
 
 
-
+*/
 
 # --- !Downs
 
