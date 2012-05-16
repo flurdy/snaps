@@ -16,6 +16,18 @@
 
     <br/>
 
+    @flash.get("message").map { message =>
+    <p class="alert alert-info">
+        @message
+    </p>
+    }
+
+    @flash.get("errorMessage").map { message =>
+    <p class="alert alert-error">
+        @message
+    </p>
+    }
+
     <div class="alert alert-block">
         This event is private and
         unfortunately you do not have access to it.
@@ -24,18 +36,6 @@
     <div class="alert alert-info">
         You may contact the organiser @event.organiser.map{ organiser => , <em>@organiser.username</em>, }.getOrElse("") and ask to be a participant.
     </div>
-
-    @flash.get("message").map { message =>
-        <p class="alert alert-info">
-            @message
-        </p>
-    }
-
-    @flash.get("errorMessage").map { message =>
-        <p class="alert alert-error">
-            @message
-        </p>
-    }
 
 
 

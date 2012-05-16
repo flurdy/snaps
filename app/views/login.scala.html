@@ -12,13 +12,14 @@
 <h2>Log into Snaps</h2>
         <br/>
 
+
     @flash.get("message").map { message =>
     <p class="alert alert-warning">
         @message
     </p>
     }
 
-    @for(error <- loginForm.errors){
+@for(error <- loginForm.errors){
     <p class="alert alert-error">
         Oh dear: @error.message: @error.key
     </p>

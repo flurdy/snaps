@@ -50,24 +50,14 @@ object EventController extends Controller with EventWrappers with Secured {
     )
   }
 
-//  def eventNotFound = {
-//    Logger.warn("Event not found")
-//    NotFound.flashing("message" -> "Event not found")
-//  }
-
   def notEventParticipant(event: Event)(implicit session:Session, flash: Flash) = {
-    Logger.debug("Not an event participant")
+    Logger.info("Not an event participant")
     Unauthorized(views.html.events.unauthorised(event)).flashing("errorMessage"->"Event private, and you do not have access to it")
   }
 
-//  def notEventOrganiser = {
-//    Logger.warn("Not an organiser")
-//    Unauthorized.flashing("message" -> "Participant is not an organiser")
-//  }
-
-  def eventRequireAuthentication(implicit currentParticipant: Option[Participant], flash: Flash)  = {
-    Logger.warn("Event requires participant")
-    Unauthorized(views.html.login(Application.loginForm)).flashing("errorMessage"->"Event private, please log in")
+  def eventRequireAuthentication(eventId: Long)(implicit request: RequestHeader, currentParticipant: Option[Participant], flash: Flash)  = {
+    Logger.info("Event requires authentication")
+    onUnauthenticated(request).flashing(("errorMessage"->"Event private, please log in"),("eventId"-> eventId.toString))
   }
 
   def viewEvent(eventId: Long) = withRichEvent(eventId) { (event,albums,participants) => implicit request =>
@@ -75,13 +65,11 @@ object EventController extends Controller with EventWrappers with Secured {
       Ok(views.html.events.view(event,albums,participants))
     } else {
       currentParticipant match {
-        case None => eventRequireAuthentication
+        case None => eventRequireAuthentication(eventId)
         case Some(participant) => {
           if(event.isParticipant(participant) ) {
             Ok(views.html.events.view(event,albums,participants))
           } else {
-            Logger.warn("Current participant is not a participant: " + participant.username )
-            Logger.warn("Event organiser: " + event.organiser.get.username )
             notEventParticipant(event)
           }
         }
@@ -115,8 +103,8 @@ object EventController extends Controller with EventWrappers with Secured {
        event.public))
      val albums = Album.findAlbums(eventId)
      val participants = event.findParticipants
-     val requesters = event.findRequests
-     Ok(views.html.events.edit(event,albums,participants,requesters,editForm))
+     val requests = event.findRequests
+     Ok(views.html.events.edit(event,albums,participants,requests,editForm))
   }
 
 

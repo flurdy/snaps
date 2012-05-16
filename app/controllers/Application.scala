@@ -47,12 +47,18 @@ object Application extends Controller with Secured {
 
   def index = Action {
     implicit request =>
-      Ok(views.html.index(EventController.searchForm, EventController.createForm, registerForm))
+      flash.get("eventId").map { eventId =>
+        Redirect(routes.EventController.viewEvent(eventId.toLong))
+    }.getOrElse(Ok(views.html.index(EventController.searchForm, EventController.createForm, registerForm)))
+
   }
 
   def showLogin = Action {
     implicit request =>
-      Ok(views.html.login(loginForm))
+      flash.get("eventId").map { eventId =>
+        Ok(views.html.login(loginForm))
+          .withSession( session + ("eventId" -> eventId))
+      }.getOrElse(Ok(views.html.login(loginForm)))
   }
 
   def login = Action {
@@ -64,7 +70,11 @@ object Application extends Controller with Secured {
         },
         loggedInForm => {
           if (Logger.isDebugEnabled) Logger.debug("Logging in: " + loggedInForm._1)
-          Redirect(routes.Application.index()).withSession("username" -> loggedInForm._1).flashing("message" -> "Logged in")
+          Redirect(
+            session.get("eventId").map { eventId =>
+              routes.EventController.viewEvent(eventId.toLong)
+            }.getOrElse(routes.Application.index())
+          ).withSession("username" -> loggedInForm._1).flashing("message" -> "Logged in")
         }
       )
   }
@@ -104,7 +114,16 @@ trait Secured {
 
   def username(request: RequestHeader) = request.session.get(Security.username)
 
-  def onUnauthenticated(request: RequestHeader) = Results.Redirect(routes.Application.showLogin)
+  def onUnauthenticated(request: RequestHeader)= {
+    request.flash.get("eventId") match{
+      case Some(eventId) => {
+        Results.Redirect(routes.Application.showLogin).flashing("eventId" -> eventId)
+      }
+      case None => {
+        Results.Redirect(routes.Application.showLogin)
+      }
+    }
+  }
 
   def onUnauthorised(request: RequestHeader, event: Event)(implicit session: Session, flash: Flash) = {
     Results.Unauthorized(

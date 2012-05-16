@@ -7,29 +7,29 @@
 
 }{
 
-@for(error <- searchForm.errors){
-    <p class="alert alert-error">
-        Oh dear: @error.message: @error.key
+    @for(error <- searchForm.errors){
+        <p class="alert alert-error">
+            Oh dear: @error.message: @error.key
+        </p>
+    }
+
+    @flash.get("message").map { message =>
+    <p class="alert alert-info">
+        @message
     </p>
-}
+    }
 
-@flash.get("message").map { message =>
-<p class="alert alert-info">
-    @message
-</p>
-}
+    @flash.get("warnMessage").map { message =>
+    <p class="alert alert-warning">
+        @message
+    </p>
+    }
 
-@flash.get("warnMessage").map { message =>
-<p class="alert alert-warning">
-    @message
-</p>
-}
-
-@flash.get("errorMessage").map { message =>
-<p class="alert alert-error">
-    @message
-</p>
-}
+    @flash.get("errorMessage").map { message =>
+    <p class="alert alert-error">
+        @message
+    </p>
+    }
 
 @form(action = routes.EventController.search(), 'class -> "well form-search"){
     <h3>Find event</h3>
