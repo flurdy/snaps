@@ -55,9 +55,9 @@ object EventController extends Controller with EventWrappers with Secured {
 //    NotFound.flashing("message" -> "Event not found")
 //  }
 
-  def notEventParticipant(event: Event)(implicit session:Session) = {
+  def notEventParticipant(event: Event)(implicit session:Session, flash: Flash) = {
     Logger.debug("Not an event participant")
-    Unauthorized(views.html.events.unauthorised(event)(currentParticipant)).flashing("message"->"Event private, and you do not have access to it")
+    Unauthorized(views.html.events.unauthorised(event)).flashing("errorMessage"->"Event private, and you do not have access to it")
   }
 
 //  def notEventOrganiser = {
@@ -67,7 +67,7 @@ object EventController extends Controller with EventWrappers with Secured {
 
   def eventRequireAuthentication(implicit currentParticipant: Option[Participant], flash: Flash)  = {
     Logger.warn("Event requires participant")
-    Unauthorized(views.html.login(Application.loginForm)).flashing("message"->"Event private, please log in")
+    Unauthorized(views.html.login(Application.loginForm)).flashing("errorMessage"->"Event private, please log in")
   }
 
   def viewEvent(eventId: Long) = withEventAndAlbumsAndParticipants(eventId) { (event,albums,participants) => implicit request =>
@@ -115,7 +115,8 @@ object EventController extends Controller with EventWrappers with Secured {
        event.public))
      val albums = Album.findAlbums(eventId)
      val participants = event.findParticipants
-     Ok(views.html.events.edit(event,albums,participants,editForm))
+     val requesters = event.findRequests
+     Ok(views.html.events.edit(event,albums,participants,requesters,editForm))
   }
 
 
@@ -125,7 +126,8 @@ object EventController extends Controller with EventWrappers with Secured {
         Logger.warn("Bad update event request:"+errors)
         val albums = Album.findAlbums(event.eventId)
         val participants = event.findParticipants
-        BadRequest(views.html.events.edit(event,albums,participants,errors))
+        val requesters = event.findRequests
+        BadRequest(views.html.events.edit(event,albums,participants,requesters,errors))
       },
       updatedForm => {
           val updatedEvent = event.copy(
@@ -171,7 +173,8 @@ object EventController extends Controller with EventWrappers with Secured {
     }
   }
 
-  def addParticipant(eventId: Long) = isEventOrganiser(eventId) { event => implicit request =>
+
+  def addCurrentParticipant(eventId: Long) = isEventOrganiser(eventId) { event => implicit request =>
     participantForm.bindFromRequest.fold(
       errors => {
         for(error<-errors.errors){
@@ -179,19 +182,30 @@ object EventController extends Controller with EventWrappers with Secured {
         }
         val albums = Album.findAlbums(event.eventId)
         val participants = event.findParticipants
-        BadRequest(views.html.events.edit(event,albums,participants,updateForm)).flashing("errorMessage" -> "Invalid participant");
+        val requesters = event.findRequests
+        BadRequest(views.html.events.edit(event,albums,participants,requesters,updateForm)).flashing("errorMessage" -> "Invalid participant");
       },
-      addParticipantForm => {
-        Participant.findByUsername(addParticipantForm) match {
-          case None => eventParticipantNotFound(eventId)
-          case Some(participantToBeAdded) => {
-            Logger.debug("Add participant: " + participantToBeAdded.participantId + " to: "+eventId)
-            event.addParticipant(participantToBeAdded)
-            Redirect(routes.EventController.showEditEvent(eventId)).flashing("message" -> "Participant added");
-          }
-        }
-      }
+      addParticipantForm => addAnyParticipant(event,Participant.findByUsername(addParticipantForm))
     )
+  }
+
+  def addRequestedParticipant(eventId: Long, participantId: Long) = isEventOrganiser(eventId) { event => implicit request =>
+      addAnyParticipant(event,Participant.findById(participantId))
+  }
+
+  def addAnyParticipant(event: Event, participantFound: Option[Participant]) = {
+    participantFound.map { participant =>
+      event.addParticipant(participant)
+      event.removeJoinRequest(participant)
+      Redirect(routes.EventController.showEditEvent(event.eventId)).flashing("message" -> "Participant added");
+  }.getOrElse(eventParticipantNotFound(event.eventId))
+}
+
+
+
+  def requestToJoin(eventId: Long) = withEventAndParticipant(eventId) { (event,participant) => implicit request =>
+    event.addJoinRequest(participant)
+    Unauthorized(views.html.events.joinrequest(event)).flashing("message"->"Request to join sent")
   }
 
 }
@@ -221,7 +235,7 @@ trait EventWrappers extends Secured {
       if( event.isOrganiser(participant) ){
         f(event)(request)
       } else {
-        onUnauthorised(request,event)(request.session)
+        onUnauthorised(request,event)(request.session,request.flash)
       }
   }
 
@@ -230,7 +244,7 @@ trait EventWrappers extends Secured {
       if( event.isParticipant(participant) ){
         f(event,participant)(request)
       } else {
-        onUnauthorised(request,event)(request.session)
+        onUnauthorised(request,event)(request.session,request.flash)
       }
   }
 

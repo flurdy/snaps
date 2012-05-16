@@ -1,4 +1,4 @@
-@(event: Event, albums: Seq[Album], participants: Seq[Participant], updateForm: Form[(String,String,String,String,Boolean) ])(implicit currentParticipant: Option[Participant], flash: Flash)
+@(event: Event, albums: Seq[Album], participants: Seq[Participant], requesters: Seq[Participant], updateForm: Form[(String,String,String,String,Boolean) ])(implicit currentParticipant: Option[Participant], flash: Flash)
 
 @import helper._
 @import helper.twitterBootstrap._
@@ -61,13 +61,15 @@
 <div class="form-actions">
     <button type="submit" class="btn btn-primary">Update event</button>
     <a href="@routes.EventController.showDeleteEvent(event.eventId)"><button type="button" class="btn btn-danger">Delete event</button></a>
-    <a href="@routes.EventController.viewEvent(event.eventId)"><button type="button" class="btn">Cancel</button></a>
+    <a class="btn" href="@routes.EventController.viewEvent(event.eventId)">Cancel</a>
 </div>
 }
 
 <div class="well">
 
     <h3>Photo albums</h3>
+
+    @if(!albums.isEmpty){
 
     <table class="table table-striped">
         <thead>
@@ -92,6 +94,7 @@
         }
         </tbody>
     </table>
+    }
 
     @form(action = routes.AlbumController.showAddAlbum(event.eventId), 'class -> "form-inline"){
         <button type="submit" class="btn btn-info btn-small">Add album</button>
@@ -103,31 +106,57 @@
 
     <h3>Participants</h3>
 
+    @if(!participants.isEmpty){
 
     <table class="table table-striped">
         <thead>
         <tr>
-            <th>Particpant</th>
+            <th>Participant</th>
             <th colspan="1">Actions</th>
         </tr>
         </thead>
         <tbody>
-            @for( participant <- participants ){
-                <tr>
-                    <td>@participant.username</td>
-                    <td>
-                        @form(action = routes.EventController.removeParticipant(event.eventId,participant.participantId), 'class -> "form-horizontal"){
-                        <button type="submit" class="btn btn-info btn-mini">Remove</button>
-                        }
-                    </td>
-                </tr>
-            }
+        @for( participant <- participants ){
+        <tr>
+            <td>@participant.username</td>
+            <td>
+                @form(action = routes.EventController.removeParticipant(event.eventId,participant.participantId), 'class -> "form-horizontal"){
+                <button type="submit" class="btn btn-warning btn-mini">Remove</button>
+                }
+            </td>
+        </tr>
+        }
         </tbody>
     </table>
+    }
+    @if(!requesters.isEmpty){
+    <h3>Join requests</h3>
 
-    @form(action = routes.EventController.addParticipant(event.eventId), 'class -> "well form-horizontal"){
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Participant</th>
+            <th colspan="1">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @for( participant <- requesters ){
+        <tr>
+            <td>@participant.username</td>
+            <td>
+                @form(action = routes.EventController.addRequestedParticipant(event.eventId,participant.participantId), 'class -> "form-horizontal"){
+                <button type="submit" class="btn btn-primary btn-mini">Add participant</button>
+                }
+            </td>
+        </tr>
+        }
+        </tbody>
+    </table>
+    }
+
+    @form(action = routes.EventController.addCurrentParticipant(event.eventId), 'class -> "well form-horizontal"){
         <input type="text" name="username" class="span3" placeholder="Username of participant" value=""/>
-        <button type="submit" class="btn btn-info btn-small">Add participant</button>
+        <button type="submit" class="btn btn-success btn-small">Add participant</button>
     }
 
 </div>

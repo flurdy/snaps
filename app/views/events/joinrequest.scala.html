@@ -10,19 +10,13 @@
     <a href="@routes.EventController.viewEvent(event.eventId)">Event</a>
 </li>
 } {
-
-
     <h3>@event.eventName</h3>
 
     <br/>
 
-    <div class="alert alert-block">
-        This event is private and
-        unfortunately you do not have access to it.
-    </div>
 
     <div class="alert alert-info">
-        You may contact the organiser @event.organiser.map{ organiser => , <em>@organiser.username</em>, }.getOrElse("") and ask to be a participant.
+        Join request sent to the organiser of this event
     </div>
 
     @flash.get("message").map { message =>
@@ -37,14 +31,5 @@
         </p>
     }
 
-
-
-<div class="form-actions">
-
-        @form(action = routes.EventController.requestToJoin(event.eventId),'class -> "form-inline"){
-        <button type="submit" class="btn btn-info btn-small">Join event</button>
-        }
-
-    </div>
 
 }

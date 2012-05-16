@@ -146,4 +146,22 @@ object Participant {
       ).as(Participant.simple *)
     }
   }
+
+
+  def findRequestsByEvent(eventId: Long) = {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          select pa.*
+          from eventrequests er
+          left join participant pa
+          on pa.participantid = er.participantid
+          where er.eventid = {eventid}
+        """
+      ).on(
+        'eventid -> eventId
+      ).as(Participant.simple *)
+    }
+  }
+
 }

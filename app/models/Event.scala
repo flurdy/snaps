@@ -15,6 +15,7 @@ case class Event (
   description: Option[String],
   public: Boolean = true
 ){
+
   require(eventName.trim.length > 1)
   require( organiserId.isDefined || public )
 //  require(description == None || description.get.trim.length < 3900)
@@ -68,12 +69,33 @@ case class Event (
     this
   }
 
+
+  def findRequests : Seq[Participant]= {
+    Participant.findRequestsByEvent(eventId)
+  }
+
+  def addJoinRequest(participant: Participant) = {
+    if( !Event.isParticipant(eventId,participant.participantId) ) {
+      if( !Event.isAlreadyJoinRequested(eventId,participant.participantId) ) {
+        Event.addJoinRequest(eventId,participant.participantId)
+      } else {
+        Logger.info("Already requested to join event: " + participant.participantId)
+      }
+    } else {
+      Logger.info("Already event participant: " + participant.participantId)
+    }
+    this
+  }
+
+  def removeJoinRequest(participant: Participant) = {
+      Event.removeJoinRequest(eventId,participant.participantId)
+  }
+
 }
 
 
 
 object Event {
-
 
   val simple = {
     get[Long]("eventid") ~
@@ -266,5 +288,57 @@ object Event {
       ).executeInsert()
     }
   }
+
+
+  def addJoinRequest(eventId: Long, participantId: Long) = {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          insert into eventrequests
+          (eventid,participantid,requestdate)
+          values
+          ({eventid},{participantid},CURRENT_TIMESTAMP)
+        """
+      ).on(
+        'participantid -> participantId,
+        'eventid -> eventId
+      ).executeInsert()
+    }
+  }
+
+
+  def isAlreadyJoinRequested(eventId: Long, participantId: Long) = {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          select count(participantid) = 1
+          from eventrequests
+          where eventid = {eventid}
+          and participantid = {participantid}
+        """
+      ).on(
+        'participantid -> participantId,
+        'eventid -> eventId
+      ).as(scalar[Boolean].single)
+    }
+  }
+
+
+  def removeJoinRequest(eventId: Long, participantId: Long) {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          delete from eventrequests
+          where eventid = {eventid}
+          and participantid = {participantid}
+        """
+      ).on(
+        'participantid -> participantId,
+        'eventid -> eventId
+      ).execute()
+    }
+  }
+
+
 
 }

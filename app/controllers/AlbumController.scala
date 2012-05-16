@@ -56,7 +56,8 @@ object AlbumController extends Controller with EventWrappers with Secured {
             Logger.warn("Bad update album request: "+errors)
             val albums = Album.findAlbums(eventId)
             val participants = event.findParticipants
-            BadRequest(views.html.events.edit(event,albums,participants,EventController.updateForm)
+            val requesters = event.findRequests
+            BadRequest(views.html.events.edit(event,albums,participants,requesters,EventController.updateForm)
               ).flashing("errorMessage" -> "Invalid album data")
           },
           submittedAlbumForm => {

@@ -106,9 +106,9 @@ trait Secured {
 
   def onUnauthenticated(request: RequestHeader) = Results.Redirect(routes.Application.showLogin)
 
-  def onUnauthorised(request: RequestHeader, event: Event)(implicit session: Session) = {
+  def onUnauthorised(request: RequestHeader, event: Event)(implicit session: Session, flash: Flash) = {
     Results.Unauthorized(
-        views.html.events.unauthorised(event)(currentParticipant)
+        views.html.events.unauthorised(event)(currentParticipant,flash)
       ).flashing("message"->"Event private, and you do not have access to it")
   }
 
