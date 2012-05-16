@@ -97,9 +97,9 @@ class AlbumSpec extends Specification {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
         val event = Event.createAndSaveEvent("asasasa")
         event.addAlbum(new Album("John","http://bbb.com"))
-        val event2 = Event.findEventWithAlbums(event.eventId).get
-        event2.albums must have size(1)
-        val albumId = event2.albums.head.albumId
+        val event2 = Event.findEvent(event.eventId).get
+        event2.findAlbums must have size(1)
+        val albumId = event2.findAlbums.head.albumId
         Album.findAlbum(event.eventId,albumId).get.publisher must beEqualTo("John")
       }
     }
@@ -117,7 +117,7 @@ class AlbumSpec extends Specification {
         val event = Event.createAndSaveEvent("asasasa")
         event.addAlbum(new Album("John","http://bbb.com"))
         event.addAlbum(new Album("Sue","http://aaa.com"))
-        Event.findEventWithAlbums(event.eventId).get.albums must have size(2)
+        Event.findEvent(event.eventId).get.findAlbums must have size(2)
       }
     }
 
@@ -126,9 +126,9 @@ class AlbumSpec extends Specification {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
         val event1 = Event.createAndSaveEvent("asasasa")
         event1.addAlbum(new Album("John","http://bbb.com"))
-        val event2 = Event.findEventWithAlbums(event1.eventId).get
-        event1.findAlbum(event2.albums.head.albumId) must beSome
-        Album.findAlbum(event1.eventId,event2.albums.head.albumId) must beSome
+        val event2 = Event.findEvent(event1.eventId).get
+        event1.findAlbum(event2.findAlbums.head.albumId) must beSome
+        Album.findAlbum(event1.eventId,event2.findAlbums.head.albumId) must beSome
       }
     }
 
@@ -137,12 +137,12 @@ class AlbumSpec extends Specification {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
         val event1 = Event.createAndSaveEvent("asasasa")
         event1.addAlbum(new Album("John","http://bbb.com"))
-        val event2 = Event.findEventWithAlbums(event1.eventId).get
-        var album = event2.albums.head
+        val event2 = Event.findEvent(event1.eventId).get
+        var album = event2.findAlbums.head
         Album.findAlbum(event1.eventId,album.albumId).get.publisher must beEqualTo("John")
-        album = event2.albums.head.copy(publisher="Oliver")
+        album = event2.findAlbums.head.copy(publisher="Oliver")
         Album.updateAlbum(album)
-        Event.findEventWithAlbums(event1.eventId).get.albums must have size(1)
+        Event.findEvent(event1.eventId).get.findAlbums must have size(1)
         Album.findAlbum(event1.eventId,album.albumId).get.publisher must beEqualTo("Oliver")
       }
     }
@@ -151,7 +151,7 @@ class AlbumSpec extends Specification {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
         val event = Event.createAndSaveEvent("asasasa")
         event.addAlbum(new Album("John","http://bbb.com"))
-        val album = Event.findEventWithAlbums(event.eventId).get.albums.head
+        val album = Event.findEvent(event.eventId).get.findAlbums.head
         album.copy(publisher = "") must throwAn[IllegalArgumentException]
         album.copy(url = "http") must throwAn[IllegalArgumentException]
       }
@@ -162,11 +162,11 @@ class AlbumSpec extends Specification {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
         val event1 = Event.createAndSaveEvent("asasasa")
         event1.addAlbum(new Album("John","http://bbb.com"))
-        Event.findEventWithAlbums(event1.eventId).get.albums must have size(1)
-        val event2 = Event.findEventWithAlbums(event1.eventId).get
-        val album = event2.albums.head
+        Event.findEvent(event1.eventId).get.findAlbums must have size(1)
+        val event2 = Event.findEvent(event1.eventId).get
+        val album = event2.findAlbums.head
         event2.removeAlbum(album)
-        Event.findEventWithAlbums(event1.eventId).get.albums must have size(0)
+        Event.findEvent(event1.eventId).get.findAlbums must have size(0)
         Album.findAlbum(event1.eventId,album.albumId) must beNone
       }
     }

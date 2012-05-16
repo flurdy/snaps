@@ -1,4 +1,4 @@
-@(event: Event)(implicit currentParticipant: Option[Participant], flash: Flash)
+@(event: Event,albums: Seq[Album],participants: Seq[Participant])(implicit currentParticipant: Option[Participant], flash: Flash)
 
 @import helper._
 @import helper.twitterBootstrap._
@@ -47,22 +47,13 @@
 
     <br/>
 
-    @if(!event.public){
-
-       <p>
-            <i class="icon-lock"></i>
-           Restricted event. Not viewable by all</p>
-
-       <br/>
-    }
-
     <p class="description">@event.description</p>
 
     </div>
 
 <br/><br/>
 
-@if(event.albums.isEmpty){
+@if(albums.isEmpty){
 <p></p>
 } else {
     <div class="well">
@@ -77,7 +68,7 @@
             </tr>
         </thead>
         <tbody>
-        @for(album <- event.albums){
+        @for(album <- albums){
             <tr>
                 <td>@album.publisher</td>
                 <td><a href="@album.url" target="_blank">@album.url <img class="external-link" src="@routes.Assets.at("images/external-link-ltr-icon.png")"/></a></td>
@@ -89,6 +80,15 @@
         </tbody>
     </table>
     </div>
+
+}
+@if(!event.public){
+
+<p>
+    <i class="icon-lock"></i>
+    Restricted event. Not viewable by all</p>
+
+<br/>
 }
 
 <br/>

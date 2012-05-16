@@ -47,7 +47,7 @@
     <textarea name="description" class="span6" rows="8">@updateForm("description").value</textarea>
 </fieldset>
 <fieldset>
-    <legend>Visibility:@updateForm("public").value</legend>
+    <legend>Visibility</legend>
     <label class="radio" for="publictrue">
         <input type="radio" name="public" id="publictrue" value="true" @if(updateForm("public").value.getOrElse("") == "true"){ checked="checked" } />
         Public event. Anyone can view it

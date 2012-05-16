@@ -20,7 +20,7 @@ case class Event (
 //  require(description == None || description.get.trim.length < 3900)
 
 
-  var albums: List[Album] = List()
+//  var albums: List[Album] = List()
 
   def this(eventName: String) = this(0,eventName,None,None,None)
 
@@ -34,17 +34,13 @@ case class Event (
     Participant.findById(participantId)
   }.getOrElse(None)
 
-  def findAlbum(albumId: Long) = {
-    Album.findAlbum(eventId,albumId)
-  }
+  def findAlbum(albumId: Long) = Album.findAlbum(eventId,albumId)
 
-  def addAlbum(album: Album) = {
-    Album.insertAlbum(eventId,album)
-  }
+  def findAlbums: Seq[Album] = Album.findAlbums(eventId)
 
-  def removeAlbum(album: Album) = {
-    Album.deleteAlbum(album.albumId)
-  }
+  def addAlbum(album: Album) = Album.insertAlbum(eventId,album)
+
+  def removeAlbum(album: Album) = Album.deleteAlbum(album.albumId)
 
   def isParticipant(participant: Participant) = {
     Event.isParticipant(eventId,participant.participantId) || isOrganiser(participant)
@@ -133,14 +129,10 @@ object Event {
   }
 
 
-  def findEventWithAlbums(eventId : Long): Option[Event] = {
-    findEvent(eventId) match {
-      case None => None
-      case Some(event) => {
-        event.albums = Album.findAlbums(eventId)
-        Option(event)
-      }
-    }
+  def findEventWithAlbumsAndParticipants(eventId : Long): Option[(Event,Seq[Album],Seq[Participant])] = {
+    findEvent(eventId).map { event =>
+      Option((event,event.findAlbums,event.findParticipants))
+    }.getOrElse(None)
   }
 
 
@@ -163,7 +155,7 @@ object Event {
         """
           UPDATE snapevent
           SET eventname = {eventname},
-            organiser = {organiser},
+            organiserid = {organiserid},
             eventdate = {eventdate},
             description = {description},
             publicevent = {publicevent}
@@ -172,7 +164,7 @@ object Event {
       ).on(
         'eventid -> event.eventId,
         'eventname -> event.eventName,
-        'organiser -> event.organiserId,
+        'organiserid -> event.organiserId,
         'eventdate -> event.eventDate,
         'description -> event.description,
         'publicevent -> event.public
@@ -214,9 +206,12 @@ object Event {
     DB.withConnection { implicit connection =>
       SQL(
         """
-          SELECT * FROM snapevent
-          WHERE organiser like {searchtext}
-          ORDER BY organiser ASC,eventdate DESC,eventname ASC
+          SELECT sn.*
+          FROM participant pa
+          LEFT JOIN snapevent sn
+            ON pa.participantid = sn.organiserid
+          WHERE pa.username like {searchtext}
+          ORDER BY pa.username ASC, sn.eventdate DESC, sn.eventname ASC
         """
       ).on(
         'searchtext -> sqlSearch

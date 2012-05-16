@@ -104,10 +104,16 @@ trait Secured {
 
   def username(request: RequestHeader) = request.session.get(Security.username)
 
-  def onUnauthorised(request: RequestHeader) = Results.Redirect(routes.Application.showLogin)
+  def onUnauthenticated(request: RequestHeader) = Results.Redirect(routes.Application.showLogin)
+
+  def onUnauthorised(request: RequestHeader, event: Event)(implicit session: Session) = {
+    Results.Unauthorized(
+        views.html.events.unauthorised(event)(currentParticipant)
+      ).flashing("message"->"Event private, and you do not have access to it")
+  }
 
   def isAuthenticated(f: => String => Request[AnyContent] => Result) = {
-    Security.Authenticated(username, onUnauthorised) {
+    Security.Authenticated(username, onUnauthenticated) {
       username =>
         Action(request => f(username)(request))
     }
@@ -116,14 +122,12 @@ trait Secured {
   def withParticipant(f: Participant => Request[AnyContent] => Result) = isAuthenticated {
     username => implicit request =>
       Participant.findByUsername(username).map {
-        participant =>
-          f(participant)(request)
-      }.getOrElse(onUnauthorised(request))
+        participant => f(participant)(request)
+      }.getOrElse(onUnauthenticated(request))
   }
 
   implicit def currentParticipant(implicit session: Session): Option[Participant] = {
     Participant.findByUsername(session.get(Security.username).getOrElse(""))
   }
-
 
 }
