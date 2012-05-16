@@ -70,7 +70,7 @@ object EventController extends Controller with EventWrappers with Secured {
     Unauthorized(views.html.login(Application.loginForm)).flashing("errorMessage"->"Event private, please log in")
   }
 
-  def viewEvent(eventId: Long) = withEventAndAlbumsAndParticipants(eventId) { (event,albums,participants) => implicit request =>
+  def viewEvent(eventId: Long) = withRichEvent(eventId) { (event,albums,participants) => implicit request =>
     if(event.public || !event.organiser.isDefined){
       Ok(views.html.events.view(event,albums,participants))
     } else {
@@ -216,7 +216,7 @@ trait EventWrappers extends Secured {
 
   def onEventNotFound(request: RequestHeader) = Results.NotFound.flashing("message" -> "Event not found")
 
-  def withEventAndAlbumsAndParticipants(eventId: Long)(f: (Event,Seq[Album],Seq[Participant]) => Request[AnyContent] => Result) =  {
+  def withRichEvent(eventId: Long)(f: (Event,Seq[Album],Seq[Participant]) => Request[AnyContent] => Result) =  {
     Event.findEvent(eventId).map {
       event => Action(request => f(event,event.findAlbums,event.findParticipants)(request))
     }.getOrElse(Action(request => onEventNotFound(request)))
