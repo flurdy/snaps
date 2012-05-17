@@ -26,17 +26,16 @@
     }
 
 @form(action = routes.Application.login(), 'class -> "well"){
-<fieldset>
-    <legend>Username</legend>
-    <input type="text" name="username" class="span3" placeholder="your username or email address" value="@loginForm("username").value" />
-</fieldset>
-<fieldset>
-    <legend>Password</legend>
-    <input type="password" name="password" class="span3" placeholder="your password" />
-</fieldset>
-<div class="form-actions">
-    <button type="submit" class="btn btn-primary">Log in</button>
-</div>
+    <fieldset>
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" class="span3" placeholder="your username or email address" value="@loginForm("username").value" />
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" class="span3" placeholder="your password" />
+    </fieldset>
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Log in</button>
+        <a href="@routes.Application.showRegister" class="btn btn-inverse">Register</a>
+    </div>
 }
 
 

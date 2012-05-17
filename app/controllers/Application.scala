@@ -45,16 +45,19 @@ object Application extends Controller with Secured {
     })
   )
 
-  def index = Action {
-    implicit request =>
-      flash.get("eventId").map { eventId =>
-        Redirect(routes.EventController.viewEvent(eventId.toLong))
-    }.getOrElse(Ok(views.html.index(EventController.searchForm, EventController.createForm, registerForm)))
-
+  def index = Action { implicit request =>
+    flash.get("eventId") match {
+      case None =>  {
+        session.get("eventId") match {
+          case None => Ok(views.html.index(EventController.searchForm, EventController.createForm, registerForm))
+          case Some(eventId) => Redirect(routes.EventController.viewEvent(eventId.toLong)).withSession(session - "eventId")
+        }
+      }
+      case Some(eventId) => Redirect(routes.EventController.viewEvent(eventId.toLong))
+    }
   }
 
-  def showLogin = Action {
-    implicit request =>
+  def showLogin = Action { implicit request =>
       flash.get("eventId").map { eventId =>
         Ok(views.html.login(loginForm))
           .withSession( session + ("eventId" -> eventId))
@@ -70,8 +73,9 @@ object Application extends Controller with Secured {
         },
         loggedInForm => {
           if (Logger.isDebugEnabled) Logger.debug("Logging in: " + loggedInForm._1)
+          val eventId : Option[String] = session.get("eventId")
           Redirect(
-            session.get("eventId").map { eventId =>
+            eventId.map { eventId =>
               routes.EventController.viewEvent(eventId.toLong)
             }.getOrElse(routes.Application.index())
           ).withSession("username" -> loggedInForm._1).flashing("message" -> "Logged in")
@@ -117,7 +121,7 @@ trait Secured {
   def onUnauthenticated(request: RequestHeader)= {
     request.flash.get("eventId") match{
       case Some(eventId) => {
-        Results.Redirect(routes.Application.showLogin).flashing("eventId" -> eventId)
+        Results.Redirect(routes.Application.showLogin).withSession(request.session+("eventId" -> eventId)).flashing("eventId" -> eventId)
       }
       case None => {
         Results.Redirect(routes.Application.showLogin)

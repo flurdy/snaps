@@ -11,23 +11,23 @@
 </li>
 } {
 
-@flash.get("message").map { message =>
-<p class="alert alert-info">
-    @message
-</p>
-}
+    @flash.get("message").map { message =>
+    <p class="alert alert-info">
+        @message
+    </p>
+    }
 
-@flash.get("warnMessage").map { message =>
-<p class="alert alert-warning">
-    @message
-</p>
-}
+    @flash.get("warnMessage").map { message =>
+    <p class="alert alert-warning">
+        @message
+    </p>
+    }
 
-@flash.get("errorMessage").map { message =>
-<p class="alert alert-error">
-    @message
-</p>
-}
+    @flash.get("errorMessage").map { message =>
+    <p class="alert alert-error">
+        @message
+    </p>
+    }
 
     <div class="">
 
@@ -93,27 +93,25 @@
 
 <br/>
 
-    @if( currentParticipant.isDefined ){
-        @if( event.organiser.isDefined ) {
-            <div class="form-actions">
-                @if( event.isParticipant(currentParticipant.get)  ){
-                    @form(action = routes.AlbumController.showAddAlbum(event.eventId), 'class -> "form-inline"){
-                        <button type="submit" class="btn btn-info btn-small">Add album</button>
-                    }
+    <div class="form-actions">
+        @if( currentParticipant.isDefined ){
+            @if( event.isParticipant(currentParticipant.get) ){
+                @form(action = routes.AlbumController.showAddAlbum(event.eventId), 'class -> "form-inline"){
+                    <button type="submit" class="btn btn-info btn-small">Add album</button>
                 }
-                @if( event.isOrganiser(currentParticipant.get)  ){
-                    @form(action = routes.EventController.showEditEvent(event.eventId), 'class -> "form-inline"){
-                        <button type="submit" class="btn btn-warning btn-small">Edit event</button>
-                    }
+            }
+            @if( event.isOrganiser(currentParticipant.get)  ){
+                @form(action = routes.EventController.showEditEvent(event.eventId), 'class -> "form-inline"){
+                    <button type="submit" class="btn btn-warning btn-small">Edit event</button>
                 }
-                @if( !event.isParticipant(currentParticipant.get)  ){
-                    @form(action = routes.EventController.requestToJoin(event.eventId),'class -> "form-inline"){
-                       <button type="submit" class="btn btn-info btn-small">Join event</button>
-                    }
-                }
-            </div>
+            }
         }
-     }
+        @if( event.organiser.isDefined && (!currentParticipant.isDefined || !event.isParticipant(currentParticipant.get)  )){
+            @form(action = routes.EventController.requestToJoin(event.eventId),'class -> "form-inline"){
+                <button type="submit" class="btn btn-info btn-small">Join event</button>
+            }
+        }
+    </div>
 
 
 <style>
