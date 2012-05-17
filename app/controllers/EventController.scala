@@ -53,7 +53,7 @@ object EventController extends Controller with EventWrappers with Secured {
 
   def notEventParticipant(event: Event)(implicit session:Session, flash: Flash) = {
     Logger.info("Not an event participant")
-    Unauthorized(views.html.events.unauthorised(event)).withSession(session+"eventId"->event.eventId.toString)
+    Unauthorized(views.html.events.unauthorised(event)).withSession(session+("eventId"->event.eventId.toString))
      //.flashing("errorMessage"->"Event private, and you do not have access to it")
   }
 
