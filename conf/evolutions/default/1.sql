@@ -2,9 +2,6 @@
 
 # --- !Ups
 
--- SET REFERENTIAL_INTEGRITY FALSE;
-
-DROP TABLE IF EXISTS eventrequest;
 
 DROP TABLE IF EXISTS eventparticipant;
 
@@ -20,7 +17,6 @@ DROP SEQUENCE IF EXISTS snapalbum_seq;
 
 DROP SEQUENCE IF EXISTS participant_seq;
 
--- SET REFERENTIAL_INTEGRITY TRUE;
 
 CREATE TABLE snapevent (
     eventid               SERIAL PRIMARY KEY,
@@ -55,14 +51,6 @@ CREATE TABLE eventparticipant (
     foreign key(participantid) references participant(participantid) on delete cascade
 );
 
-CREATE TABLE eventrequests (
-    eventid               BIGINT NOT NULL,
-    participantid          BIGINT NOT NULL,
-    requestdate            TIMESTAMP,
-    foreign key(eventid) references snapevent(eventid) on delete cascade,
-    foreign key(participantid) references participant(participantid) on delete cascade
-);
-
 
 CREATE SEQUENCE snapevent_seq START WITH 1000;
 
@@ -75,10 +63,6 @@ CREATE SEQUENCE participant_seq START WITH 1000;
 
 # --- !Downs
 
-
---SET REFERENTIAL_INTEGRITY FALSE;
-
-DROP TABLE IF EXISTS eventrequest;
 
 DROP TABLE IF EXISTS eventparticipant;
 
@@ -93,7 +77,5 @@ DROP SEQUENCE IF EXISTS snapevent_seq;
 DROP SEQUENCE IF EXISTS snapalbum_seq;
 
 DROP SEQUENCE IF EXISTS participant_seq;
-
---SET REFERENTIAL_INTEGRITY TRUE;
 
 
