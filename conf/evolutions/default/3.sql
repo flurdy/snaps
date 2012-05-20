@@ -23,10 +23,6 @@ INSERT INTO snapevent (eventid,eventname,eventdate,publicevent) VALUES (
         (SELECT NEXTVAL('snapevent_seq')),
          'New Year', '2008-12-31', TRUE );
 
-INSERT INTO snapevent (eventid,eventname,eventdate) VALUES (
-        (SELECT NEXTVAL('snapevent_seq')),
-         'New Year', '2010-12-31' );
-
 
 INSERT INTO snapevent (eventid,eventname,organiserid,eventdate,publicevent) VALUES (
         (SELECT NEXTVAL('snapevent_seq')),

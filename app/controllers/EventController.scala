@@ -40,25 +40,29 @@ object EventController extends Controller with EventWrappers with Secured {
       },
       searchText => {
         if (searchText.trim.length==0){
-          Ok(views.html.events.list(searchText, Event.findAll))
+          Ok(views.html.events.list(searchText, currentParticipant.map{ participant => Event.findAllEventsAsParticipantOrOrganiser(participant.participantId)
+          }.getOrElse(Seq.empty), Event.findAll, Participant.findAll))
         } else {
-          val events = Event.findAllEventsContaining(searchText)
-          val organisersEvents = Event.findAllEventsByOrganisersContaining(searchText)
-          Ok(views.html.events.list(searchText,events ::: organisersEvents))
+          val participantEvents : Seq[Event] = currentParticipant.map{ participant =>
+            Event.searchAllEventsAsParticipantOrOrganiser(searchText.trim,participant.participantId)
+          }.getOrElse(Seq.empty)
+          val events : Seq[Event] = Event.searchAllSearchableEventsContaining(searchText.trim)
+          val participants : Seq[Participant] = Participant.findParticipantsContaining(searchText.trim)
+          Ok(views.html.events.list(searchText,participantEvents,events,participants))
         }
       }
     )
   }
 
 
-  def notEventParticipant(event: Event)(implicit session:Session, flash: Flash) = {
+  private def notEventParticipant(event: Event)(implicit session:Session, flash: Flash) = {
     Logger.info("Not an event participant")
     Unauthorized(views.html.events.unauthorised(event)).withSession(session+("eventId"->event.eventId.toString))
      //.flashing("errorMessage"->"Event private, and you do not have access to it")
   }
 
 
-  def eventRequireAuthentication(eventId: Long)(implicit request: RequestHeader, currentParticipant: Option[Participant], flash: Flash)  = {
+  private def eventRequireAuthentication(eventId: Long)(implicit request: RequestHeader, currentParticipant: Option[Participant], flash: Flash)  = {
     Logger.info("Event requires authentication")
     onUnauthenticated(request).withSession("eventId"-> eventId.toString).flashing("errorMessage"->"Event private, please log in")
   }
@@ -148,7 +152,7 @@ object EventController extends Controller with EventWrappers with Secured {
   }
 
 
-  def eventParticipantNotFound(eventId: Long) = {
+  private def eventParticipantNotFound(eventId: Long) = {
     Logger.warn("Participant not found for remove participant")
     Redirect(routes.EventController.showEditEvent(eventId)).flashing("errorMessage" -> "Participant not found")
   }
@@ -185,7 +189,7 @@ object EventController extends Controller with EventWrappers with Secured {
       addAnyParticipant(event,Participant.findById(participantId))
   }
 
-  def addAnyParticipant(event: Event, participantFound: Option[Participant]) = {
+  private def addAnyParticipant(event: Event, participantFound: Option[Participant]) = {
     participantFound.map { participant =>
       event.addParticipant(participant)
       event.removeJoinRequest(participant)

@@ -13,7 +13,8 @@ case class Event (
   organiserId: Option[Long],
   eventDate: Option[String],
   description: Option[String],
-  public: Boolean = true
+  public: Boolean = true,
+  searchable: Boolean = true
 ){
 
   require(eventName.trim.length > 1)
@@ -97,14 +98,16 @@ case class Event (
 
 object Event {
 
+
   val simple = {
     get[Long]("eventid") ~
       get[String]("eventname") ~
       get[Option[Long]]("organiserid") ~
       get[Option[String]]("eventdate") ~
       get[Option[String]]("description") ~
-      get[Boolean]("publicevent") map {
-      case eventid~eventname~organiserid~eventdate~description~publicevent => Event( eventid, eventname, organiserid, eventdate, description, publicevent )
+      get[Boolean]("publicevent") ~
+      get[Boolean]("searchable") map {
+      case eventid~eventname~organiserid~eventdate~description~publicevent~searchable => Event( eventid, eventname, organiserid, eventdate, description, publicevent, searchable )
     }
   }
 
@@ -119,10 +122,10 @@ object Event {
       SQL(
         """
           INSERT INTO snapevent
-          (eventid, eventname, organiserid, eventdate, description, publicevent)
+          (eventid, eventname, organiserid, eventdate, description, publicevent, searchable)
           VALUES
           ({eventid}, {eventname}, {organiserid},
-              {eventdate}, {description},{publicevent})
+              {eventdate}, {description},{publicevent},{searchable})
         """
       ).on(
         'eventid -> eventId,
@@ -130,12 +133,53 @@ object Event {
         'organiserid -> event.organiserId,
         'eventdate -> event.eventDate,
         'description -> event.description,
-        'publicevent -> event.public
+        'publicevent -> event.public,
+        'searchable -> event.searchable
       ).executeInsert()
       new Event(eventId,event)
     }
   }
 
+
+  def updateEvent(event: Event) = {
+    assert(event.eventName.trim.length > 1)
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          UPDATE snapevent
+          SET eventname = {eventname},
+            organiserid = {organiserid},
+            eventdate = {eventdate},
+            description = {description},
+            publicevent = {publicevent},
+            searchable = {searchable}
+          WHERE eventid = {eventid}
+        """
+      ).on(
+        'eventid -> event.eventId,
+        'eventname -> event.eventName,
+        'organiserid -> event.organiserId,
+        'eventdate -> event.eventDate,
+        'description -> event.description,
+        'publicevent -> event.public,
+        'searchable -> event.searchable
+      ).executeUpdate()
+      event
+    }
+  }
+
+  def deleteEvent(eventId: Long){
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          DELETE FROM snapevent
+          WHERE eventid = {eventid}
+        """
+      ).on(
+        'eventid -> eventId
+      ).execute()
+    }
+  }
 
   def findEvent(eventId : Long): Option[Event] = {
     DB.withConnection { implicit connection =>
@@ -163,6 +207,7 @@ object Event {
       SQL(
         """
           SELECT * FROM snapevent
+          WHERE searchable = TRUE
           ORDER BY eventdate DESC,eventname ASC
         """
       ).on(
@@ -170,51 +215,53 @@ object Event {
     }
   }
 
-  def updateEvent(event: Event) = {
-    assert(event.eventName.trim.length > 1)
+
+  def findAllEventsAsParticipantOrOrganiser(participantId: Long) : Seq[Event] = {
+    findAllEventsByOrganiser(participantId) union findAllEventsByParticipant(participantId)
+  }
+
+
+  private def findAllEventsByOrganiser(organiserId: Long) = {
     DB.withConnection { implicit connection =>
       SQL(
         """
-          UPDATE snapevent
-          SET eventname = {eventname},
-            organiserid = {organiserid},
-            eventdate = {eventdate},
-            description = {description},
-            publicevent = {publicevent}
-          WHERE eventid = {eventid}
+          SELECT sn.*
+          FROM snapevent sn
+          WHERE sn.organiserid = {organiserid}
+          ORDER BY sn.eventdate DESC, sn.eventname ASC
         """
       ).on(
-        'eventid -> event.eventId,
-        'eventname -> event.eventName,
-        'organiserid -> event.organiserId,
-        'eventdate -> event.eventDate,
-        'description -> event.description,
-        'publicevent -> event.public
-      ).executeUpdate()
-      event
+        'organiserid -> organiserId
+      ).as(Event.simple *)
     }
   }
 
-  def deleteEvent(eventId: Long){
+  private def findAllEventsByParticipant(participantid: Long) = {
     DB.withConnection { implicit connection =>
       SQL(
         """
-          DELETE FROM snapevent
-          WHERE eventid = {eventid}
+        SELECT sn.*
+        FROM eventparticipant ep
+        LEFT JOIN snapevent sn
+          ON ep.eventid = sn.eventid
+        WHERE ep.participantid = {participantid}
+        ORDER BY sn.eventdate DESC, sn.eventname ASC
         """
       ).on(
-        'eventid -> eventId
-      ).execute()
+        'participantid -> participantid
+      ).as(Event.simple *)
     }
   }
 
-  def findAllEventsContaining(searchText: String) = {
+
+  def searchAllSearchableEventsContaining(searchText: String) = {
     val sqlSearch = "%" + searchText +"%"
     DB.withConnection { implicit connection =>
       SQL(
         """
           SELECT * FROM snapevent
           WHERE eventname like {searchtext}
+          AND searchable = TRUE
           ORDER BY eventdate DESC,eventname ASC
         """
       ).on(
@@ -223,23 +270,50 @@ object Event {
     }
   }
 
-  def findAllEventsByOrganisersContaining(searchText: String) = {
-    val sqlSearch = "%" + searchText +"%"
+
+  private def searchAllEventsAsParticipant(sqlSearch: String, participantId: Long) : Seq[Event] = {
     DB.withConnection { implicit connection =>
       SQL(
         """
           SELECT sn.*
-          FROM participant pa
+          FROM eventparticipant ep
           LEFT JOIN snapevent sn
-            ON pa.participantid = sn.organiserid
-          WHERE pa.username like {searchtext}
-          ORDER BY pa.username ASC, sn.eventdate DESC, sn.eventname ASC
+            ON ep.eventid = sn.eventid
+          WHERE sn.eventname like {searchtext}
+          AND ep.participantid = {participantid}
+          ORDER BY sn.eventdate DESC, sn.eventname ASC
         """
       ).on(
-        'searchtext -> sqlSearch
+        'searchtext -> sqlSearch,
+        'participantid -> participantId
       ).as(Event.simple *)
     }
   }
+
+  private def searchAllEventsAsOrganiser(sqlSearch: String, participantId: Long) : Seq[Event] = {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+        SELECT sn.*
+        FROM snapevent sn
+        WHERE sn.eventname like {searchtext}
+        AND sn.organiserid = {participantid}
+        ORDER BY sn.eventdate DESC, sn.eventname ASC
+        """
+      ).on(
+        'searchtext -> sqlSearch,
+        'participantid -> participantId
+      ).as(Event.simple *)
+    }
+  }
+
+
+  def searchAllEventsAsParticipantOrOrganiser(searchText: String, participantId: Long) : Seq[Event] = {
+    val   sqlSearch = "%" + searchText +"%"
+    searchAllEventsAsParticipant(sqlSearch,participantId) union searchAllEventsAsOrganiser(sqlSearch,participantId)
+  }
+
+
 
   def isParticipant(eventId: Long, participantId: Long) : Boolean = {
     DB.withConnection { implicit connection =>
@@ -338,7 +412,6 @@ object Event {
       ).execute()
     }
   }
-
 
 
 }

@@ -1,39 +1,87 @@
-@(searchText: String,events: Seq[Event])(implicit currentParticipant: Option[Participant])
+@(searchText: String,organiserEvents: Seq[Event],events: Seq[Event],participants: Seq[Participant])(implicit currentParticipant: Option[Participant])
 
 @import helper._
 @import helper.twitterBootstrap._
 
-@main(" snaps @ flurdy") {
+@main(" snaps | search") {
 
 }{
 
-     <h2>Events</h2>
+    <h2>Events</h2>
 
+    <br/>
 
+    @if(organiserEvents.isEmpty){
+        <div class="well"><h3>No events found</h3></div>
+    } else {
+
+    <h3>Your events</h3>
 
     <table class="table table-striped">
         <thead>
-            <tr>
-                <th>Event</th>
-                <th>Date</th>
-                <th>Organisers</th>
-            </tr>
+        <tr>
+            <th>Event</th>
+            <th>Date</th>
+            <th>Organisers</th>
+        </tr>
         </thead>
         <tbody>
-        @for(event <- events) {
-            <tr>
-                <td><a href="@routes.EventController.viewEvent(event.eventId)">@event.eventName</a></td>
-                <td>@event.eventDate</td>
-                <td>@event.organiser.map { organiser => @organiser.username }.getOrElse("")</td>
-                <td>@if(!event.public){<i class="icon-lock"></i>}</td>
-            </tr>
+        @for(event <- organiserEvents) {
+        <tr>
+            <td><a href="@routes.EventController.viewEvent(event.eventId)">@event.eventName</a></td>
+            <td>@event.eventDate</td>
+            <td>@event.organiser.map { organiser => @organiser.username }.getOrElse("")</td>
+            <td>@if(!event.public){<i class="icon-lock"></i>}</td>
+        </tr>
         }
         </tbody>
     </table>
+    }
+
+
+    @if(events.isEmpty){
+    <div class="well"><h3>No events found</h3></div>
+    } else {
+
+    <h3>Public events</h3>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Event</th>
+            <th>Date</th>
+            <th>Organisers</th>
+        </tr>
+        </thead>
+        <tbody>
+        @for(event <- events) {
+        <tr>
+            <td><a href="@routes.EventController.viewEvent(event.eventId)">@event.eventName</a></td>
+            <td>@event.eventDate</td>
+            <td>@event.organiser.map { organiser => @organiser.username }.getOrElse("")</td>
+            <td>@if(!event.public){<i class="icon-lock"></i>}</td>
+        </tr>
+        }
+        </tbody>
+    </table>
+    }
+
+    @if(!participants.isEmpty){
+
+        <br/>
+
+        <h2>Participants</h2>
+
+        <div class="well">
+            @for(participant <- participants){
+                <span><span class="span">@participant.username</span></span>
+            }
+        </div>
+    }
 
     @form(action = routes.EventController.search(), 'class -> "well form-search"){
     <fieldset>
-        <legend>Find event</legend>
+        <legend>Find event or participant</legend>
         <input type="text" name="searchText" class="span3 input-medium search-query" value="@searchText" placeholder="Event name or organiser">
         <button type="submit" class="btn btn-primary">search</button>
     </fieldset>

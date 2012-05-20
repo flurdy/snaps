@@ -14,6 +14,8 @@
 
     <h3>@event.eventName</h3>
 
+    @event.organiser.map{ organiser => <h5>Organiser: <em>@organiser.username</em></h5>< }.getOrElse("")
+
     <br/>
 
     @flash.get("message").map { message =>
@@ -34,7 +36,7 @@
     </div>
 
     <div class="alert alert-info">
-        You may contact the organiser @event.organiser.map{ organiser => , <em>@organiser.username</em>, }.getOrElse("") and ask to be a participant.
+        You may contact the organiser and ask to be a participant.
     </div>
 
 

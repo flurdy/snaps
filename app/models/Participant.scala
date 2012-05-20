@@ -78,6 +78,17 @@ object Participant {
     }
   }
 
+  def findAll = {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          SELECT * FROM participant
+          ORDER BY username
+        """
+      ).as(Participant.simple *)
+    }
+  }
+
   def authenticate(username: String, password: String) : Option[Participant]  = {
     DB.withConnection { implicit connection =>
       SQL(
@@ -163,5 +174,22 @@ object Participant {
       ).as(Participant.simple *)
     }
   }
+
+  def findParticipantsContaining(searchText: String) = {
+      val sqlSearch = "%" + searchText +"%"
+      DB.withConnection { implicit connection =>
+        SQL(
+          """
+            SELECT * FROM participant pa
+            WHERE pa.username like {searchtext}
+            OR pa.fullname like {searchtext}
+            ORDER BY pa.username ASC
+          """
+        ).on(
+          'searchtext -> sqlSearch
+        ).as(Participant.simple *)
+      }
+  }
+
 
 }
