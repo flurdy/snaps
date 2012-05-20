@@ -32,7 +32,7 @@
     }
 
 @form(action = routes.EventController.search(), 'class -> "well form-search"){
-    <h3>Find event</h3>
+    <h3>Find event or participant</h3>
     <fieldset>
         <input type="text" name="searchText" class="span3 search-query" placeholder="Event name or organiser"/>
         <button type="submit" class="btn btn-primary">Search</button>
@@ -53,10 +53,8 @@
     </fieldset>
 }
 
+
 @if( ! currentParticipant ){
-
-
-
 
     @form(action = routes.Application.register(), 'class -> "well"){
         <h3>Register participant</h3>

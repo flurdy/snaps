@@ -1,4 +1,4 @@
-@(event: Event, albums: Seq[Album], participants: Seq[Participant], requesters: Seq[Participant], updateForm: Form[(String,String,String,String,Boolean) ])(implicit currentParticipant: Option[Participant], flash: Flash)
+@(event: Event, albums: Seq[Album], participants: Seq[Participant], requesters: Seq[Participant], updateForm: Form[(String,String,String,String,Boolean,Boolean) ])(implicit currentParticipant: Option[Participant], flash: Flash)
 
 @import helper._
 @import helper.twitterBootstrap._
@@ -40,22 +40,34 @@
 </fieldset>
 <fieldset>
     <legend>Organiser</legend>
-    <input type="text" disabled="disabled" name="organiser" class="span4" value="@updateForm("organiser").value" placeholder="Main organiser"/>
+    <input type="text" readonly="readonly" name="organiser" class="span4" value="@updateForm("organiser").value" placeholder="Main organiser"/>
 </fieldset>
 <fieldset>
     <legend>Description</legend>
     <textarea name="description" class="span6" rows="8">@updateForm("description").value</textarea>
 </fieldset>
 <fieldset>
-    <legend>Visibility</legend>
-    <label class="radio" for="publictrue">
-        <input type="radio" name="public" id="publictrue" value="true" @if(updateForm("public").value.getOrElse("") == "true"){ checked="checked" } />
-        Public event. Anyone can view it
-    </label>
-    <label class="radio" for="publicfalse">
-        <input type="radio" name="public" id="publicfalse"  value="false" @if(updateForm("public").value.getOrElse("") == "false"){ checked="checked" } />
-        Private event. Authorised participants only
-    </label>
+    <legend>Access</legend>
+    <div class="control-group">
+        <label class="radio" for="publictrue">
+            <input type="radio" name="public" id="publictrue" value="true" @if(updateForm("public").value.getOrElse("") == "true"){ checked="checked" } />
+            Public event. Anyone can view it
+        </label>
+        <label class="radio" for="publicfalse">
+            <input type="radio" name="public" id="publicfalse"  value="false" @if(updateForm("public").value.getOrElse("") == "false"){ checked="checked" } />
+            Private event. Authorised participants only
+        </label>
+    </div>
+    <div class="control-group">
+        <label class="radio" for="searchtrue">
+            <input type="radio" name="searchable" id="searchtrue" value="true" @if(updateForm("searchable").value.getOrElse("") == "true"){ checked="checked" } />
+            Searchable. Anyone can find it
+        </label>
+        <label class="radio" for="searchfalse">
+            <input type="radio" name="searchable" id="searchfalse"  value="false" @if(updateForm("searchable").value.getOrElse("") == "false"){ checked="checked" } />
+            Not searchable. Can not be found by searching
+        </label>
+    </div>
 </fieldset>
 
 <div class="form-actions">

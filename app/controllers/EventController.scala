@@ -18,14 +18,15 @@ object EventController extends Controller with EventWrappers with Secured {
       "eventName" -> nonEmptyText(minLength = 3 , maxLength = 100)
   )
 
-  val updateForm:  Form[(String,String,String,String,Boolean)] = Form(
+  val updateForm:  Form[(String,String,String,String,Boolean,Boolean)] = Form(
     tuple(
       "eventName" -> nonEmptyText(maxLength = 100),
       "organiser" -> text(maxLength = 100),
       "eventDate" -> text(maxLength = 100),
       "description" -> text (maxLength = 3900),
-      "public"  -> boolean
-    )//(Event.apply)(Event.unapply)
+      "public"  -> boolean,
+      "searchable"  -> boolean
+    )
   )
 
   val participantForm = Form(
@@ -61,7 +62,6 @@ object EventController extends Controller with EventWrappers with Secured {
   private def notEventParticipant(event: Event)(implicit session:Session, flash: Flash) = {
     Logger.info("Not an event participant")
     Unauthorized(views.html.events.unauthorised(event)).withSession(session+("eventId"->event.eventId.toString))
-     //.flashing("errorMessage"->"Event private, and you do not have access to it")
   }
 
 
@@ -111,7 +111,8 @@ object EventController extends Controller with EventWrappers with Secured {
        },
        event.eventDate.getOrElse(""),
        event.description.getOrElse(""),
-       event.public))
+       event.public,
+       event.searchable))
      val albums = Album.findAlbums(eventId)
      val participants = event.findParticipants
      val requests = event.findRequests
@@ -134,8 +135,8 @@ object EventController extends Controller with EventWrappers with Secured {
             //organiser = Option(updatedForm._2),
             eventDate = Option(updatedForm._3),
             description = Option(updatedForm._4) ,
-            public = updatedForm._5 )
-          Logger.warn("P:"+updatedEvent.public)
+            public = updatedForm._5,
+            searchable = updatedForm._6 )
           Event.updateEvent(updatedEvent)
           Redirect(routes.EventController.viewEvent(event.eventId));
       }
@@ -188,9 +189,11 @@ object EventController extends Controller with EventWrappers with Secured {
     )
   }
 
+
   def addRequestedParticipant(eventId: Long, participantId: Long) = isEventOrganiser(eventId) { event => implicit request =>
       addAnyParticipant(event,Participant.findById(participantId))
   }
+
 
   private def addAnyParticipant(event: Event, participantFound: Option[Participant]) = {
     participantFound.map { participant =>

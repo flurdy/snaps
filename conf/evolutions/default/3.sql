@@ -24,11 +24,11 @@ INSERT INTO snapevent (eventid,eventname,eventdate,publicevent) VALUES (
          'New Year', '2008-12-31', TRUE );
 
 
-INSERT INTO snapevent (eventid,eventname,organiserid,eventdate,publicevent) VALUES (
+INSERT INTO snapevent (eventid,eventname,organiserid,eventdate,publicevent,searchable) VALUES (
         (SELECT NEXTVAL('snapevent_seq')),
          'Adams at Barbados',
          (SELECT MAX(participantid) FROM participant WHERE username = 'testuser'),
-          'Summer 2010',FALSE );
+          'Summer 2010',FALSE, FALSE );
 
 
 INSERT INTO snapevent (eventid,eventname,organiserid,eventdate) VALUES (

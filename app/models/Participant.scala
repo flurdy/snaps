@@ -8,6 +8,8 @@ import play.Logger
 import util.Random
 import java.security.MessageDigest
 import org.mindrot.jbcrypt.BCrypt
+import java.util.Date
+import java.text.SimpleDateFormat
 
 case class Participant(
                   participantId: Long = 0,
@@ -19,13 +21,16 @@ case class Participant(
   lazy val encryptedPassword = Participant.encrypt(password)
 
   def createAndSaveEvent(eventName: String) = {
-    Event.createAndSaveEvent(new Event(eventName,participantId))
+    Event.createAndSaveEvent(new Event(eventName,participantId,Participant.DateFormat.format(new java.util.Date())))
   }
+
 }
 
 
 
 object Participant {
+
+  val DateFormat = new SimpleDateFormat("yyyy-MM-dd")
 
   val authenticationMapper = {
     get[Long]("participantid") ~

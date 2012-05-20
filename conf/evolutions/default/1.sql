@@ -3,6 +3,8 @@
 # --- !Ups
 
 
+DROP TABLE IF EXISTS eventrequest;
+
 DROP TABLE IF EXISTS eventparticipant;
 
 DROP TABLE IF EXISTS snapalbum;
@@ -24,7 +26,8 @@ CREATE TABLE snapevent (
     organiserid           BIGINT,
     eventDate             VARCHAR(128),
     description           VARCHAR(4000),
-    publicevent           BOOLEAN DEFAULT TRUE
+    publicevent           BOOLEAN DEFAULT TRUE,
+    searchable            BOOLEAN DEFAULT TRUE
 );
 
 
@@ -51,6 +54,14 @@ CREATE TABLE eventparticipant (
     foreign key(participantid) references participant(participantid) on delete cascade
 );
 
+CREATE TABLE eventrequests (
+    eventid               BIGINT NOT NULL,
+    participantid          BIGINT NOT NULL,
+    requestdate            TIMESTAMP,
+    foreign key(eventid) references snapevent(eventid) on delete cascade,
+    foreign key(participantid) references participant(participantid) on delete cascade
+);
+
 
 CREATE SEQUENCE snapevent_seq START WITH 1000;
 
@@ -63,6 +74,7 @@ CREATE SEQUENCE participant_seq START WITH 1000;
 
 # --- !Downs
 
+DROP TABLE IF EXISTS eventrequest;
 
 DROP TABLE IF EXISTS eventparticipant;
 

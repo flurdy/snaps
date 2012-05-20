@@ -2,15 +2,7 @@
 
 # --- !Ups
 
-DROP TABLE IF EXISTS eventrequest;
-
-CREATE TABLE eventrequests (
-    eventid               BIGINT NOT NULL,
-    participantid          BIGINT NOT NULL,
-    requestdate            TIMESTAMP,
-    foreign key(eventid) references snapevent(eventid) on delete cascade,
-    foreign key(participantid) references participant(participantid) on delete cascade
-);
+DELETE FROM eventrequests;
 
 INSERT INTO eventrequests (eventid,participantid,requestdate) VALUES (
          (SELECT MAX(eventid) FROM snapevent WHERE eventname = 'Adams at Barbados'),
@@ -23,4 +15,4 @@ INSERT INTO eventrequests (eventid,participantid,requestdate) VALUES (
 # --- !Downs
 
 
-DROP TABLE IF EXISTS eventrequest;
+DELETE FROM eventrequests;

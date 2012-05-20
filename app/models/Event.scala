@@ -28,6 +28,8 @@ case class Event (
 
   def this(eventName: String,organiserId: Long) = this(0,eventName,Some(organiserId),None,None)
 
+  def this(eventName: String,organiserId: Long,eventDate: String) = this(0,eventName,Option(organiserId),Option(eventDate),None)
+
   def this(eventName: String, organiserId: Option[Long], eventDate: Option[String], description: Option[String]) = this(0,eventName,organiserId,eventDate,description)
 
   def this(eventId: Long, that: Event) = this(eventId,that.eventName, that.organiserId, that.eventDate, that.description)

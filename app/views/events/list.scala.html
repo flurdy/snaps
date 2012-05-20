@@ -72,10 +72,12 @@
 
         <h2>Participants</h2>
 
-        <div class="well">
-            @for(participant <- participants){
-                <span><span class="span">@participant.username</span></span>
-            }
+        <div class="well cloud">
+            <ul>
+                @for(participant <- participants){
+                    <li>@participant.username</li>
+                }
+            </ul>
         </div>
     }
 

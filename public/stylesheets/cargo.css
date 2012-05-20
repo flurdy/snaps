@@ -11,17 +11,17 @@ img#fork-me {
     filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
 }
 #stern { padding: 0.2em 1.5em; margin: 0px; overflow: hidden; }
-#stern #flurdy{
+#stern #flurdy {
     font-size: 1em;
 	float: right;
 	margin: -0.4em 0;
 	padding: 0;
 }
-#stern #flurdy a{
+#stern #flurdy a {
 	margin: 0;
 	padding: 0;
 }
-#stern #flurdy img{
+#stern #flurdy img {
 	margin: 0;
 	padding: 0;
 	height: 1em;
@@ -35,7 +35,7 @@ ul.horizontal li {
 	padding-right: 1.2em;
 	list-style: none;
 }
-#cargo button { margin: 0 1em; }
+#cargo .btn { margin: 0 1em; }
 
 #cargo .form-actions form { display: inline; }
 .external-link { vertical-align: top; margin: 0.1em;}
@@ -44,3 +44,16 @@ ul.horizontal li {
 ul.horizontal .login-link { float: right; text-align: right; padding: 0 0 0 1.2em; }
 
 #cargo h3 { margin-bottom: 0.7em; }
+
+#cargo .cloud ul { margin: 0; }
+#cargo .cloud li {
+    padding: 0.5em 0.8em;
+    margin: 0.1em 0.2em;
+    line-height: 3em;
+    text-align: center;
+    display: inline;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) inset;
+    background-color: #f1f1f1;
+}
