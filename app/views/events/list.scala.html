@@ -11,9 +11,11 @@
 
     <br/>
 
-    @if(organiserEvents.isEmpty){
+    @if(organiserEvents.isEmpty && events.isEmpty){
         <div class="well"><h3>No events found</h3></div>
-    } else {
+    }
+
+    @if(!organiserEvents.isEmpty){
 
     <h3>Your events</h3>
 
@@ -39,9 +41,7 @@
     }
 
 
-    @if(events.isEmpty){
-    <div class="well"><h3>No events found</h3></div>
-    } else {
+    @if(!events.isEmpty){
 
     <h3>Public events</h3>
 

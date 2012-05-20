@@ -39,13 +39,16 @@ object EventController extends Controller with EventWrappers with Secured {
         BadRequest(views.html.index(errors,createForm,Application.registerForm))
       },
       searchText => {
-        if (searchText.trim.length==0){
-          Ok(views.html.events.list(searchText, currentParticipant.map{ participant => Event.findAllEventsAsParticipantOrOrganiser(participant.participantId)
-          }.getOrElse(Seq.empty), Event.findAll, Participant.findAll))
-        } else {
-          val participantEvents : Seq[Event] = currentParticipant.map{ participant =>
+        val participantEvents = currentParticipant.map{ participant =>
+          if (searchText.trim.length==0) {
+            Event.findAllEventsAsParticipantOrOrganiser(participant.participantId)
+          } else {
             Event.searchAllEventsAsParticipantOrOrganiser(searchText.trim,participant.participantId)
-          }.getOrElse(Seq.empty)
+          }
+        }.getOrElse(Seq.empty)
+        if (searchText.trim.length==0){
+          Ok(views.html.events.list("", participantEvents, Event.findAll, Participant.findAll))
+        } else {
           val events : Seq[Event] = Event.searchAllSearchableEventsContaining(searchText.trim)
           val participants : Seq[Participant] = Participant.findParticipantsContaining(searchText.trim)
           Ok(views.html.events.list(searchText,participantEvents,events,participants))
