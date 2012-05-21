@@ -32,7 +32,7 @@
         <tr>
             <td><a href="@routes.EventController.viewEvent(event.eventId)">@event.eventName</a></td>
             <td>@event.eventDate</td>
-            <td>@event.organiser.map { organiser => @organiser.username }.getOrElse("")</td>
+            <td>@event.organiser.map { organiser => <a href="@routes.ParticipantController.viewParticipant(organiser.participantId)">@organiser.username</a> }.getOrElse("")</td>
             <td>@if(!event.public){<i class="icon-lock"></i>}</td>
         </tr>
         }
@@ -43,7 +43,7 @@
 
     @if(!events.isEmpty){
 
-    <h3>Public events</h3>
+    @if(!organiserEvents.isEmpty){<h3>Public events</h3>}
 
     <table class="table table-striped">
         <thead>
@@ -58,7 +58,7 @@
         <tr>
             <td><a href="@routes.EventController.viewEvent(event.eventId)">@event.eventName</a></td>
             <td>@event.eventDate</td>
-            <td>@event.organiser.map { organiser => @organiser.username }.getOrElse("")</td>
+            <td>@event.organiser.map { organiser => <a href="@routes.ParticipantController.viewParticipant(organiser.participantId)">@organiser.username</a> }.getOrElse("")</td>
             <td>@if(!event.public){<i class="icon-lock"></i>}</td>
         </tr>
         }
@@ -75,7 +75,7 @@
         <div class="well cloud">
             <ul>
                 @for(participant <- participants){
-                    <li>@participant.username</li>
+                    <li><a href="@routes.ParticipantController.viewParticipant(participant.participantId)">@participant.username</a></li>
                 }
             </ul>
         </div>

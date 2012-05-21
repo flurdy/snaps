@@ -4,6 +4,7 @@
 
 # Home page
 GET     /                           controllers.Application.index
+GET     /index.html                  controllers.Application.index
 GET     /login.html                 controllers.Application.showLogin
 POST     /login                 controllers.Application.login
 GET     /logout                 controllers.Application.logout
@@ -13,6 +14,7 @@ POST     /register                 controllers.Application.register
 GET     /events                 controllers.EventController.search
 POST     /events                controllers.EventController.createEvent
 GET     /events/:id/           controllers.EventController.viewEvent(id: Long)
+GET     /events/:id/index.html           controllers.EventController.viewEvent(id: Long)
 GET     /events/:id/edit.html           controllers.EventController.showEditEvent(id: Long)
 POST     /events/:id/           controllers.EventController.updateEvent(id: Long)
 PUT     /events/:id/           controllers.EventController.updateEvent(id: Long)
@@ -34,6 +36,12 @@ DELETE     /events/:eventId/participant/:participantId/    controllers.EventCont
 
 POST   /events/:eventId/join    controllers.EventController.requestToJoin(eventId: Long)
 
+GET     /participant/:participantId/                 controllers.ParticipantController.viewParticipant(participantId: Long)
+GET     /participant/:participantId/index.html       controllers.ParticipantController.viewParticipant(participantId: Long)
+POST     /participant/:participantId/update       controllers.ParticipantController.updateParticipant(participantId: Long)
+PUT     /participant/:participantId/       controllers.ParticipantController.updateParticipant(participantId: Long)
+POST     /participant/:participantId/delete       controllers.ParticipantController.deleteParticipant(participantId: Long)
+DELETE     /participant/:participantId/       controllers.ParticipantController.deleteParticipant(participantId: Long)
 
 # Map static resources from the /public folder to the /assets URL path
 # GET     /images/*imgFile               controllers.Assets.at(path="/public/images", imgFile)

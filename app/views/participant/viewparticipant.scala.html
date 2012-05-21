@@ -1,0 +1,127 @@
+@(participant: Participant,events: Seq[Event],updateParticipantForm: Form[(String,Option[String],Option[String])])(implicit currentParticipant: Option[Participant], flash: Flash)
+
+@import helper._
+@import helper.twitterBootstrap._
+@import models._
+
+@main("snaps | participant | " + participant.username ){
+    <li>
+        <span class="divider">/</span>
+        <a href="@routes.ParticipantController.viewParticipant(participant.participantId)">Participant</a>
+    </li>
+} {
+
+    @flash.get("message").map { message =>
+    <p class="alert alert-info">
+        @message
+    </p>
+    }
+
+    @flash.get("warnMessage").map { message =>
+    <p class="alert alert-warning">
+        @message
+    </p>
+    }
+
+    @flash.get("errorMessage").map { message =>
+    <p class="alert alert-error">
+        @message
+    </p>
+    }
+
+    @flash.get("error").map { message =>
+    <p class="alert alert-error">
+        @message
+    </p>
+    }
+
+    @flash.get("errors").map { message =>
+    <p class="alert alert-error">
+        @message
+    </p>
+    }
+
+    @for(error <- updateParticipantForm.errors){
+    <p class="alert alert-error">
+        @error.message
+    </p>
+    }
+
+        <h2>Participant</h2>
+        @if( currentParticipant.isDefined && currentParticipant.get.username == participant.username ){
+            @form(action = routes.ParticipantController.updateParticipant(participant.participantId), 'class -> "well form-horizontal"){
+                <fieldset>
+                    <div class="control-group">
+                        <label for="username" class="control-label">Username</label>
+                        <div class="controls">
+                            <input type="text" readonly="readonly" id="username" name="username" class="span4" value="@updateParticipantForm("username").value" placeholder="Username"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label for="fullname" class="control-label">Full name</label>
+                        <div class="controls">
+                            <input type="text" id="fullname" name="fullname" class="span4" value="@updateParticipantForm("fullname").value" placeholder="Full name"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label for="email" class="control-label">Email</label>
+                        <div class="controls">
+                            <input type="text" id="email" name="email" class="span4" value="@updateParticipantForm("email").value" placeholder="Email address"/>
+                        </div>
+                    </div>
+                </fieldset>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-success btn-small">Update participant</button>
+            </div>
+            }
+
+        } else {
+            <h3>@participant.username</h3>
+            <h4>Full name: @participant.fullName</h4>
+            @if(participant.email.isDefined){
+                <h4>Email: @participant.email</h4>
+            }
+        }
+
+
+
+<br/><br/>
+
+@if(!events.isEmpty){
+    <div class="well">
+
+        <h3>Photo events</h3>
+
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Event name</th>
+                <th>Date</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @for(event <- events) {
+        <tr>
+            <td><a href="@routes.EventController.viewEvent(event.eventId)">@event.eventName</a></td>
+            <td>@event.eventDate</td>
+            <td>@if(!event.public){<i class="icon-lock"></i>}</td>
+        </tr>
+        }
+        </tbody>
+    </table>
+    </div>
+
+}
+
+<br/>
+
+
+
+<style>
+    #jib .breadcrumb { margin: 0.8em; }
+</style>
+
+}

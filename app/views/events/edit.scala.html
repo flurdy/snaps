@@ -36,7 +36,7 @@
     <input type="text" name="eventName" class="span4" value="@updateForm("eventName").value" placeholder="Event name"/></fieldset>
 <fieldset>
     <legend>Event date</legend>
-    <input type="text" name="eventDate" class="span2" value="@updateForm("eventDate").value" placeholder="Event date"/>
+    <input type="text" name="eventDate" class="span3" value="@updateForm("eventDate").value" placeholder="Event date"/>
 </fieldset>
 <fieldset>
     <legend>Organiser</legend>
@@ -71,7 +71,7 @@
 </fieldset>
 
 <div class="form-actions">
-    <button type="submit" class="btn btn-primary">Update event</button>
+    <button type="submit" class="btn btn-success">Update event</button>
     <a href="@routes.EventController.showDeleteEvent(event.eventId)"><button type="button" class="btn btn-danger">Delete event</button></a>
     <a class="btn" href="@routes.EventController.viewEvent(event.eventId)">Cancel</a>
 </div>

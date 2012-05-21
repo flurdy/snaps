@@ -42,7 +42,7 @@
     @if(event.organiser.isDefined){
     <br/>
 
-    <p>Event organiser: @event.organiser.map { organiser => @organiser.username}</p>
+    <p>Event organiser: @event.organiser.map { organiser =>  <a href="@routes.ParticipantController.viewParticipant(organiser.participantId)">@organiser.username</a> }</p>
     }
 
     <br/>

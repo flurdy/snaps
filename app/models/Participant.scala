@@ -197,4 +197,33 @@ object Participant {
   }
 
 
+  def updateParticipant(participant: Participant) = {
+    Logger.info("Updating : " + participant)
+    findById(participant.participantId) match {
+      case Some(existingParticipant) => {
+        DB.withConnection { implicit connection =>
+          SQL(
+            """
+              UPDATE participant
+              SET username  = {username},
+                fullname = {fullname},
+                email = {email}
+              WHERE participantid = {participantid}
+            """
+          ).on(
+            'participantid -> participant.participantId,
+            'username -> participant.username,
+            'fullname -> participant.fullName,
+            'email -> participant.email
+          ).executeInsert()
+        }
+      }
+      case None => {
+        throw new NullPointerException("Participant not found")
+      }
+    }
+  }
+
+
+
 }
