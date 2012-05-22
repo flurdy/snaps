@@ -24,6 +24,13 @@ case class Participant(
     Event.createAndSaveEvent(new Event(eventName,participantId,Participant.DateFormat.format(new java.util.Date())))
   }
 
+  def deleteAccount  {
+    Event.removeAllJoinRequestsByParticipant(participantId)
+    Event.removeParticipantFromAllEvents(participantId)
+    Event.removeAllEventsByOrganiser(participantId)
+    Participant.deleteParticipant(participantId)
+  }
+
 }
 
 
@@ -198,7 +205,6 @@ object Participant {
 
 
   def updateParticipant(participant: Participant) = {
-    Logger.info("Updating : " + participant)
     findById(participant.participantId) match {
       case Some(existingParticipant) => {
         DB.withConnection { implicit connection =>
@@ -224,6 +230,42 @@ object Participant {
     }
   }
 
+
+  def updatePassword(participant: Participant) = {
+    findById(participant.participantId) match {
+      case Some(existingParticipant) => {
+        DB.withConnection { implicit connection =>
+          SQL(
+            """
+              UPDATE participant
+              SET password  = {password}
+              WHERE participantid = {participantid}
+            """
+          ).on(
+            'participantid -> participant.participantId,
+            'password -> participant.encryptedPassword
+          ).executeInsert()
+        }
+      }
+      case None => {
+        throw new NullPointerException("Participant not found")
+      }
+    }
+  }
+
+  def deleteParticipant(participantId: Long) {
+    Logger.info("Deleting participant: " + participantId)
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          DELETE FROM participant
+          WHERE participantid = {participantid}
+        """
+      ).on(
+        'participantid -> participantId
+      ).execute()
+    }
+  }
 
 
 }

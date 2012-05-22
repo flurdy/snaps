@@ -1,0 +1,32 @@
+@(participant: Participant)(implicit currentParticipant: Option[Participant])
+
+@import helper._
+@import helper.twitterBootstrap._
+@import models._
+
+@main(" snaps | delete account"){
+<li>
+    <span class="divider">/</span>
+    <a href="@routes.ParticipantController.viewParticipant(participant.participantId)">Participant</a>
+</li>
+} {
+
+       <h2>Delete account</h2>
+         <br/>
+        <h3>Participant: @participant.username</h3>
+    <br/>
+    <div class="alert alert-block">
+        Please confirm you want to delete your account
+        <br/><br/>
+        Note this will also delete your albums and events
+    </div>
+
+@form(action = routes.ParticipantController.deleteParticipant(participant.participantId), 'class -> "form-horizontal"){
+<div class="form-actions">
+    <button type="submit" class="btn btn-danger">Delete account</button>
+    <a class="btn" href="@routes.ParticipantController.viewParticipant(participant.participantId)">Cancel</a>
+</div>
+}
+
+
+}

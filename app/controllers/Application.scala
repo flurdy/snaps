@@ -47,15 +47,6 @@ object Application extends Controller with Secured {
 
   def index = Action { implicit request =>
     Ok(views.html.index(EventController.searchForm, EventController.createForm, registerForm))
-//    flash.get("eventId") match {
-//      case None =>  {
-//        session.get("eventId") match {
-//          case None => Ok(views.html.index(EventController.searchForm, EventController.createForm, registerForm))
-//          case Some(eventId) => Redirect(routes.EventController.viewEvent(eventId.toLong)).withSession(session - "eventId")
-//        }
-//      }
-//      case Some(eventId) => Redirect(routes.EventController.viewEvent(eventId.toLong))
-//    }
   }
 
   def showLogin = Action { implicit request =>

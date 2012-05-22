@@ -22,7 +22,7 @@
 @form(action = routes.EventController.deleteEvent(event.eventId), 'class -> "form-horizontal"){
 <div class="form-actions">
     <button type="submit" class="btn btn-danger">Delete event</button>
-    <a href="@routes.EventController.viewEvent(event.eventId)"><button type="button" class="btn">Cancel</button></a>
+    <a class="btn" href="@routes.EventController.viewEvent(event.eventId)">Cancel</a>
 </div>
 }
 

@@ -110,4 +110,18 @@ object Album {
     }
   }
 
+
+  def deleteAllAlbumsByEvent(eventId: Long) {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          DELETE FROM snapalbum
+          WHERE eventid = {eventid}
+        """
+      ).on(
+        'eventid -> eventId
+      ).execute()
+    }
+  }
+
 }

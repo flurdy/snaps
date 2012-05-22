@@ -61,7 +61,7 @@
                                 <li><a href="http://flurdy.com/contact/" target="_blank">Contact</a></li>
                                 <li class="login-link">
                                 @currentParticipant match {
-                                    case Some(participant) => {<a href="@routes.Application.logout" rel="nofollow">Log out: @participant.username</a>
+                                    case Some(participant) => {<a href="@routes.Application.logout" rel="nofollow">Log out</a></li><li class="login-link"><a href="@routes.ParticipantController.viewParticipant(participant.participantId)">@participant.username</a>
                                     }
                                     case None => {<a href="@routes.Application.showLogin" rel="nofollow">Log in</a></li><li class="login-link"><a href="@routes.Application.showRegister">Register</a>
                                     }

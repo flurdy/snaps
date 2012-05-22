@@ -40,8 +40,11 @@ GET     /participant/:participantId/                 controllers.ParticipantCont
 GET     /participant/:participantId/index.html       controllers.ParticipantController.viewParticipant(participantId: Long)
 POST     /participant/:participantId/update       controllers.ParticipantController.updateParticipant(participantId: Long)
 PUT     /participant/:participantId/       controllers.ParticipantController.updateParticipant(participantId: Long)
+POST     /participant/:participantId/delete/confirm       controllers.ParticipantController.confirmDeleteParticipant(participantId: Long)
 POST     /participant/:participantId/delete       controllers.ParticipantController.deleteParticipant(participantId: Long)
 DELETE     /participant/:participantId/       controllers.ParticipantController.deleteParticipant(participantId: Long)
+POST     /participant/:participantId/password       controllers.ParticipantController.changePassword(participantId: Long)
+PUT     /participant/:participantId/password       controllers.ParticipantController.changePassword(participantId: Long)
 
 # Map static resources from the /public folder to the /assets URL path
 # GET     /images/*imgFile               controllers.Assets.at(path="/public/images", imgFile)

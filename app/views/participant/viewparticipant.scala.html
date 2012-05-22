@@ -48,8 +48,11 @@
     }
 
         <h2>Participant</h2>
+         <br/>
         @if( currentParticipant.isDefined && currentParticipant.get.username == participant.username ){
+
             @form(action = routes.ParticipantController.updateParticipant(participant.participantId), 'class -> "well form-horizontal"){
+                <h3>Update details</h3>
                 <fieldset>
                     <div class="control-group">
                         <label for="username" class="control-label">Username</label>
@@ -76,12 +79,48 @@
             </div>
             }
 
-        } else {
+        @form(action = routes.ParticipantController.changePassword(participant.participantId), 'class -> "well form-horizontal"){
+            <h3>Change password</h3>
+            <fieldset>
+                <div class="control-group">
+                    <label for="password" class="control-label">Original password</label>
+                    <div class="controls">
+                        <input type="password" id="password" name="password" class="span4" placeholder="Old password"/>
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset>
+                <div class="control-group">
+                    <label for="newpassword" class="control-label">New password</label>
+                    <div class="controls">
+                        <input type="password" id="newpassword" name="newpassword" class="span4" placeholder="New password"/>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label for="fullname" class="control-label">Confirm password</label>
+                    <div class="controls">
+                        <input type="password" id="confirm" name="confirm" class="span4" placeholder="Confirm password"/>
+                    </div>
+                </div>
+            </fieldset>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-warning  btn-small">Change password</button>
+        </div>
+        }
+
+
+        @form(action = routes.ParticipantController.confirmDeleteParticipant(participant.participantId), 'class -> "well form-horizontal"){
+        <h3>Delete your account</h3>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-danger btn-small">Delete account</button>
+        </div>
+        }
+
+
+} else {
             <h3>@participant.username</h3>
             <h4>Full name: @participant.fullName</h4>
-            @if(participant.email.isDefined){
-                <h4>Email: @participant.email</h4>
-            }
         }
 
 

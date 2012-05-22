@@ -16,22 +16,24 @@ object ParticipantController extends Controller with Secured {
       "username" -> nonEmptyText(maxLength = 99),
       "fullname" -> optional(text(maxLength = 99)),
       "email" -> optional(text(maxLength = 99))
-//      "password" -> nonEmptyText(minLength = 4, maxLength = 99),
-//      "confirm" -> nonEmptyText(minLength = 4, maxLength = 99)
-//    ) verifying("Passwords does not match", fields => fields match {
-//      case (username, fullname, email, password, confirmPassword) => {
-//        password.trim == confirmPassword.trim
-//      }
-//    ) verifying("Username is already taken", fields => fields match {
-//      case (username, fullname, email, password, confirmPassword) => {
-//        !Participant.findByUsername(username.trim).isDefined
-//      }
     ) verifying("Email address is not valid", fields => fields match {
       case (username, fullname, email ) => {
         email match {
           case Some(emailAddress) => Application.ValidEmailAddress.findFirstIn(emailAddress.trim).isDefined
           case None => true
         }
+      }
+    })
+  )
+
+  val passwordForm = Form(
+    tuple(
+      "password" -> nonEmptyText(minLength = 4, maxLength = 99),
+      "newpassword" -> nonEmptyText(minLength = 4, maxLength = 99),
+      "confirm" ->    nonEmptyText(minLength = 4, maxLength = 99)
+    ) verifying("Passwords does not match", fields => fields match {
+      case ( password, newPassword, confirmPassword) => {
+        newPassword.trim == confirmPassword.trim
       }
     })
   )
@@ -58,7 +60,7 @@ object ParticipantController extends Controller with Secured {
           fullName = updatedForm._2,
           email = updatedForm._3)
           Participant.updateParticipant(updatedParticipant)
-          Redirect(routes.ParticipantController.viewParticipant(participantId));
+          Redirect(routes.ParticipantController.viewParticipant(participantId)).flashing("message" -> "Participant updated")
         }.getOrElse{
           NotFound.flashing("message" -> "Participant not found")
         }
@@ -66,6 +68,39 @@ object ParticipantController extends Controller with Secured {
     )
   }
 
-  def deleteParticipant(participantId: Long) = TODO
+  def confirmDeleteParticipant(participantId: Long) = withParticipant { participant => implicit request =>
+    if(participant.participantId == participantId){
+      Ok(views.html.participant.deleteparticipant(participant))
+    } else {
+      Logger.warn("Participant:" + participant.participantId + " can not delete " + participantId)
+      Unauthorized.flashing("messageError"->"Can only delete your own account")
+    }
+  }
+
+  def deleteParticipant(participantId: Long) = withParticipant { participant => implicit request =>
+    if(participant.participantId == participantId){
+      Logger.info("Participant deleted:" + participantId + " | " + participant.username)
+      participant.deleteAccount
+      Redirect(routes.Application.index()).withNewSession;
+    } else {
+      Logger.warn("Participant:" + participant.participantId + " can not delete " + participantId)
+      Unauthorized.flashing("messageError"->"Can only delete your own account")
+    }
+  }
+
+  def changePassword(participantId: Long) = withParticipant { participant => implicit request =>
+    passwordForm.bindFromRequest.fold(
+      errors => {
+        Logger.warn("Bad change passwords request:"+errors)
+        BadRequest(views.html.participant.viewparticipant(participant,Event.findAllEventsAsParticipantOrOrganiser(participantId),updateParticipantForm)).flashing("messageError"->"Password change failed")
+      },
+      passwords => {
+         val newParticipant = participant.copy(password = Option(passwords._2))
+        Logger.info("Changing password for " + participantId)
+         Participant.updatePassword(newParticipant)
+        Redirect(routes.ParticipantController.viewParticipant(participantId)).flashing("message" -> "Password changed")
+      }
+    )
+  }
 
 }

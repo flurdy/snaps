@@ -171,6 +171,9 @@ object Event {
   }
 
   def deleteEvent(eventId: Long){
+    removeAllJoinRequestsByEvent(eventId)
+    removeAllParticipantsByEvent(eventId)
+    Album.deleteAllAlbumsByEvent(eventId)
     DB.withConnection { implicit connection =>
       SQL(
         """
@@ -223,7 +226,7 @@ object Event {
   }
 
 
-  private def findAllEventsByOrganiser(organiserId: Long) = {
+  def findAllEventsByOrganiser(organiserId: Long) = {
     DB.withConnection { implicit connection =>
       SQL(
         """
@@ -238,7 +241,7 @@ object Event {
     }
   }
 
-  private def findAllEventsByParticipant(participantid: Long) = {
+  def findAllEventsByParticipant(participantid: Long) = {
     DB.withConnection { implicit connection =>
       SQL(
         """
@@ -416,4 +419,68 @@ object Event {
   }
 
 
+  def removeAllJoinRequestsByParticipant(participantId: Long) {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          delete from eventrequests
+          where participantid = {participantid}
+        """
+      ).on(
+        'participantid -> participantId
+      ).execute()
+    }
+  }
+
+  private def removeAllJoinRequestsByEvent(eventId: Long) {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          delete from eventrequests
+          where eventid = {eventid}
+        """
+      ).on(
+        'eventid -> eventId
+      ).execute()
+    }
+  }
+
+
+
+  private def removeAllParticipantsByEvent(eventId: Long) {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          delete from eventparticipant
+          where eventid = {eventid}
+        """
+      ).on(
+        'eventid -> eventId
+      ).execute()
+    }
+  }
+
+
+
+  def removeParticipantFromAllEvents(participantId: Long) {
+//    findAllEventsByParticipant(participantId).map { event =>
+      // TODO: delete albums by participant
+//    }
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          delete from eventparticipant
+          where participantid = {participantid}
+        """
+      ).on(
+        'participantid -> participantId
+      ).execute()
+    }
+  }
+
+  def removeAllEventsByOrganiser(participantId: Long) = {
+    findAllEventsByOrganiser(participantId).map { event =>
+      Event.deleteEvent(event.eventId)
+    }
+  }
 }
