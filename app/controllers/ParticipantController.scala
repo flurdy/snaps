@@ -31,16 +31,18 @@ object ParticipantController extends Controller with Secured {
       "password" -> nonEmptyText(minLength = 4, maxLength = 99),
       "newpassword" -> nonEmptyText(minLength = 4, maxLength = 99),
       "confirm" ->    nonEmptyText(minLength = 4, maxLength = 99)
-    ) verifying("Passwords does not match", fields => fields match {
+    ) verifying("Passwords do not match", fields => fields match {
       case ( password, newPassword, confirmPassword) => {
         newPassword.trim == confirmPassword.trim
       }
+//    }) verifying("Orignal password incorrect", fields => fields match {
+//      case (password,_,_) => Participant.authenticate(username, password).isDefined
     })
   )
 
    def viewParticipant(participantId: Long) = Action { implicit request =>
      Participant.findById(participantId).map { participant =>
-       Ok(views.html.participant.viewparticipant(participant,Event.findAllEventsAsParticipantOrOrganiser(participantId),updateParticipantForm.fill((participant.username,participant.fullName,participant.email))))
+       Ok(views.html.participant.viewparticipant(participant,Event.findAllEventsAsParticipantOrOrganiser(participantId),updateParticipantForm.fill((participant.username,participant.fullName,participant.email)),passwordForm))
      }.getOrElse{
        NotFound.flashing("message" -> "Participant not found")
      }
@@ -51,7 +53,7 @@ object ParticipantController extends Controller with Secured {
     updateParticipantForm.bindFromRequest.fold(
       errors => {
         Logger.warn("Bad update participant request:"+errors)
-        BadRequest(views.html.participant.viewparticipant(participant,Event.findAllEventsAsParticipantOrOrganiser(participantId),errors)).flashing("messageError"->"Update failed")
+        BadRequest(views.html.participant.viewparticipant(participant,Event.findAllEventsAsParticipantOrOrganiser(participantId),errors,passwordForm)).flashing("messageError"->"Update failed")
       },
       updatedForm => {
         Participant.findById(participantId).map { editParticipant =>
@@ -91,14 +93,21 @@ object ParticipantController extends Controller with Secured {
   def changePassword(participantId: Long) = withParticipant { participant => implicit request =>
     passwordForm.bindFromRequest.fold(
       errors => {
-        Logger.warn("Bad change passwords request:"+errors)
-        BadRequest(views.html.participant.viewparticipant(participant,Event.findAllEventsAsParticipantOrOrganiser(participantId),updateParticipantForm)).flashing("messageError"->"Password change failed")
+        for(error <- errors.errors){
+          Logger.warn("Bad change passwords request:"+error.key + ":"+error.message)
+        }
+        BadRequest(views.html.participant.viewparticipant(participant,Event.findAllEventsAsParticipantOrOrganiser(participantId),updateParticipantForm,errors)).flashing("messageError"->"Password change failed")
       },
       passwords => {
-         val newParticipant = participant.copy(password = Option(passwords._2))
-        Logger.info("Changing password for " + participantId)
-         Participant.updatePassword(newParticipant)
-        Redirect(routes.ParticipantController.viewParticipant(participantId)).flashing("message" -> "Password changed")
+        Participant.authenticate(participant.username, passwords._1).map { _ =>
+          Logger.info("Changing password for " + participantId)
+          val newParticipant = participant.copy(password = Option(passwords._2))
+          Participant.updatePassword(newParticipant)
+          Redirect(routes.ParticipantController.viewParticipant(participantId)).flashing("message" -> "Password changed")
+        }.getOrElse{
+          Logger.debug("Original password incorrect")
+          Redirect(routes.ParticipantController.viewParticipant(participantId)).flashing("errorMessage" -> "Password incorrect")
+        }
       }
     )
   }

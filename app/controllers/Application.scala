@@ -27,7 +27,7 @@ object Application extends Controller with Secured {
       "email" -> optional(text(maxLength = 99)),
       "password" -> nonEmptyText(minLength = 4, maxLength = 99),
       "confirm" -> nonEmptyText(minLength = 4, maxLength = 99)
-    ) verifying("Passwords does not match", fields => fields match {
+    ) verifying("Passwords do not match", fields => fields match {
       case (username, fullname, email, password, confirmPassword) => {
         password.trim == confirmPassword.trim
       }

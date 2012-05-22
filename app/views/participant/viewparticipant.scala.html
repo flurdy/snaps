@@ -1,11 +1,11 @@
-@(participant: Participant,events: Seq[Event],updateParticipantForm: Form[(String,Option[String],Option[String])])(implicit currentParticipant: Option[Participant], flash: Flash)
+@(participant: Participant,events: Seq[Event],updateParticipantForm: Form[(String,Option[String],Option[String])],passwordForm: Form[(String,String,String)])(implicit currentParticipant: Option[Participant], flash: Flash)
 
 @import helper._
 @import helper.twitterBootstrap._
 @import models._
 
 @main("snaps | participant | " + participant.username ){
-    <li>
+<li xmlns="http://www.w3.org/1999/html">
         <span class="divider">/</span>
         <a href="@routes.ParticipantController.viewParticipant(participant.participantId)">Participant</a>
     </li>
@@ -41,10 +41,16 @@
     </p>
     }
 
-    @for(error <- updateParticipantForm.errors){
-    <p class="alert alert-error">
-        @error.message
-    </p>
+    @if(updateParticipantForm.errors){
+        @for(error <- updateParticipantForm.errors){
+            <p class="alert alert-error">
+                @if(error.key){
+                    There was a problem with the <strong>@error.key</strong> field: <em>@error.message</em>
+                } else {
+                    @error.message
+                }
+            </p>
+        }
     }
 
         <h2>Participant</h2>
@@ -79,7 +85,20 @@
             </div>
             }
 
-        @form(action = routes.ParticipantController.changePassword(participant.participantId), 'class -> "well form-horizontal"){
+        @if(passwordForm.errors){
+            @for(error <- passwordForm.errors){
+                <p class="alert alert-error">
+                    @if(error.key){
+                        There was a problem with the <strong>@error.key</strong> field: <em>@error.message</em>
+                    } else {
+                      @error.message
+                    }
+                </p>
+            }
+        }
+
+
+@form(action = routes.ParticipantController.changePassword(participant.participantId), 'class -> "well form-horizontal"){
             <h3>Change password</h3>
             <fieldset>
                 <div class="control-group">
