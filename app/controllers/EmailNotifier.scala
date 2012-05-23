@@ -21,7 +21,7 @@ object EmailNotifier {
   }
 
   def mockRegistrationNotification(participant: Participant) {
-    Logger.debug("Notification (mock): Registration by " + participant.username)
+    Logger.info("Notification (mock): Registration by " + participant.username)
   }
 
   def registrationNotification(participant: Participant) {
