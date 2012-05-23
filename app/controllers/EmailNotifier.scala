@@ -25,7 +25,6 @@ object EmailNotifier {
   }
 
   def registrationNotification(participant: Participant) {
-    Logger.info("Notification Mode " + Play.current.mode)
     Logger.info("smtp.host=" + Play.current.configuration.getString("smtp.host"))
     Logger.info("smtp.host=" + Play.application.configuration.getString("smtp.host"))
     Logger.info("smtp.host=" + Play.configuration.getString("smtp.host"))
