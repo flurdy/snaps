@@ -25,15 +25,16 @@ object EmailNotifier {
   }
 
   def registrationNotification(participant: Participant) {
-    if(Play.current.mode == Mode.Prod){
+    Logger.info("Notification Mode " + Play.current.mode)
+//    if(Play.current.mode == Mode.Prod){
       Play.current.configuration.getString("smtp.host") match {
         case None => throw new NullPointerException("No SMTP host defined")
         case Some("mock") => mockRegistrationNotification(participant)
         case _ => sendRegistrationNotification(participant)
       }
-    } else {
-      mockRegistrationNotification(participant)
-    }
+//    } else {
+//      mockRegistrationNotification(participant)
+//    }
   }
 
 
