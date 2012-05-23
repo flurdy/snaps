@@ -8,11 +8,9 @@ object ApplicationBuild extends Build {
     val appVersion      = "0.3-SNAPSHOT"
 
     val appDependencies = Seq(
-      // Add your project dependencies here,
       "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
-      //"ua.t3hnar.bcrypt" % "scala-bcrypt" % "10.4.1.3"
-      "org.mindrot" % "jbcrypt" % "0.3m"
-
+      "org.mindrot" % "jbcrypt" % "0.3m",
+      "com.typesafe" %% "play-plugins-mailer" % "2.0.2"
     )
 
     val main = PlayProject(appName, appVersion, appDependencies, mainLang = SCALA).settings(

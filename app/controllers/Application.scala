@@ -5,7 +5,7 @@ import mvc._
 import play.api.data._
 import play.api.data.Forms._
 import models._
-import javax.swing.AbstractAction
+import notifiers._
 
 object Application extends Controller with Secured {
 
@@ -97,10 +97,12 @@ object Application extends Controller with Secured {
           if (Logger.isDebugEnabled) Logger.debug("Registering: " + registeredForm._1)
           val participant = Participant(0, registeredForm._1, registeredForm._2, registeredForm._3, Some(registeredForm._4))
           Participant.save(participant)
+          EmailNotifier.registrationNotification(participant)
           Redirect(routes.Application.index()).withSession("username" -> participant.username).flashing("message" -> "Registered. Welcome")
         }
       )
   }
+
 
 }
 
