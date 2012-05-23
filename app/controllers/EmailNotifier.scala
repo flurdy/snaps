@@ -11,15 +11,17 @@ object EmailNotifier {
 
 
   def sendRegistrationNotification(participant: Participant) {
+    Logger.info("Sending notification email for registration by " + participant.username)
     val mail = use[MailerPlugin].email
     mail.setSubject("New Snaps registration")
     mail.addRecipient("Ivar <ivar+snapsexample@flurdy.com>")
     mail.addFrom("Snaps mail monkey <ivar+snapsexample@flurdy.com>")
     mail.send( "Participant " + participant.username + " has registered with Snaps" )
+    Logger.debug("Notification email sent" )
   }
 
   def mockRegistrationNotification(participant: Participant) {
-    Logger.debug("Noticfication: Registration for " + participant.username)
+    Logger.debug("Notification (mock): Registration by " + participant.username)
   }
 
   def registrationNotification(participant: Participant) {
