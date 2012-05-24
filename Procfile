@@ -1,1 +1,1 @@
-web: target/start -Dhttp.port=${PORT} -DapplyEvolutions.default=true -Ddb.default.driver=org.postgresql.Driver -Ddb.default.url=$DATABASE_URL -Dsmtp.host=smtp.sendgrid.net -Dsmtp.port=465 -Dsmtp.ssl=yes -Dsmtp.user=$SENDGRID_USERNAME -Dsmtp.password=$SENDGRID_PASSWORD
+web: target/start -Dconfig.resource=heroku.conf -Dhttp.port=${PORT} -Ddb.default.url=$DATABASE_URL -Dsmtp.user=$SENDGRID_USERNAME -Dsmtp.password=$SENDGRID_PASSWORD
