@@ -28,15 +28,17 @@ object EmailNotifier {
     Logger.info("smtp.host=" + Play.current.configuration.getString("smtp.host"))
     Logger.info("smtp.host=" + Play.application.configuration.getString("smtp.host"))
     Logger.info("smtp.host=" + Play.configuration.getString("smtp.host"))
-//    if(Play.current.mode == Mode.Prod){
-      Play.current.configuration.getString("smtp.host") match {
+    Logger.info("smtp.username=" + Play.configuration.getString("smtp.username"))
+    if(Play.mode == Mode.Prod){
+      Play.configuration.getString("smtp.host") match {
         case None => throw new NullPointerException("No SMTP host defined")
         case Some("mock") => mockRegistrationNotification(participant)
         case _ => sendRegistrationNotification(participant)
       }
-//    } else {
-//      mockRegistrationNotification(participant)
-//    }
+    } else {
+      Logger.info("Development mode")
+      mockRegistrationNotification(participant)
+    }
   }
 
 
