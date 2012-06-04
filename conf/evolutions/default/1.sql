@@ -54,7 +54,7 @@ CREATE TABLE eventparticipant (
     foreign key(participantid) references participant(participantid) on delete cascade
 );
 
-CREATE TABLE eventrequests (
+CREATE TABLE eventrequest (
     eventid               BIGINT NOT NULL,
     participantid          BIGINT NOT NULL,
     requestdate            TIMESTAMP,

@@ -46,22 +46,6 @@ INSERT INTO participant (participantid,username,fullname,email,password) VALUES 
       (SELECT NEXTVAL('participant_seq')),
        'moreusers-4', 'Test User', 'test@example.com', '$2a$10$waIvJd.49bI.OhwgmKIO2uBhAP4KMoCGGdx/at2kjIE6IFdjmWV6e' );
 
-INSERT INTO participant (participantid,username,fullname,email,password) VALUES (
-      (SELECT NEXTVAL('participant_seq')),
-       'moreusers-5', 'Test User', 'test@example.com', '$2a$10$waIvJd.49bI.OhwgmKIO2uBhAP4KMoCGGdx/at2kjIE6IFdjmWV6e' );
-
-INSERT INTO participant (participantid,username,fullname,email,password) VALUES (
-      (SELECT NEXTVAL('participant_seq')),
-       'moreusers-6', 'Test User', 'test@example.com', '$2a$10$waIvJd.49bI.OhwgmKIO2uBhAP4KMoCGGdx/at2kjIE6IFdjmWV6e' );
-
-INSERT INTO participant (participantid,username,fullname,email,password) VALUES (
-      (SELECT NEXTVAL('participant_seq')),
-       'moreusers-7', 'Test User', 'test@example.com', '$2a$10$waIvJd.49bI.OhwgmKIO2uBhAP4KMoCGGdx/at2kjIE6IFdjmWV6e' );
-
-INSERT INTO participant (participantid,username,fullname,email,password) VALUES (
-      (SELECT NEXTVAL('participant_seq')),
-       'moreusers-8', 'Test User', 'test@example.com', '$2a$10$waIvJd.49bI.OhwgmKIO2uBhAP4KMoCGGdx/at2kjIE6IFdjmWV6e' );
-
 
 # --- !Downs
 

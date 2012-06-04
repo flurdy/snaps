@@ -373,7 +373,7 @@ object Event {
     DB.withConnection { implicit connection =>
       SQL(
         """
-          insert into eventrequests
+          insert into eventrequest
           (eventid,participantid,requestdate)
           values
           ({eventid},{participantid},CURRENT_TIMESTAMP)
@@ -391,7 +391,7 @@ object Event {
       SQL(
         """
           select count(participantid) = 1
-          from eventrequests
+          from eventrequest
           where eventid = {eventid}
           and participantid = {participantid}
         """
@@ -407,7 +407,7 @@ object Event {
     DB.withConnection { implicit connection =>
       SQL(
         """
-          delete from eventrequests
+          delete from eventrequest
           where eventid = {eventid}
           and participantid = {participantid}
         """
@@ -423,7 +423,7 @@ object Event {
     DB.withConnection { implicit connection =>
       SQL(
         """
-          delete from eventrequests
+          delete from eventrequest
           where participantid = {participantid}
         """
       ).on(
@@ -436,7 +436,7 @@ object Event {
     DB.withConnection { implicit connection =>
       SQL(
         """
-          delete from eventrequests
+          delete from eventrequest
           where eventid = {eventid}
         """
       ).on(
