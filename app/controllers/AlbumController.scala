@@ -7,6 +7,7 @@ import play.api.data.Forms._
 import play.api.data.validation.Constraints._
 import play.Logger
 import models._
+import notifiers.EmailNotifier
 
 
 object AlbumController extends Controller with EventWrappers with Secured {
@@ -34,6 +35,7 @@ object AlbumController extends Controller with EventWrappers with Secured {
       },
       submittedAlbumForm => {
         val album = new Album(participant.username,submittedAlbumForm._2)
+        EmailNotifier.addAlbumNotification(participant,event,album)
         event.addAlbum(album)
         Redirect(routes.EventController.viewEvent(eventId)).flashing("message" -> "Album added")
       }
@@ -78,6 +80,7 @@ object AlbumController extends Controller with EventWrappers with Secured {
       case None => albumNotFound
       case Some(album) => {
         Logger.info("Remove album: "+albumId)
+        EmailNotifier.removeAlbumNotification(participant,event,album)
         event.removeAlbum(album)
         Redirect(routes.EventController.showEditEvent(eventId)).flashing("message" -> "Album removed")
       }

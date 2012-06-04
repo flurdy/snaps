@@ -6,6 +6,7 @@ import play.api.data.Forms._
 import play.api.mvc.Controller
 import play.Logger
 import models._
+import notifiers.EmailNotifier
 
 object ParticipantController extends Controller with Secured {
 
@@ -82,6 +83,7 @@ object ParticipantController extends Controller with Secured {
   def deleteParticipant(participantId: Long) = withParticipant { participant => implicit request =>
     if(participant.participantId == participantId){
       Logger.info("Participant deleted:" + participantId + " | " + participant.username)
+      EmailNotifier.deleteParticipantNotification(participant)
       participant.deleteAccount
       Redirect(routes.Application.index()).withNewSession;
     } else {

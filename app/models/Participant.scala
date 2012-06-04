@@ -25,6 +25,7 @@ case class Participant(
   }
 
   def deleteAccount  {
+    require(participantId>0)
     Event.removeAllJoinRequestsByParticipant(participantId)
     Event.removeParticipantFromAllEvents(participantId)
     Event.removeAllEventsByOrganiser(participantId)

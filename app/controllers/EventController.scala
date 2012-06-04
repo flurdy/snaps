@@ -7,6 +7,7 @@ import play.api.data.Forms._
 import play.api.data.validation.Constraints._
 import play.Logger
 import models._
+import notifiers.EmailNotifier
 
 object EventController extends Controller with EventWrappers with Secured {
 
@@ -96,6 +97,7 @@ object EventController extends Controller with EventWrappers with Secured {
         BadRequest(views.html.index(searchForm,errors,Application.registerForm))
       },
       eventName => {
+        EmailNotifier.createEventNotification(participant,eventName)
         val event = participant.createAndSaveEvent(eventName)
         Redirect(routes.EventController.showEditEvent(event.eventId)).flashing("message" -> "Event created")
       }
@@ -103,7 +105,7 @@ object EventController extends Controller with EventWrappers with Secured {
   }
 
 
-  def showEditEvent(eventId: Long) = isEventOrganiser(eventId) { event => implicit request =>
+  def showEditEvent(eventId: Long) = isEventOrganiser(eventId) { (event,participant) => implicit request =>
      val editForm = updateForm.fill((event.eventName,
        event.organiser match {
          case None => ""
@@ -120,7 +122,7 @@ object EventController extends Controller with EventWrappers with Secured {
   }
 
 
-  def updateEvent(eventId: Long) = isEventOrganiser(eventId) { event => implicit request =>
+  def updateEvent(eventId: Long) = isEventOrganiser(eventId) { (event,participant) => implicit request =>
     updateForm.bindFromRequest.fold(
       errors => {
         Logger.warn("Bad update event request:"+errors)
@@ -144,13 +146,14 @@ object EventController extends Controller with EventWrappers with Secured {
   }
 
 
-  def showDeleteEvent(eventId: Long) = isEventOrganiser(eventId) { event => implicit request =>
+  def showDeleteEvent(eventId: Long) = isEventOrganiser(eventId) { (event,participant) => implicit request =>
     Ok(views.html.events.delete(event))
   }
 
 
-  def deleteEvent(eventId: Long) =  isEventOrganiser(eventId) { event => implicit request =>
+  def deleteEvent(eventId: Long) =  isEventOrganiser(eventId) { (event,participant) => implicit request =>
     Logger.info("Deleting event: " + eventId)
+    EmailNotifier.deleteEventNotification(participant,event)
     Event.deleteEvent(eventId)
     Redirect(routes.Application.index()).flashing("message" -> "Event deleted");
   }
@@ -162,11 +165,12 @@ object EventController extends Controller with EventWrappers with Secured {
   }
 
 
-  def removeParticipant(eventId: Long, participantId: Long) = isEventOrganiser(eventId) { event => implicit request =>
+  def removeParticipant(eventId: Long, participantId: Long) = isEventOrganiser(eventId) { (event,participant) => implicit request =>
     Logger.debug("Remove participant: " + participantId +" from "+eventId)
     Participant.findById(participantId) match {
       case None => eventParticipantNotFound(eventId)
       case Some(participantToBeRemoved) => {
+        EmailNotifier.removeParticipantFromEventNotification(participantToBeRemoved,event)
         event.removeParticipant(participantToBeRemoved)
         Redirect(routes.EventController.showEditEvent(eventId)).flashing("message" -> "Participant removed");
       }
@@ -174,7 +178,7 @@ object EventController extends Controller with EventWrappers with Secured {
   }
 
 
-  def addCurrentParticipant(eventId: Long) = isEventOrganiser(eventId) { event => implicit request =>
+  def addCurrentParticipant(eventId: Long) = isEventOrganiser(eventId) { (event,participant) => implicit request =>
     participantForm.bindFromRequest.fold(
       errors => {
         for(error<-errors.errors){
@@ -190,13 +194,14 @@ object EventController extends Controller with EventWrappers with Secured {
   }
 
 
-  def addRequestedParticipant(eventId: Long, participantId: Long) = isEventOrganiser(eventId) { event => implicit request =>
+  def addRequestedParticipant(eventId: Long, participantId: Long) = isEventOrganiser(eventId) { (event,participant) => implicit request =>
       addAnyParticipant(event,Participant.findById(participantId))
   }
 
 
   private def addAnyParticipant(event: Event, participantFound: Option[Participant]) = {
     participantFound.map { participant =>
+      EmailNotifier.addParticipantToEventNotification(participant,event)
       event.addParticipant(participant)
       event.removeJoinRequest(participant)
       Redirect(routes.EventController.showEditEvent(event.eventId)).flashing("message" -> "Participant added");
@@ -238,10 +243,10 @@ trait EventWrappers extends Secured {
       }.getOrElse(onEventNotFound(request))
   }
 
-  def isEventOrganiser(eventId: Long)(f: Event => Request[AnyContent] => Result) = withEventAndParticipant(eventId) {
+  def isEventOrganiser(eventId: Long)(f: (Event,Participant) => Request[AnyContent] => Result) = withEventAndParticipant(eventId) {
     (event,participant) => implicit request =>
       if( event.isOrganiser(participant) ){
-        f(event)(request)
+        f(event,participant)(request)
       } else {
         onUnauthorised(request,event)(request.session,request.flash)
       }
