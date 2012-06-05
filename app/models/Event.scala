@@ -463,9 +463,6 @@ object Event {
 
 
   def removeParticipantFromAllEvents(participantId: Long) {
-//    findAllEventsByParticipant(participantId).map { event =>
-      // TODO: delete albums by participant
-//    }
     DB.withConnection { implicit connection =>
       SQL(
         """

@@ -249,12 +249,16 @@ object Participant {
 
   def deleteAccount(participantId: Long)  {
     require(participantId>0)
-    Logger.info("removeAllJoinRequestsByParticipant: " + participantId)
-    Event.removeAllJoinRequestsByParticipant(participantId)
-    Logger.info("removeParticipantFromAllEvents: " + participantId)
-    Event.removeParticipantFromAllEvents(participantId)
-    Logger.info("removeAllEventsByOrganiser: " + participantId)
-    Event.removeAllEventsByOrganiser(participantId)
+    try {
+      Logger.info("removeAllJoinRequestsByParticipant: " + participantId)
+      Event.removeAllJoinRequestsByParticipant(participantId)
+      Logger.info("removeParticipantFromAllEvents: " + participantId)
+      Event.removeParticipantFromAllEvents(participantId)
+      Logger.info("removeAllEventsByOrganiser: " + participantId)
+      Event.removeAllEventsByOrganiser(participantId)
+    } catch {
+      case exception: Exception => Logger.error("Exception in delete account: " + exception.getMessage,exception)
+    }
     deleteParticipant(participantId)
   }
 

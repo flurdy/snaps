@@ -24,7 +24,7 @@ CREATE TABLE snapevent (
     eventid               SERIAL PRIMARY KEY,
     eventname             VARCHAR(128) NOT NULL,
     organiserid           BIGINT,
-    eventDate             VARCHAR(128),
+    eventdate             VARCHAR(128),
     description           VARCHAR(4000),
     publicevent           BOOLEAN DEFAULT TRUE,
     searchable            BOOLEAN DEFAULT TRUE
