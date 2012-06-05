@@ -82,9 +82,10 @@ object ParticipantController extends Controller with Secured {
 
   def deleteParticipant(participantId: Long) = withParticipant { participant => implicit request =>
     if(participant.participantId == participantId){
-      Logger.info("Participant deleted:" + participantId + " | " + participant.username)
+      Logger.info("Participant deleting:" + participantId + " | " + participant.username)
       EmailNotifier.deleteParticipantNotification(participant)
-      participant.deleteAccount
+      Participant.deleteAccount(participantId)
+      Logger.warn("Participant deleted:" + participantId + " | " + participant.username)
       Redirect(routes.Application.index()).withNewSession;
     } else {
       Logger.warn("Participant:" + participant.participantId + " can not delete " + participantId)

@@ -24,13 +24,6 @@ case class Participant(
     Event.createAndSaveEvent(new Event(eventName,participantId,Participant.DateFormat.format(new java.util.Date())))
   }
 
-  def deleteAccount  {
-    require(participantId>0)
-    Event.removeAllJoinRequestsByParticipant(participantId)
-    Event.removeParticipantFromAllEvents(participantId)
-    Event.removeAllEventsByOrganiser(participantId)
-    Participant.deleteParticipant(participantId)
-  }
 
 }
 
@@ -252,6 +245,17 @@ object Participant {
         throw new NullPointerException("Participant not found")
       }
     }
+  }
+
+  def deleteAccount(participantId: Long)  {
+    require(participantId>0)
+    Logger.info("removeAllJoinRequestsByParticipant: " + participantId)
+    Event.removeAllJoinRequestsByParticipant(participantId)
+    Logger.info("removeParticipantFromAllEvents: " + participantId)
+    Event.removeParticipantFromAllEvents(participantId)
+    Logger.info("removeAllEventsByOrganiser: " + participantId)
+    Event.removeAllEventsByOrganiser(participantId)
+    deleteParticipant(participantId)
   }
 
   def deleteParticipant(participantId: Long) {

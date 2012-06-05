@@ -113,8 +113,8 @@ object Event {
     }
   }
 
-  def createAndSaveEvent(eventName: String) : Event = {
-    createAndSaveEvent(new Event(eventName))
+  def createAndSaveEvent(eventName: String, organiserId: Long) : Event = {
+    createAndSaveEvent(new Event(eventName,organiserId))
   }
 
   def createAndSaveEvent(event: Event) : Event = {
