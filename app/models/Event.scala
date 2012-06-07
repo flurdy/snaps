@@ -463,6 +463,8 @@ object Event {
 
 
   def removeParticipantFromAllEvents(participantId: Long) {
+    // TODO: resolve PG sql error
+    Logger.info("Delete participant from events: "+participantId)
     DB.withConnection { implicit connection =>
       SQL(
         """

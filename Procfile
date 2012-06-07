@@ -1,1 +1,1 @@
-web: target/start -Dconfig.resource=heroku.conf -Dhttp.port=${PORT} -Ddb.default.url=$DATABASE_URL -Dsmtp.user=$SENDGRID_USERNAME -Dsmtp.password=$SENDGRID_PASSWORD
+web: target/start -Dconfig.resource=heroku.conf -Dhttp.port=${PORT}

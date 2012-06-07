@@ -170,7 +170,7 @@ object EventController extends Controller with EventWrappers with Secured {
     Participant.findById(participantId) match {
       case None => eventParticipantNotFound(eventId)
       case Some(participantToBeRemoved) => {
-        EmailNotifier.removeParticipantFromEventNotification(participantToBeRemoved,event)
+//        EmailNotifier.removeParticipantFromEventNotification(participantToBeRemoved,event)
         event.removeParticipant(participantToBeRemoved)
         Redirect(routes.EventController.showEditEvent(eventId)).flashing("message" -> "Participant removed");
       }
@@ -201,7 +201,7 @@ object EventController extends Controller with EventWrappers with Secured {
 
   private def addAnyParticipant(event: Event, participantFound: Option[Participant]) = {
     participantFound.map { participant =>
-      EmailNotifier.addParticipantToEventNotification(participant,event)
+//      EmailNotifier.addParticipantToEventNotification(participant,event)
       event.addParticipant(participant)
       event.removeJoinRequest(participant)
       Redirect(routes.EventController.showEditEvent(event.eventId)).flashing("message" -> "Participant added");
