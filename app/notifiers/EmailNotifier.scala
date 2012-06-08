@@ -11,33 +11,48 @@ import play.core.Router
 object EmailNotifier {
 
   private def noSmtpHostDefinedException = throw new NullPointerException("No SMTP host defined")
+  private val alertRecipient = Play.configuration.getString("mail.alerts").getOrElse("Snaps")
+  private val emailFrom = Play.configuration.getString("mail.alerts").getOrElse("Snaps")
 
   private def footer = {
     val hostname = java.net.InetAddress.getLocalHost().getHostName()
     "Sent by Snaps, event photo snaps. Host: " + hostname
   }
 
-  private def sendOrMock(notification: (String, String)) {
+  private def sendOrMockAlert(notification: (String, String)) {
     if (Play.mode == Mode.Prod) {
       Play.configuration.getString("smtp.host") match {
         case None => noSmtpHostDefinedException
         case Some("mock") => mockNotification(notification._1)
-        case _ => sendNotification(notification._1, notification._2)
+        case _ => sendNotification(alertRecipient,notification._1, notification._2)
       }
     } else {
       mockNotification(notification._1)
     }
   }
 
+  private def sendOrMockNotification(notification: (Option[String],String, String)) {
+    if (Play.mode == Mode.Prod && notification._1.isDefined) {
+      Play.configuration.getString("smtp.host") match {
+        case None => noSmtpHostDefinedException
+        case Some("mock") => mockNotification(notification._2)
+        case _ => sendNotification(notification._1.get, notification._2,notification._3)
+      }
+    } else {
+      mockNotification(notification._2)
+    }
+  }
 
-  private def sendNotification(subject: String, bodyText: String) {
+
+  private def sendNotification(recipient:String,subject: String, bodyText: String) {
     val mail = use[MailerPlugin].email
     mail.setSubject("SNAPS: " + subject)
-    mail.addFrom(Play.configuration.getString("mail.from").getOrElse("Snaps"))
-    mail.addRecipient(Play.configuration.getString("mail.alerts").getOrElse("Snaps"))
+    mail.addFrom(emailFrom)
+    mail.addRecipient(recipient)
     mail.send(bodyText+footer)
     Logger.info("Notification sent: " + subject)
   }
+
 
   private def mockNotification(subject: String) {
     Logger.info("Notification (mock): " + subject)
@@ -45,15 +60,15 @@ object EmailNotifier {
 
 
   def registrationNotification(participant: Participant) {
-    sendOrMock(sendRegistrationNotification(participant))
+    sendOrMockAlert(sendRegistrationNotification(participant))
   }
 
   def deleteParticipantNotification(participant: Participant) {
-    sendOrMock(sendDeleteParticipantNotification(participant))
+    sendOrMockAlert(sendDeleteParticipantNotification(participant))
   }
 
   def createEventNotification(participant: Participant, eventName: String) {
-    sendOrMock(sendCreateEventNotification(participant, eventName))
+    sendOrMockAlert(sendCreateEventNotification(participant, eventName))
   }
 
 //  def addParticipantToEventNotification(participant: Participant, event: Event) {
@@ -65,7 +80,7 @@ object EmailNotifier {
 //  }
 
   def deleteEventNotification(participant: Participant, event: Event) {
-    sendOrMock(sendDeleteEventNotification(participant, event.eventName))
+    sendOrMockAlert(sendDeleteEventNotification(participant, event.eventName))
   }
 
 //  def addAlbumNotification(participant: Participant, event: Event, album: Album) {
@@ -116,5 +131,12 @@ object EmailNotifier {
 //    ("Snaps: Album removed", "Album removed from Event " + eventName + " by  " + participant.username)
 //  }
 
+  def sendNewPasswordNotification(participant: Participant, newPassword: String): (Option[String], String, String) = {
+    (participant.email,"Password reset","Your new password is : " + newPassword)
+  }
+
+  def sendNewPassword(participant: Participant, newPassword: String) {
+    sendOrMockNotification(sendNewPasswordNotification(participant, newPassword))
+  }
 
 }

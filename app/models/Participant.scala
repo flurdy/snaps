@@ -6,10 +6,11 @@ import anorm._
 import anorm.SqlParser._
 import play.Logger
 import util.Random
-import java.security.MessageDigest
 import org.mindrot.jbcrypt.BCrypt
 import java.util.Date
 import java.text.SimpleDateFormat
+import java.math.BigInteger
+import java.security.{SecureRandom, MessageDigest}
 
 case class Participant(
                   participantId: Long = 0,
@@ -170,7 +171,7 @@ object Participant {
       SQL(
         """
           select pa.*
-          from eventrequests er
+          from eventrequest er
           left join participant pa
           on pa.participantid = er.participantid
           where er.eventid = {eventid}
@@ -218,9 +219,7 @@ object Participant {
           ).executeInsert()
         }
       }
-      case None => {
-        throw new NullPointerException("Participant not found")
-      }
+      case None => participantNotFound
     }
   }
 
@@ -241,9 +240,7 @@ object Participant {
           ).executeInsert()
         }
       }
-      case None => {
-        throw new NullPointerException("Participant not found")
-      }
+      case None => participantNotFound
     }
   }
 
@@ -273,5 +270,19 @@ object Participant {
     }
   }
 
+  def generateRandomPassword = {
+    val source = new BigInteger(130,  new SecureRandom()).toString(32);
+    source.substring(0,3)+"-"+source.substring(4,7)+"-"+source.substring(8,11)+"-"+source.substring(12,15)
+  }
+
+  def resetPassword(participantId:Long) : String = {
+    findById(participantId).map { participant =>
+        val newPassword = generateRandomPassword
+        updatePassword( participant.copy(password=Option(newPassword)) )
+        newPassword
+    }.getOrElse(participantNotFound)
+  }
+
+  def participantNotFound = throw new NullPointerException("Participant not found")
 
 }

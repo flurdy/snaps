@@ -35,6 +35,9 @@
     <div class="form-actions">
         <button type="submit" class="btn btn-primary">Log in</button>
         <a href="@routes.Application.showRegister" class="btn btn-inverse">Register</a>
+        @if(loginForm.errors){
+            <a href="@routes.ParticipantController.showResetPassword" class="btn btn-warning">Reset password</a>
+        }
     </div>
 }
 

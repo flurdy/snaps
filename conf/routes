@@ -43,8 +43,11 @@ PUT     /participant/:participantId/       controllers.ParticipantController.upd
 POST     /participant/:participantId/delete/confirm       controllers.ParticipantController.confirmDeleteParticipant(participantId: Long)
 POST     /participant/:participantId/delete       controllers.ParticipantController.deleteParticipant(participantId: Long)
 DELETE     /participant/:participantId/       controllers.ParticipantController.deleteParticipant(participantId: Long)
+
 POST     /participant/:participantId/password       controllers.ParticipantController.changePassword(participantId: Long)
 PUT     /participant/:participantId/password       controllers.ParticipantController.changePassword(participantId: Long)
+GET     /participant/reset.html       controllers.ParticipantController.showResetPassword
+POST     /participant/reset            controllers.ParticipantController.resetPassword
 
 # Map static resources from the /public folder to the /assets URL path
 # GET     /images/*imgFile               controllers.Assets.at(path="/public/images", imgFile)

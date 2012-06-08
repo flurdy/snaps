@@ -1,8 +1,10 @@
 package controllers
 
+import play.api._
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
+import play.api.data.validation.Constraints._
 import play.api.mvc.Controller
 import play.Logger
 import models._
@@ -10,6 +12,14 @@ import notifiers.EmailNotifier
 
 object ParticipantController extends Controller with Secured {
 
+
+
+  val resetForm = Form(
+      "username" -> nonEmptyText(maxLength = 99)
+  )
+  //verifying("Participant not found", fields => fields match {
+  //    case (username,username2) => Participant.findByUsername(username.trim).isDefined
+  //)}
 
 
   val updateParticipantForm = Form(
@@ -36,13 +46,15 @@ object ParticipantController extends Controller with Secured {
       case ( password, newPassword, confirmPassword) => {
         newPassword.trim == confirmPassword.trim
       }
-//    }) verifying("Orignal password incorrect", fields => fields match {
-//      case (password,_,_) => Participant.authenticate(username, password).isDefined
+      //    }) verifying("Orignal password incorrect", fields => fields match {
+      //      case (password,_,_) => Participant.authenticate(username, password).isDefined
     })
   )
 
-   def viewParticipant(participantId: Long) = Action { implicit request =>
+
+  def viewParticipant(participantId: Long) = Action { implicit request =>
      Participant.findById(participantId).map { participant =>
+       Participant.resetPassword(participant.participantId)
        Ok(views.html.participant.viewparticipant(participant,Event.findAllEventsAsParticipantOrOrganiser(participantId),updateParticipantForm.fill((participant.username,participant.fullName,participant.email)),passwordForm))
      }.getOrElse{
        NotFound.flashing("message" -> "Participant not found")
@@ -114,5 +126,33 @@ object ParticipantController extends Controller with Secured {
       }
     )
   }
+
+
+
+  def showResetPassword = Action { implicit resetPassworduest =>
+    Ok(views.html.participant.resetpassword())
+  }
+
+
+
+  def resetPassword =  Action { implicit request =>
+    resetForm.bindFromRequest.fold(
+      errors => {
+        for(error <- errors.errors){
+          Logger.warn("Bad change passwords request:"+error.key + ":"+error.message)
+        }
+        BadRequest(views.html.participant.resetpassword()).flashing("errorMessage"->"Password reset failed")
+      },
+      username => {
+        Participant.findByUsername(username).map { participant =>
+          Logger.info("Password reset requested for: " + participant.participantId)
+          val newPassword = Participant.resetPassword(participant.participantId)
+          EmailNotifier.sendNewPassword(participant,newPassword)
+        }
+        Redirect(routes.Application.index()).flashing("message" -> "Password reset and sent by email")
+      }
+    )
+  }
+
 
 }

@@ -169,6 +169,19 @@ class ParticipantSpec extends Specification {
     }
 
 
+    "be able to reset password" in {
+      running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
+        val participant = Participant(0,"tester",Some("Test User"), Some("test@example.com"), Some("testpassword"));
+        val participantId = Participant.save(participant).participantId
+        Participant.authenticate("tester","testpassword") must beSome[Participant]
+        val newPassword = Participant.resetPassword(participantId)
+        Participant.authenticate("tester","testpassword") must beNone
+        Participant.authenticate("tester",newPassword) must beSome[Participant]
+      }
+    }
+
+
+
   }
 
 }
