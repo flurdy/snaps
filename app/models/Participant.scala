@@ -17,12 +17,15 @@ case class Participant(
                   username: String,
                   fullName: Option[String],
                   email: Option[String],
-                  password: Option[String] ){
+                  password: Option[String],
+                  isAdmin:Boolean=false,
+                  isSuperUser:Boolean=false){
 
   lazy val encryptedPassword = Participant.encrypt(password)
 
   def createAndSaveEvent(eventName: String) = {
-    Event.createAndSaveEvent(new Event(eventName,participantId,Participant.DateFormat.format(new java.util.Date())))
+    Event.createAndSaveEvent(new Event(eventName,participantId,
+          Participant.DateFormat.format(new java.util.Date())))
   }
 
 
@@ -46,8 +49,10 @@ object Participant {
     get[Long]("participantid") ~
       get[String]("username") ~
       get[Option[String]]("fullname") ~
-      get[Option[String]]("email")  map {
-      case participantid~username~fullname~email => Participant( participantid, username, fullname, email, None )
+      get[Option[String]]("email")  ~
+      get[Boolean]("admin") ~
+      get[Boolean]("superuser")  map {
+      case participantid~username~fullname~email~isadmin~issuperuser=> Participant( participantid, username, fullname, email, None, isadmin, issuperuser )
     }
   }
 

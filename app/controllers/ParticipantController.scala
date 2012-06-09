@@ -54,7 +54,6 @@ object ParticipantController extends Controller with Secured {
 
   def viewParticipant(participantId: Long) = Action { implicit request =>
      Participant.findById(participantId).map { participant =>
-       Participant.resetPassword(participant.participantId)
        Ok(views.html.participant.viewparticipant(participant,Event.findAllEventsAsParticipantOrOrganiser(participantId),updateParticipantForm.fill((participant.username,participant.fullName,participant.email)),passwordForm))
      }.getOrElse{
        NotFound.flashing("message" -> "Participant not found")
@@ -70,12 +69,17 @@ object ParticipantController extends Controller with Secured {
       },
       updatedForm => {
         Participant.findById(participantId).map { editParticipant =>
-        val updatedParticipant = editParticipant.copy(
-          //username = updatedForm._1,
-          fullName = updatedForm._2,
-          email = updatedForm._3)
-          Participant.updateParticipant(updatedParticipant)
-          Redirect(routes.ParticipantController.viewParticipant(participantId)).flashing("message" -> "Participant updated")
+          if (participant.isAdmin || participant == editParticipant){
+            val updatedParticipant = editParticipant.copy(
+            //username = updatedForm._1,
+            fullName = updatedForm._2,
+            email = updatedForm._3)
+            Participant.updateParticipant(updatedParticipant)
+            Redirect(routes.ParticipantController.viewParticipant(participantId)).flashing("message" -> "Participant updated")
+          } else {
+            Logger.warn("Participant is not an admin and trying to edit someone else")
+            Unauthorized.flashing("message" -> "Not allowed to edit participant")
+          }
         }.getOrElse{
           NotFound.flashing("message" -> "Participant not found")
         }
@@ -111,25 +115,36 @@ object ParticipantController extends Controller with Secured {
         for(error <- errors.errors){
           Logger.warn("Bad change passwords request:"+error.key + ":"+error.message)
         }
-        BadRequest(views.html.participant.viewparticipant(participant,Event.findAllEventsAsParticipantOrOrganiser(participantId),updateParticipantForm,errors)).flashing("messageError"->"Password change failed")
+        BadRequest(views.html.participant.viewparticipant(participant,Event.findAllEventsAsParticipantOrOrganiser(participantId),updateParticipantForm,errors)).flashing("errorMessage"->"Password change failed")
       },
       passwords => {
-        Participant.authenticate(participant.username, passwords._1).map { _ =>
-          Logger.info("Changing password for " + participantId)
-          val newParticipant = participant.copy(password = Option(passwords._2))
-          Participant.updatePassword(newParticipant)
-          Redirect(routes.ParticipantController.viewParticipant(participantId)).flashing("message" -> "Password changed")
+        Participant.findById(participantId).map { participantToUpdate =>
+          if(participant.isAdmin){
+            changeAndStoreNewPassword(participantToUpdate,passwords._2)
+          } else {
+            Participant.authenticate(participantToUpdate.username, passwords._1).map { _ =>
+              changeAndStoreNewPassword(participantToUpdate,passwords._2)
+            }.getOrElse{
+              Redirect(routes.ParticipantController.viewParticipant(participantId)).flashing("errorMessage" -> "Password incorrect")
+            }
+          }
         }.getOrElse{
-          Logger.debug("Original password incorrect")
-          Redirect(routes.ParticipantController.viewParticipant(participantId)).flashing("errorMessage" -> "Password incorrect")
+          Redirect(routes.ParticipantController.viewParticipant(participantId)).flashing("errorMessage" -> "Participant not found")
         }
       }
     )
   }
 
+  private def changeAndStoreNewPassword(participant:Participant,newPassword:String) = {
+    Logger.info("Changing password for " + participant.participantId)
+    val newParticipant = participant.copy(password = Option(newPassword))
+    Participant.updatePassword(newParticipant)
+    Redirect(routes.ParticipantController.viewParticipant(participant.participantId)).flashing("message" -> "Password changed")
+  }
 
 
-  def showResetPassword = Action { implicit resetPassworduest =>
+
+  def showResetPassword = Action { implicit request =>
     Ok(views.html.participant.resetpassword())
   }
 
