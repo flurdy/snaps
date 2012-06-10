@@ -1,4 +1,4 @@
-@(registerForm: Form[(String,Option[String],Option[String],String,String)])(implicit currentParticipant: Option[Participant], flash: Flash)
+@(registerForm: Form[(String,Option[String],String,String,String)])(implicit currentParticipant: Option[Participant], flash: Flash)
 
 @import helper._
 @import helper.twitterBootstrap._
@@ -13,11 +13,22 @@
         <br/>
 
     @flash.get("message").map { message =>
+    <p class="alert alert-info">
+        @message
+    </p>
+    }
+
+    @flash.get("warningMessage").map { message =>
     <p class="alert alert-warning">
         @message
     </p>
     }
 
+    @flash.get("errorMessage").map { message =>
+    <p class="alert alert-error">
+        @message
+    </p>
+    }
     @for(error <- registerForm.errors){
     <p class="alert alert-error">
         Oh dear: @error.message: @error.key

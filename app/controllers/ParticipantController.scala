@@ -12,8 +12,6 @@ import notifiers.EmailNotifier
 
 object ParticipantController extends Controller with Secured {
 
-
-
   val resetForm = Form(
       "username" -> nonEmptyText(maxLength = 99)
   )
@@ -26,15 +24,11 @@ object ParticipantController extends Controller with Secured {
     tuple(
       "username" -> nonEmptyText(maxLength = 99),
       "fullname" -> optional(text(maxLength = 99)),
-      "email" -> optional(text(maxLength = 99))
+      "email" -> text(maxLength = 99)
     ) verifying("Email address is not valid", fields => fields match {
-      case (username, fullname, email ) => {
-        email match {
-          case Some(emailAddress) => Application.ValidEmailAddress.findFirstIn(emailAddress.trim).isDefined
-          case None => true
-        }
+      case (username, fullname, email ) => Participant.ValidEmailAddress.findFirstIn(email.trim).isDefined
       }
-    })
+    )
   )
 
   val passwordForm = Form(
@@ -99,7 +93,7 @@ object ParticipantController extends Controller with Secured {
   def deleteParticipant(participantId: Long) = withParticipant { participant => implicit request =>
     if(participant.participantId == participantId){
       Logger.info("Participant deleting:" + participantId + " | " + participant.username)
-      EmailNotifier.deleteParticipantNotification(participant)
+      EmailNotifier.deleteParticipantAlert(participant)
       Participant.deleteAccount(participantId)
       Logger.warn("Participant deleted:" + participantId + " | " + participant.username)
       Redirect(routes.Application.index()).withNewSession;

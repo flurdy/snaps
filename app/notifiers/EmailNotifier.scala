@@ -11,8 +11,8 @@ import play.core.Router
 object EmailNotifier {
 
   private def noSmtpHostDefinedException = throw new NullPointerException("No SMTP host defined")
-  private val alertRecipient = Play.configuration.getString("mail.alerts").getOrElse("Snaps")
-  private val emailFrom = Play.configuration.getString("mail.alerts").getOrElse("Snaps")
+  private val alertRecipient = Play.configuration.getString("mail.alerts").getOrElse("snaps@example.org")
+  private val emailFrom = Play.configuration.getString("mail.alerts").getOrElse("snaps@example.com")
 
   private def footer = {
     val hostname = java.net.InetAddress.getLocalHost().getHostName()
@@ -31,12 +31,12 @@ object EmailNotifier {
     }
   }
 
-  private def sendOrMockNotification(notification: (Option[String],String, String)) {
-    if (Play.mode == Mode.Prod && notification._1.isDefined) {
+  private def sendOrMockNotification(notification: (String,String, String)) {
+    if (Play.mode == Mode.Prod) {
       Play.configuration.getString("smtp.host") match {
         case None => noSmtpHostDefinedException
         case Some("mock") => mockNotification(notification._2)
-        case _ => sendNotification(notification._1.get, notification._2,notification._3)
+        case _ => sendNotification(notification._1, notification._2,notification._3)
       }
     } else {
       mockNotification(notification._2)
@@ -59,84 +59,82 @@ object EmailNotifier {
   }
 
 
-  def registrationNotification(participant: Participant) {
-    sendOrMockAlert(sendRegistrationNotification(participant))
+  def registrationAlert(participant: Participant) {
+    sendOrMockAlert(registrationText(participant))
   }
 
-  def deleteParticipantNotification(participant: Participant) {
-    sendOrMockAlert(sendDeleteParticipantNotification(participant))
+  def deleteParticipantAlert(participant: Participant) {
+    sendOrMockAlert(deleteParticipantText(participant))
   }
 
-  def createEventNotification(participant: Participant, eventName: String) {
-    sendOrMockAlert(sendCreateEventNotification(participant, eventName))
+  def createEventAlert(participant: Participant, eventName: String) {
+    sendOrMockAlert(createEventText(participant, eventName))
   }
 
-//  def addParticipantToEventNotification(participant: Participant, event: Event) {
-//    sendOrMock(sendAddParticipantToEventNotification(participant, event.eventName))
-//  }
-//
-//  def removeParticipantFromEventNotification(participant: Participant, event: Event) {
-//    sendOrMock(sendRemoveParticipantFromEventNotification(participant, event.eventName))
-//  }
+
+  def addAlbumNotification(participant: Participant, event: Event, album: Album) {
+    val (subject:String,body:String) = addAlbumText(participant, event.eventName)
+    sendEventNotification(event,subject,body)
+  }
+
+  private def sendEventNotification(event:Event,subject:String,body:String) {
+    event.organiser.map { organiser =>
+      sendOrMockNotification(organiser.email,subject,body)
+    }
+    for(eventParticipant<-event.findParticipants){
+      sendOrMockNotification(eventParticipant.email,subject,body)
+    }
+  }
+
+  def deleteEventAlert(participant: Participant, event: Event) {
+    sendOrMockAlert(deleteEventText(participant, event.eventName))
+  }
 
   def deleteEventNotification(participant: Participant, event: Event) {
-    sendOrMockAlert(sendDeleteEventNotification(participant, event.eventName))
+    val (subject:String,body:String) = deleteEventText(participant, event.eventName)
+    sendEventNotification(event,subject,body)
   }
 
-//  def addAlbumNotification(participant: Participant, event: Event, album: Album) {
-//    sendOrMock(sendAddAlbumNotification(participant, event.eventName))
-//  }
-//
-//  def removeAlbumNotification(participant: Participant, event: Event, album: Album) {
-//    sendOrMock(sendRemoveAlbumNotification(participant, event.eventName))
-//  }
-
-
-  private def sendRegistrationNotification(participant: Participant) = {
+  private def registrationText(participant: Participant) = {
     ("New registration", "Participant " + participant.username + " has registered with Snaps")
   }
 
-  private def sendDeleteParticipantNotification(participant: Participant) = {
+  private def deleteParticipantText(participant: Participant) = {
     ("Participant deleted", "Participant " + participant.username + " has been deleted with Snaps")
 
   }
 
-
-//  private def sendAddParticipantToEventNotification(participant: Participant, eventName: String) = {
-//    ("Participant added", "Participant " + participant.username + " has been added to" + eventName)
-//  }
-//
-//
-//  private def sendRemoveParticipantFromEventNotification(participant: Participant, eventName: String) = {
-//    ("Participant removed", "Participant " + participant.username + " has been removed from" + eventName)
-//  }
-
-
-  private def sendCreateEventNotification(participant: Participant, eventName: String) = {
+  private def createEventText(participant: Participant, eventName: String) = {
     ("Event created", "Event " + eventName + " created by  " + participant.username)
   }
 
-
-  private def sendDeleteEventNotification(participant: Participant, eventName: String) = {
+  private def deleteEventText(participant: Participant, eventName: String) = {
     ("Event deleted", "Event " + eventName + " deleted by  " + participant.username)
   }
 
+  private def addAlbumText(participant: Participant, eventName: String) = {
+    ("Album added", "Album added to Event " + eventName + " by  " + participant.username)
+  }
 
-//  private def sendAddAlbumNotification(participant: Participant, eventName: String) = {
-//    ("Snaps: Album added", "Album added to Event " + eventName + " by  " + participant.username)
-//  }
-//
-//
-//  private def sendRemoveAlbumNotification(participant: Participant, eventName: String) = {
-//    ("Snaps: Album removed", "Album removed from Event " + eventName + " by  " + participant.username)
-//  }
 
-  def sendNewPasswordNotification(participant: Participant, newPassword: String): (Option[String], String, String) = {
+  def newPasswordText(participant: Participant, newPassword: String): (String, String, String) = {
     (participant.email,"Password reset","Your new password is : " + newPassword)
   }
 
   def sendNewPassword(participant: Participant, newPassword: String) {
-    sendOrMockNotification(sendNewPasswordNotification(participant, newPassword))
+    sendOrMockNotification(newPasswordText(participant, newPassword))
   }
+
+  private def joinRequestText(event: Event, participant: Participant): (String, String) = {
+    ("Event join request", Participant + "" + participant.username + " has asked to joinRequestText _event " + event.eventName)
+  }
+
+  def sendJoinRequestNotification(event: Event, participant: Participant) {
+    val (subject:String,body:String) = joinRequestText(event,participant)
+    event.organiser.map { organiser =>
+      sendOrMockNotification(organiser.email,subject,body)
+    }
+  }
+
 
 }

@@ -35,7 +35,7 @@ object AlbumController extends Controller with EventWrappers with Secured {
       },
       submittedAlbumForm => {
         val album = new Album(participant.username,submittedAlbumForm._2)
-//        EmailNotifier.addAlbumNotification(participant,event,album)
+        EmailNotifier.addAlbumNotification(participant,event,album)
         event.addAlbum(album)
         Redirect(routes.EventController.viewEvent(eventId)).flashing("message" -> "Album added")
       }
@@ -49,7 +49,7 @@ object AlbumController extends Controller with EventWrappers with Secured {
   }
 
 
-  def updateAlbum(eventId: Long,albumId: Long) = isEventParticipant(eventId) { (event,participant) => implicit request =>
+  def updateAlbum(eventId: Long,albumId: Long) = isEventParticipantOrAdmin(eventId) { (event,participant) => implicit request =>
     event.findAlbum(albumId) match {
       case None => albumNotFound
       case Some(album) => {
@@ -75,7 +75,7 @@ object AlbumController extends Controller with EventWrappers with Secured {
   }
 
 
-  def removeAlbum(eventId: Long, albumId: Long) = isEventParticipant(eventId) { (event,participant) => implicit request =>
+  def removeAlbum(eventId: Long, albumId: Long) = isEventParticipantOrAdmin(eventId) { (event,participant) => implicit request =>
     event.findAlbum(albumId) match {
       case None => albumNotFound
       case Some(album) => {

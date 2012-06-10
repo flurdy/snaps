@@ -9,7 +9,6 @@ import notifiers._
 
 object Application extends Controller with Secured {
 
-  val ValidEmailAddress = """^[0-9a-zA-Z]([-\.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9}$""".r
 
   val loginForm = Form(
     tuple(
@@ -24,7 +23,7 @@ object Application extends Controller with Secured {
     tuple(
       "username" -> nonEmptyText(maxLength = 99),
       "fullname" -> optional(text(maxLength = 99)),
-      "email" -> optional(text(maxLength = 99)),
+      "email" -> nonEmptyText(maxLength = 99),
       "password" -> nonEmptyText(minLength = 4, maxLength = 99),
       "confirm" -> nonEmptyText(minLength = 4, maxLength = 99)
     ) verifying("Passwords do not match", fields => fields match {
@@ -36,12 +35,20 @@ object Application extends Controller with Secured {
         !Participant.findByUsername(username.trim).isDefined
       }
     }) verifying("Email address is not valid", fields => fields match {
-      case (username, fullname, email, password, confirmPassword) => {
-        email match {
-          case Some(emailAddress) => ValidEmailAddress.findFirstIn(emailAddress.trim).isDefined
-          case None => true
-        }
+      case (username, fullname, email, password, confirmPassword) => Participant.ValidEmailAddress.findFirstIn(email.trim).isDefined
+    })
+  )
+
+  val initialRegisterForm = Form(
+    tuple(
+      "username" -> nonEmptyText(maxLength = 99),
+      "email" -> nonEmptyText(maxLength = 99)
+    ) verifying("Username is already taken", fields => fields match {
+      case (username, email) => {
+        !Participant.findByUsername(username.trim).isDefined
       }
+    }) verifying("Email address is not valid", fields => fields match {
+      case (username, email) => Participant.ValidEmailAddress.findFirstIn(email.trim).isDefined
     })
   )
 
@@ -86,6 +93,20 @@ object Application extends Controller with Secured {
       Ok(views.html.register(registerForm))
   }
 
+  def firstRegisterStep = Action {
+    implicit request =>
+      initialRegisterForm.bindFromRequest.fold(
+        errors => {
+          Logger.warn("Registration failed: " + errors)
+          BadRequest(views.html.register(registerForm.fill(errors.get._1,None,errors.get._2,"","")))
+        },
+        registeredForm => {
+          Ok(views.html.register(registerForm.fill(registeredForm._1,None,registeredForm._2,"",""))).flashing("message"->"Please fill in your name and choose a password")
+        }
+      )
+  }
+
+
   def register = Action {
     implicit request =>
       registerForm.bindFromRequest.fold(
@@ -97,11 +118,12 @@ object Application extends Controller with Secured {
           if (Logger.isDebugEnabled) Logger.debug("Registering: " + registeredForm._1)
           val participant = Participant(0, registeredForm._1, registeredForm._2, registeredForm._3, Some(registeredForm._4))
           Participant.save(participant)
-          EmailNotifier.registrationNotification(participant)
+          EmailNotifier.registrationAlert(participant)
           Redirect(routes.Application.index()).withSession("username" -> participant.username).flashing("message" -> "Registered. Welcome")
         }
       )
   }
+
 
 
 }

@@ -16,10 +16,12 @@ case class Participant(
                   participantId: Long = 0,
                   username: String,
                   fullName: Option[String],
-                  email: Option[String],
+                  email: String,
                   password: Option[String],
                   isAdmin:Boolean=false,
                   isSuperUser:Boolean=false){
+
+  // require(Participant.ValidEmailAddress.findFirstIn(email).isDefined)
 
   lazy val encryptedPassword = Participant.encrypt(password)
 
@@ -35,6 +37,8 @@ case class Participant(
 
 object Participant {
 
+  val ValidEmailAddress = """^[0-9a-zA-Z]([-\.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9}$""".r
+
   val DateFormat = new SimpleDateFormat("yyyy-MM-dd")
 
   val authenticationMapper = {
@@ -49,7 +53,7 @@ object Participant {
     get[Long]("participantid") ~
       get[String]("username") ~
       get[Option[String]]("fullname") ~
-      get[Option[String]]("email")  ~
+      get[String]("email")  ~
       get[Boolean]("admin") ~
       get[Boolean]("superuser")  map {
       case participantid~username~fullname~email~isadmin~issuperuser=> Participant( participantid, username, fullname, email, None, isadmin, issuperuser )

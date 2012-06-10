@@ -1,4 +1,4 @@
-@(searchForm: Form[String],createForm: Form[String], registerForm: Form[(String,Option[String],Option[String],String,String)])(implicit currentParticipant: Option[Participant], flash: Flash)
+@(searchForm: Form[String],createForm: Form[String], registerForm: Form[(String,Option[String],String,String,String)])(implicit currentParticipant: Option[Participant], flash: Flash)
 
 @import helper._
 @import helper.twitterBootstrap._
@@ -56,22 +56,22 @@
 
 @if( ! currentParticipant ){
 
-    @form(action = routes.Application.register(), 'class -> "well"){
-        <h3>Register participant</h3>
+    @form(action = routes.Application.firstRegisterStep(), 'class -> "well form-horizontal"){
+        <h3>Register as participant</h3>
         <fieldset>
-            <!-- <legend>Username</legend>       -->
-            <input type="text" name="username" id="register-username" class="span3" placeholder="Your username or email address" value="@registerForm("username").value"/>
-        </fieldset>
-        <fieldset>
-            <!-- <legend>Password</legend> -->
-            <input type="password" name="password" id="register-password" class="span3" placeholder="Your password"/>
-        </fieldset>
-        <fieldset>
-            <!-- <legend>Confirm password</legend> -->
-            <input type="password" name="confirm" id="register-confirm" class="span3" placeholder="Confirm password"/>
-        </fieldset>
-        <fieldset>
-            <button type="submit" class="btn btn-warning">Register</button>
+            <div class="control-group">
+                <label for="register-username" class="control-label">Username</label>
+                <div class="controls">
+                    <input type="text" name="username" id="register-username" class="span3" placeholder="Your username" value="@registerForm("username").value"/>
+                </div>
+            </div>
+            <div class="control-group">
+                <label for="register-email" class="control-label">Email</label>
+                <div class="controls">
+                    <input type="text" name="email" id="register-email" class="span3" placeholder="Your email address" value="@registerForm("email").value"/>
+                    <button type="submit" class="btn btn-warning">Register</button>
+                </div>
+            </div>
         </fieldset>
     }
 

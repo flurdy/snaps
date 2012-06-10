@@ -79,7 +79,7 @@ object EventController extends Controller with EventWrappers with Secured {
       currentParticipant match {
         case None => eventRequireAuthentication(eventId)
         case Some(participant) => {
-          if(event.isParticipant(participant) ) {
+          if(event.isParticipant(participant) || participant.isAdmin) {
             Ok(views.html.events.view(event,albums,participants))
           } else {
             notEventParticipant(event)
@@ -97,7 +97,7 @@ object EventController extends Controller with EventWrappers with Secured {
         BadRequest(views.html.index(searchForm,errors,Application.registerForm))
       },
       eventName => {
-        EmailNotifier.createEventNotification(participant,eventName)
+        EmailNotifier.createEventAlert(participant,eventName)
         val event = participant.createAndSaveEvent(eventName)
         Redirect(routes.EventController.showEditEvent(event.eventId)).flashing("message" -> "Event created")
       }
@@ -105,7 +105,7 @@ object EventController extends Controller with EventWrappers with Secured {
   }
 
 
-  def showEditEvent(eventId: Long) = isEventOrganiser(eventId) { (event,participant) => implicit request =>
+  def showEditEvent(eventId: Long) = isEventOrganiserOrAdmin(eventId) { (event,participant) => implicit request =>
      val editForm = updateForm.fill((event.eventName,
        event.organiser match {
          case None => ""
@@ -122,7 +122,7 @@ object EventController extends Controller with EventWrappers with Secured {
   }
 
 
-  def updateEvent(eventId: Long) = isEventOrganiser(eventId) { (event,participant) => implicit request =>
+  def updateEvent(eventId: Long) = isEventOrganiserOrAdmin(eventId) { (event,participant) => implicit request =>
     updateForm.bindFromRequest.fold(
       errors => {
         Logger.warn("Bad update event request:"+errors)
@@ -146,13 +146,14 @@ object EventController extends Controller with EventWrappers with Secured {
   }
 
 
-  def showDeleteEvent(eventId: Long) = isEventOrganiser(eventId) { (event,participant) => implicit request =>
+  def showDeleteEvent(eventId: Long) = isEventOrganiserOrAdmin(eventId) { (event,participant) => implicit request =>
     Ok(views.html.events.delete(event))
   }
 
 
-  def deleteEvent(eventId: Long) =  isEventOrganiser(eventId) { (event,participant) => implicit request =>
+  def deleteEvent(eventId: Long) =  isEventOrganiserOrAdmin(eventId) { (event,participant) => implicit request =>
     Logger.info("Deleting event: " + eventId)
+    EmailNotifier.deleteEventAlert(participant,event)
     EmailNotifier.deleteEventNotification(participant,event)
     Event.deleteEvent(eventId)
     Redirect(routes.Application.index()).flashing("message" -> "Event deleted");
@@ -165,7 +166,7 @@ object EventController extends Controller with EventWrappers with Secured {
   }
 
 
-  def removeParticipant(eventId: Long, participantId: Long) = isEventOrganiser(eventId) { (event,participant) => implicit request =>
+  def removeParticipant(eventId: Long, participantId: Long) = isEventOrganiserOrAdmin(eventId) { (event,participant) => implicit request =>
     Logger.debug("Remove participant: " + participantId +" from "+eventId)
     Participant.findById(participantId) match {
       case None => eventParticipantNotFound(eventId)
@@ -178,7 +179,7 @@ object EventController extends Controller with EventWrappers with Secured {
   }
 
 
-  def addCurrentParticipant(eventId: Long) = isEventOrganiser(eventId) { (event,participant) => implicit request =>
+  def addCurrentParticipant(eventId: Long) = isEventOrganiserOrAdmin(eventId) { (event,participant) => implicit request =>
     participantForm.bindFromRequest.fold(
       errors => {
         for(error<-errors.errors){
@@ -194,7 +195,7 @@ object EventController extends Controller with EventWrappers with Secured {
   }
 
 
-  def addRequestedParticipant(eventId: Long, participantId: Long) = isEventOrganiser(eventId) { (event,participant) => implicit request =>
+  def addRequestedParticipant(eventId: Long, participantId: Long) = isEventOrganiserOrAdmin(eventId) { (event,participant) => implicit request =>
       addAnyParticipant(event,Participant.findById(participantId))
   }
 
@@ -213,6 +214,7 @@ object EventController extends Controller with EventWrappers with Secured {
   def requestToJoin(eventId: Long) = withEventAndParticipant(eventId) { (event,participant) => implicit request =>
     Logger.debug("Request to join:"+eventId)
     event.addJoinRequest(participant)
+    EmailNotifier.sendJoinRequestNotification(event,participant)
     if(event.public || !event.organiser.isDefined || event.isParticipant(participant) ){
       Redirect( routes.EventController.viewEvent(eventId) ).flashing(("message"->"Request to join sent"),("eventId"->eventId.toString))
     } else {
@@ -243,9 +245,9 @@ trait EventWrappers extends Secured {
       }.getOrElse(onEventNotFound(request))
   }
 
-  def isEventOrganiser(eventId: Long)(f: (Event,Participant) => Request[AnyContent] => Result) = withEventAndParticipant(eventId) {
+  def isEventOrganiserOrAdmin(eventId: Long)(f: (Event,Participant) => Request[AnyContent] => Result) = withEventAndParticipant(eventId) {
     (event,participant) => implicit request =>
-      if( event.isOrganiser(participant) ){
+      if( event.isOrganiser(participant) || participant.isAdmin){
         f(event,participant)(request)
       } else {
         onUnauthorised(request,event)(request.session,request.flash)
@@ -255,6 +257,15 @@ trait EventWrappers extends Secured {
   def isEventParticipant(eventId: Long)(f: (Event,Participant) => Request[AnyContent] => Result) = withEventAndParticipant(eventId) {
     (event,participant) => implicit request =>
       if( event.isParticipant(participant) ){
+        f(event,participant)(request)
+      } else {
+        onUnauthorised(request,event)(request.session,request.flash)
+      }
+  }
+
+  def isEventParticipantOrAdmin(eventId: Long)(f: (Event,Participant) => Request[AnyContent] => Result) = withEventAndParticipant(eventId) {
+    (event,participant) => implicit request =>
+      if( event.isParticipant(participant) || participant.isAdmin){
         f(event,participant)(request)
       } else {
         onUnauthorised(request,event)(request.session,request.flash)
