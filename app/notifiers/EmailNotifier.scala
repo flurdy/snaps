@@ -31,15 +31,15 @@ object EmailNotifier {
     }
   }
 
-  private def sendOrMockNotification(notification: (String,String, String)) {
+  private def sendOrMockNotification(email:String,notification: (String, String)) {
     if (Play.mode == Mode.Prod) {
       Play.configuration.getString("smtp.host") match {
         case None => noSmtpHostDefinedException
-        case Some("mock") => mockNotification(notification._2)
-        case _ => sendNotification(notification._1, notification._2,notification._3)
+        case Some("mock") => mockNotification(notification._1)
+        case _ => sendNotification(email,notification._1, notification._2)
       }
     } else {
-      mockNotification(notification._2)
+      mockNotification(notification._1)
     }
   }
 
@@ -79,10 +79,10 @@ object EmailNotifier {
 
   private def sendEventNotification(event:Event,subject:String,body:String) {
     event.organiser.map { organiser =>
-      sendOrMockNotification(organiser.email,subject,body)
+      sendOrMockNotification(organiser.email,(subject,body))
     }
     for(eventParticipant<-event.findParticipants){
-      sendOrMockNotification(eventParticipant.email,subject,body)
+      sendOrMockNotification(eventParticipant.email,(subject,body))
     }
   }
 
@@ -117,12 +117,12 @@ object EmailNotifier {
   }
 
 
-  def newPasswordText(participant: Participant, newPassword: String): (String, String, String) = {
-    (participant.email,"Password reset","Your new password is : " + newPassword)
+  def newPasswordText(participant: Participant, newPassword: String): (String, String) = {
+    ("Password reset","Your new password is : " + newPassword)
   }
 
   def sendNewPassword(participant: Participant, newPassword: String) {
-    sendOrMockNotification(newPasswordText(participant, newPassword))
+    sendOrMockNotification(participant.email,newPasswordText(participant, newPassword))
   }
 
   private def joinRequestText(event: Event, participant: Participant): (String, String) = {
@@ -132,9 +132,17 @@ object EmailNotifier {
   def sendJoinRequestNotification(event: Event, participant: Participant) {
     val (subject:String,body:String) = joinRequestText(event,participant)
     event.organiser.map { organiser =>
-      sendOrMockNotification(organiser.email,subject,body)
+      sendOrMockNotification(organiser.email,(subject,body))
     }
   }
 
+  def emailVerificationText(username: String, verificationUrl: String): (String, String) = {
+    ("Please verify your email address","Please verify your email address by going to this website: " + verificationUrl)
+  }
 
+
+  def sendEmailVerification(participant:Participant, verificationHash: String) {
+    val verificationUrl = "/participant/" + participant.participantId + "/verify/" + verificationHash +"/"
+    sendOrMockNotification(participant.email,emailVerificationText(participant.username, verificationUrl))
+  }
 }

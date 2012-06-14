@@ -164,4 +164,19 @@ object ParticipantController extends Controller with Secured {
   }
 
 
+  def verify(participantId:Long, verificationHash:String) = Action {
+    Participant.findById(participantId).map { participant =>
+      Logger.info("Verifying participant: " + participantId)
+      if( participant.matchesVerificationHash(verificationHash) ) {
+        participant.markEmailAsVerified(verificationHash)
+        Redirect(routes.Application.showLogin()).flashing("message" -> "Email verified. Please log in")
+      } else {
+        Logger.warn("Email verification failed")
+        NotFound.flashing("message" -> "Participant or verification not found")
+      }
+    }.getOrElse{
+      NotFound.flashing("message" -> "Participant or verification not found")
+    }
+  }
+
 }

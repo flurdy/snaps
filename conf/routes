@@ -50,6 +50,9 @@ PUT     /participant/:participantId/password       controllers.ParticipantContro
 GET     /participant/reset.html       controllers.ParticipantController.showResetPassword
 POST     /participant/reset            controllers.ParticipantController.resetPassword
 
+GET    /participant/:participantId/verify/:verificationHash/       controllers.ParticipantController.verify(participantId:Long,verificationHash:String)
+
+
 # Map static resources from the /public folder to the /assets URL path
 # GET     /images/*imgFile               controllers.Assets.at(path="/public/images", imgFile)
 # GET     /stylesheets/*cssfile               controllers.Assets.at(path="public/stylesheets/", cssfile)

@@ -11,6 +11,7 @@ import java.util.Date
 import java.text.SimpleDateFormat
 import java.math.BigInteger
 import java.security.{SecureRandom, MessageDigest}
+import notifiers.EmailNotifier
 
 case class Participant(
                   participantId: Long = 0,
@@ -30,6 +31,20 @@ case class Participant(
           Participant.DateFormat.format(new java.util.Date())))
   }
 
+  def storeAndSendEmailVerification {
+    val verificationHash = Participant.generateVerificationHash
+    Logger.debug("Email verification:"+email+" " + verificationHash)
+    Participant.saveVerification(participantId,email,verificationHash)
+    EmailNotifier.sendEmailVerification(this,verificationHash)
+  }
+
+  def markEmailAsVerified(verificationHash:String) {
+    Participant.markEmailAsVerified(participantId,verificationHash)
+  }
+
+  def matchesVerificationHash(verificationHash: String) : Boolean = {
+    Participant.findEmailVerification(participantId,verificationHash)
+  }
 
 }
 
@@ -109,8 +124,12 @@ object Participant {
     DB.withConnection { implicit connection =>
       SQL(
         """
-          SELECT * FROM participant
-            WHERE username = {username}
+          SELECT pa.* FROM participant pa
+          LEFT JOIN emailverification ev
+|          ON ev.participantid = pa.participantid
+|          AND ev.email = pa.email
+          WHERE pa.username = {username}
+          AND ev.verified = TRUE
         """
       ).on(
         'username -> username
@@ -293,5 +312,61 @@ object Participant {
   }
 
   def participantNotFound = throw new NullPointerException("Participant not found")
+
+  def generateVerificationHash = {
+    new BigInteger(130,  new SecureRandom()).toString(32)
+  }
+
+  def saveVerification(participantId: Long, email: String, verificationHash: String) {
+    DB.withConnection { implicit connection =>
+      val verificationId = SQL("SELECT NEXTVAL('emailverification_seq')").as(scalar[Long].single)
+      SQL(
+        """
+              INSERT INTO emailverification
+              (verificationid,participantid,email,verificationhash)
+              VALUES
+              ({verificationid},{participantid},{email},{verificationhash})
+        """
+      ).on(
+        'verificationid -> verificationId,
+        'participantid -> participantId ,
+        'email -> email,
+        'verificationhash -> verificationHash
+      ).executeInsert()
+    }
+  }
+
+
+  def markEmailAsVerified(participantId: Long,verificationHash: String) {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+              UPDATE emailverification
+              set verified = TRUE
+              WHERE participantid = {participantid}
+              AND verificationhash = {verificationhash}
+        """
+      ).on(
+        'participantid -> participantId ,
+        'verificationhash -> verificationHash
+      ).executeUpdate()
+    }
+  }
+
+  def findEmailVerification(participantId: Long, verificationHash: String) : Boolean = {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+              SELECT count(verificationid) = 1 FROM emailverification
+              WHERE participantid = {participantid}
+              AND verificationhash = {verificationhash}
+        """
+      ).on(
+        'participantid -> participantId ,
+        'verificationhash -> verificationHash
+      ).as(scalar[Boolean].single)
+    }
+  }
+
 
 }
