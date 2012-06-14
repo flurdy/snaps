@@ -16,7 +16,7 @@ object EmailNotifier {
 
   private def footer = {
     val hostname = java.net.InetAddress.getLocalHost().getHostName()
-    "Sent by Snaps, event photo snaps. Host: " + hostname
+    "\nSent by Snaps, event photo snaps.\nHost: " + hostname
   }
 
   private def sendOrMockAlert(notification: (String, String)) {

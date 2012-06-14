@@ -116,11 +116,11 @@ object Application extends Controller with Secured {
         },
         registeredForm => {
           if (Logger.isDebugEnabled) Logger.debug("Registering: " + registeredForm._1)
-          val participant = Participant(0, registeredForm._1, registeredForm._2, registeredForm._3, Some(registeredForm._4))
+          val participant = Participant(0, registeredForm._1.trim, registeredForm._2, registeredForm._3.trim, Some(registeredForm._4.trim))
           val registeredParticipant = Participant.save(participant)
           registeredParticipant.storeAndSendEmailVerification
           EmailNotifier.registrationAlert(registeredParticipant)
-          Redirect(routes.Application.index()).flashing("message" ->
+          Redirect(routes.Application.index()).withSession("username" -> registeredForm._1.trim).flashing("message" ->
             """
               Registered. Please verify email sendt to you to activate participation.
             """.stripMargin)

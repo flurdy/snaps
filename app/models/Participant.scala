@@ -125,11 +125,7 @@ object Participant {
       SQL(
         """
           SELECT pa.* FROM participant pa
-          LEFT JOIN emailverification ev
-          ON ev.participantid = pa.participantid
-          AND ev.email = pa.email
           WHERE pa.username = {username}
-          AND ev.verified = TRUE
         """
       ).on(
         'username -> username
