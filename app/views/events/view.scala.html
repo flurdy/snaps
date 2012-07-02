@@ -1,4 +1,4 @@
-@(event: Event,albums: Seq[Album],participants: Seq[Participant])(implicit currentParticipant: Option[Participant], flash: Flash)
+@(event: Event,albums: Seq[Album],participants: Seq[Participant])(implicit currentParticipant: Option[Participant], flash: Flash, analyticsDetails: Option[String])
 
 @import helper._
 @import helper.twitterBootstrap._

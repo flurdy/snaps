@@ -10,7 +10,7 @@ import play.Logger
 import models._
 import notifiers.EmailNotifier
 
-object ParticipantController extends Controller with Secured {
+object ParticipantController extends Controller with Secured with Tracked {
 
   val resetForm = Form(
       "username" -> nonEmptyText(maxLength = 99)

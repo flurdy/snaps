@@ -8,7 +8,7 @@ import org.specs2.specification.BeforeExample
 
 class EventSpec extends Specification {
 
-  val testUser = Participant(0,"tester",Some("Test User"), Some("test@example.com"), Some("testpassword"))
+  val testUser = Participant(0,"tester",Some("Test User"), "test@example.com", Some("testpassword"))
 
   "An Event" should {
 
@@ -102,7 +102,7 @@ class EventSpec extends Specification {
 
 class AlbumSpec extends Specification {
 
-  val testUser = Participant(0,"tester",Some("Test User"), Some("test@example.com"), Some("testpassword"))
+  val testUser = Participant(0,"tester",Some("Test User"), "test@example.com", Some("testpassword"))
 
 
   "An Album" should {

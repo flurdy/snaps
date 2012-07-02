@@ -1,4 +1,4 @@
-@(participant: Participant,events: Seq[Event],updateParticipantForm: Form[(String,Option[String],String)],passwordForm: Form[(String,String,String)])(implicit currentParticipant: Option[Participant], flash: Flash)
+@(participant: Participant,events: Seq[Event],updateParticipantForm: Form[(String,Option[String],String)],passwordForm: Form[(String,String,String)])(implicit currentParticipant: Option[Participant], flash: Flash, analyticsDetails: Option[String])
 
 @import helper._
 @import helper.twitterBootstrap._

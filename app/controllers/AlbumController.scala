@@ -10,7 +10,7 @@ import models._
 import notifiers.EmailNotifier
 
 
-object AlbumController extends Controller with EventWrappers with Secured {
+object AlbumController extends Controller with EventWrappers with Secured with Tracked {
 
   val albumForm = Form(
     tuple(
@@ -59,7 +59,7 @@ object AlbumController extends Controller with EventWrappers with Secured {
             val albums = Album.findAlbums(eventId)
             val participants = event.findParticipants
             val requesters = event.findRequests
-            BadRequest(views.html.events.edit(event,albums,participants,requesters,EventController.updateForm)
+            BadRequest(views.html.events.edit(event,albums,participants,requesters,EventController.updateForm,EventController.addParticipantToEventForm)
               ).flashing("errorMessage" -> "Invalid album data")
           },
           submittedAlbumForm => {

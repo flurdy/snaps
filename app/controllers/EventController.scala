@@ -9,7 +9,7 @@ import play.Logger
 import models._
 import notifiers.EmailNotifier
 
-object EventController extends Controller with EventWrappers with Secured {
+object EventController extends Controller with EventWrappers with Secured with Tracked {
 
   val searchForm: Form[String] = Form(
     "searchText" -> text(maxLength = 100)
@@ -30,7 +30,7 @@ object EventController extends Controller with EventWrappers with Secured {
     )
   )
 
-  val participantForm = Form(
+  val addParticipantToEventForm = Form(
     "username" -> nonEmptyText(maxLength = 99)
   )
 
@@ -118,7 +118,7 @@ object EventController extends Controller with EventWrappers with Secured {
      val albums = Album.findAlbums(eventId)
      val participants = event.findParticipants
      val requests = event.findRequests
-     Ok(views.html.events.edit(event,albums,participants,requests,editForm))
+     Ok(views.html.events.edit(event,albums,participants,requests,editForm,addParticipantToEventForm))
   }
 
 
@@ -129,7 +129,7 @@ object EventController extends Controller with EventWrappers with Secured {
         val albums = Album.findAlbums(event.eventId)
         val participants = event.findParticipants
         val requests = event.findRequests
-        BadRequest(views.html.events.edit(event,albums,participants,requests,errors))
+        BadRequest(views.html.events.edit(event,albums,participants,requests,errors,addParticipantToEventForm))
       },
       updatedForm => {
           val updatedEvent = event.copy(
@@ -179,8 +179,8 @@ object EventController extends Controller with EventWrappers with Secured {
   }
 
 
-  def addCurrentParticipant(eventId: Long) = isEventOrganiserOrAdmin(eventId) { (event,participant) => implicit request =>
-    participantForm.bindFromRequest.fold(
+  def addParticipant(eventId: Long) = isEventOrganiserOrAdmin(eventId) { (event,participant) => implicit request =>
+    addParticipantToEventForm.bindFromRequest.fold(
       errors => {
         for(error<-errors.errors){
           Logger.warn("Bad add participant request:"+error.key + " " + error.message)
@@ -188,7 +188,7 @@ object EventController extends Controller with EventWrappers with Secured {
         val albums = Album.findAlbums(event.eventId)
         val participants = event.findParticipants
         val requests = event.findRequests
-        BadRequest(views.html.events.edit(event,albums,participants,requests,updateForm)).flashing("errorMessage" -> "Invalid participant");
+        BadRequest(views.html.events.edit(event,albums,participants,requests,updateForm,errors)).flashing("errorMessage" -> "Invalid participant");
       },
       addParticipantForm => addAnyParticipant(event,Participant.findByUsername(addParticipantForm))
     )

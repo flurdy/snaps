@@ -13,7 +13,7 @@ class ParticipantSpec extends Specification {
 
     "be able to be created and persisted" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        val participant = Participant(0,"tester",Some("Test User"), Some("test@example.com"), Some("testpassword"));
+        val participant = Participant(0,"tester",Some("Test User"), "test@example.com", Some("testpassword"));
         participant.participantId.toInt must beEqualTo(0)
         Participant.save(participant).participantId.toInt must beGreaterThan(0)
       }
@@ -22,9 +22,9 @@ class ParticipantSpec extends Specification {
 
     "cannot have the same username" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        val participant1 = Participant(0,"tester",Some("Test User"), Some("test@example.com"), Some("testpassword"));
+        val participant1 = Participant(0,"tester",Some("Test User"), "test@example.com", Some("testpassword"));
         Participant.save(participant1)
-        val participant2 = Participant(0,"tester",Some("Test User"), Some("test@example.com"), Some("testpassword"))
+        val participant2 = Participant(0,"tester",Some("Test User"), "test@example.com", Some("testpassword"))
         Participant.save(participant2) must throwAn[IllegalArgumentException];
       }
     }
@@ -32,14 +32,14 @@ class ParticipantSpec extends Specification {
 
     "have the password encrypted" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        val participant1 = Participant(0,"tester",Some("Test User"), Some("test@example.com"), Some("testpassword"));
+        val participant1 = Participant(0,"tester",Some("Test User"), "test@example.com", Some("testpassword"));
         participant1.encryptedPassword must beSome[String]
       }
     }
 
     "no bother encrypting empty passwords" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        val participant1 = Participant(0,"tester",Some("Test User"), Some("test@example.com"), None);
+        val participant1 = Participant(0,"tester",Some("Test User"), "test@example.com", None);
         participant1.encryptedPassword must beNone
       }
     }
@@ -49,7 +49,7 @@ class ParticipantSpec extends Specification {
 
     "be able to authenticate" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        val participant1 = Participant(0,"tester",Some("Test User"), Some("test@example.com"), Some("testpassword"));
+        val participant1 = Participant(0,"tester",Some("Test User"), "test@example.com", Some("testpassword"));
         Participant.save(participant1)
         Participant.authenticate("tester","testpassword") must beSome[Participant]
       }
@@ -59,7 +59,7 @@ class ParticipantSpec extends Specification {
 
     "not be able to authenticate with wrong password" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        val participant1 = Participant(0,"tester",Some("Test User"), Some("test@example.com"), Some("testpassword"));
+        val participant1 = Participant(0,"tester",Some("Test User"), "test@example.com", Some("testpassword"));
         Participant.save(participant1)
         Participant.authenticate("tester","wrongpassword") must beNone
       }
@@ -69,7 +69,7 @@ class ParticipantSpec extends Specification {
 
     "be able to delete himself" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        val participant1 = Participant(0,"tester",Some("Test User"), Some("test@example.com"), Some("testpassword"));
+        val participant1 = Participant(0,"tester",Some("Test User"), "test@example.com", Some("testpassword"));
         val participantSaved = Participant.save(participant1)
         val participantId = participantSaved.participantId
         Participant.findById(participantId) must beSome[Participant]
@@ -81,7 +81,7 @@ class ParticipantSpec extends Specification {
 
     "delete all events when deleted" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        val participant1 = Participant(0,"tester",Some("Test User"), Some("test@example.com"), Some("testpassword"));
+        val participant1 = Participant(0,"tester",Some("Test User"), "test@example.com", Some("testpassword"));
         val participantId = Participant.save(participant1).participantId
         participantId.toInt must beGreaterThan(0)
         Participant.findById(participantId) must beSome[Participant]
@@ -101,9 +101,9 @@ class ParticipantSpec extends Specification {
 
     "delete all requests when deleted" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        val participant1 = Participant(0,"tester1",Some("Test User1"), Some("test@example.com"), Some("testpassword"));
-        val participant2 = Participant(0,"tester2",Some("Test User2"), Some("test@example.com"), Some("testpassword"));
-        val participant3 = Participant(0,"tester3",Some("Test User3"), Some("test@example.com"), Some("testpassword"));
+        val participant1 = Participant(0,"tester1",Some("Test User1"), "test@example.com", Some("testpassword"));
+        val participant2 = Participant(0,"tester2",Some("Test User2"), "test@example.com", Some("testpassword"));
+        val participant3 = Participant(0,"tester3",Some("Test User3"), "test@example.com", Some("testpassword"));
         val participantId1 = Participant.save(participant1).participantId
         val participantId2 = Participant.save(participant2).participantId
         val participantId3 = Participant.save(participant3).participantId
@@ -146,9 +146,9 @@ class ParticipantSpec extends Specification {
 
     "delete all participations when deleted" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        val participant1 = Participant(0,"tester1",Some("Test User1"), Some("test@example.com"), Some("testpassword"));
-        val participant2 = Participant(0,"tester2",Some("Test User2"), Some("test@example.com"), Some("testpassword"));
-        val participant3 = Participant(0,"tester3",Some("Test User3"), Some("test@example.com"), Some("testpassword"));
+        val participant1 = Participant(0,"tester1",Some("Test User1"), "test@example.com", Some("testpassword"));
+        val participant2 = Participant(0,"tester2",Some("Test User2"), "test@example.com", Some("testpassword"));
+        val participant3 = Participant(0,"tester3",Some("Test User3"), "test@example.com", Some("testpassword"));
         val participantId1 = Participant.save(participant1).participantId
         val participantId2 = Participant.save(participant2).participantId
         val eventId1 = Event.createAndSaveEvent("Christmas 2",participantId2).eventId
@@ -171,7 +171,7 @@ class ParticipantSpec extends Specification {
 
     "be able to reset password" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        val participant = Participant(0,"tester",Some("Test User"), Some("test@example.com"), Some("testpassword"));
+        val participant = Participant(0,"tester",Some("Test User"), "test@example.com", Some("testpassword"));
         val participantId = Participant.save(participant).participantId
         Participant.authenticate("tester","testpassword") must beSome[Participant]
         val newPassword = Participant.resetPassword(participantId)

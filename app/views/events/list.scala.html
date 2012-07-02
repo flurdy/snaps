@@ -1,4 +1,4 @@
-@(searchText: String,organiserEvents: Seq[Event],events: Seq[Event],participants: Seq[Participant])(implicit currentParticipant: Option[Participant])
+@(searchText: String,organiserEvents: Seq[Event],events: Seq[Event],participants: Seq[Participant])(implicit currentParticipant: Option[Participant], analyticsDetails: Option[String])
 
 @import helper._
 @import helper.twitterBootstrap._

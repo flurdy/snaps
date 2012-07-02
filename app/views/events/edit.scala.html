@@ -1,4 +1,4 @@
-@(event: Event, albums: Seq[Album], participants: Seq[Participant], requesters: Seq[Participant], updateForm: Form[(String,String,String,String,Boolean,Boolean) ])(implicit currentParticipant: Option[Participant], flash: Flash)
+@(event: Event, albums: Seq[Album], participants: Seq[Participant], requesters: Seq[Participant], updateForm: Form[(String,String,String,String,Boolean,Boolean) ], addParticipantForm: Form[String] )(implicit currentParticipant: Option[Participant], flash: Flash, analyticsDetails: Option[String])
 
 @import helper._
 @import helper.twitterBootstrap._
@@ -16,6 +16,13 @@
     <p class="alert alert-error">
         Oh dear: @error.message: @error.key
     </p>
+}
+
+
+@for(error <- addParticipantForm.errors){
+<p class="alert alert-error">
+    Oh dear: @error.message: @error.key
+</p>
 }
 
 @flash.get("message").map { message =>
@@ -158,7 +165,7 @@
             <td>@participant.username</td>
             <td>
                 @form(action = routes.EventController.addRequestedParticipant(event.eventId,participant.participantId), 'class -> "form-horizontal"){
-                <button type="submit" class="btn btn-primary btn-mini">Add participant</button>
+                <button type="submit" class="btn btn-success btn-mini">Add participant</button>
                 }
             </td>
         </tr>
@@ -167,7 +174,7 @@
     </table>
     }
 
-    @form(action = routes.EventController.addCurrentParticipant(event.eventId), 'class -> "well form-horizontal"){
+    @form(action = routes.EventController.addParticipant(event.eventId), 'class -> "well form-horizontal"){
         <input type="text" name="username" class="span3" placeholder="Username of participant" value=""/>
         <button type="submit" class="btn btn-success btn-small">Add participant</button>
     }

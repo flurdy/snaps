@@ -1,13 +1,14 @@
 package controllers
 
 import play.api._
+import play.api.Play.current
 import mvc._
 import play.api.data._
 import play.api.data.Forms._
 import models._
 import notifiers._
 
-object Application extends Controller with Secured {
+object Application extends Controller with Secured with Tracked {
 
 
   val loginForm = Form(
@@ -150,8 +151,9 @@ trait Secured {
   }
 
   def onUnauthorised(request: RequestHeader, event: Event)(implicit session: Session, flash: Flash) = {
+    implicit def analyticsDetails : Option[String] = Application.analyticsDetails
     Results.Unauthorized(
-        views.html.events.unauthorised(event)(currentParticipant,flash)
+        views.html.events.unauthorised(event)(currentParticipant,flash,Application.analyticsDetails)
       ).flashing("message"->"Event private, and you do not have access to it")
   }
 
@@ -172,5 +174,11 @@ trait Secured {
   implicit def currentParticipant(implicit session: Session): Option[Participant] = {
     Participant.findByUsername(session.get(Security.username).getOrElse(""))
   }
-
 }
+
+
+trait Tracked {
+  private val analyticsId : Option[String] = Play.application.configuration.getString("analyticsId")
+  implicit def analyticsDetails : Option[String] = analyticsId
+}
+

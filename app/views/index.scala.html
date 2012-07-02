@@ -1,4 +1,4 @@
-@(searchForm: Form[String],createForm: Form[String], registerForm: Form[(String,Option[String],String,String,String)])(implicit currentParticipant: Option[Participant], flash: Flash)
+@(searchForm: Form[String],createForm: Form[String], registerForm: Form[(String,Option[String],String,String,String)])(implicit currentParticipant: Option[Participant], flash: Flash, analyticsDetails: Option[String])
 
 @import helper._
 @import helper.twitterBootstrap._
