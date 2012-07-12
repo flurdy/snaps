@@ -9,15 +9,16 @@ import play.Logger
 case class Album (
   albumId: Long = 0,
   publisher: String,
-  url: String
+  url: String,
+  notes: Option[String]
 ){
   require(publisher.trim.length > 1)
 
   require(url.trim.length > 9)
 
-  def this(publisher: String, url: String) = this(0,publisher,url)
+  def this(publisher: String, url: String) = this(0,publisher,url,None)
 
-  def this(albumId: Long, that: Album) = this(albumId,that.publisher,that.url)
+  def this(albumId: Long, that: Album) = this(albumId,that.publisher,that.url,None)
 
 }
 
@@ -27,8 +28,9 @@ object Album {
   val simple = {
       get[Long]("albumid") ~
       get[String]("publisher") ~
-      get[String]("url") map {
-      case albumid~publisher~url => Album( albumid, publisher, url )
+      get[String]("url")~
+      get[Option[String]]("notes") map {
+      case albumid~publisher~url~notes => Album( albumid, publisher, url, notes )
     }
   }
 
@@ -67,14 +69,15 @@ object Album {
       val albumId = SQL("SELECT NEXTVAL('snapalbum_seq')").as(scalar[Long].single)
       SQL(
         """
-          INSERT INTO snapalbum (albumid,publisher,url,eventid)
-          VALUES ( {albumid},{publisher},{url},{eventid} )
+          INSERT INTO snapalbum (albumid,publisher,url,eventid,notes)
+          VALUES ( {albumid},{publisher},{url},{eventid},{notes} )
         """
       ).on(
         'albumid -> albumId,
         'publisher -> album.publisher,
         'url -> album.url,
-        'eventid -> eventId
+        'eventid -> eventId,
+        'notes -> album.notes
       ).executeInsert()
       new Album(albumId,album)
     }

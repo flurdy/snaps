@@ -10,7 +10,6 @@
     <a href="@routes.EventController.viewEvent(event.eventId)">Event</a>
 </li>
 } {
-
     @flash.get("message").map { message =>
     <p class="alert alert-info">
         @message
@@ -73,7 +72,10 @@
                 <td>@album.publisher</td>
                 <td><a href="@album.url" target="_blank">@album.url <img class="external-link" src="@routes.Assets.at("images/external-link-ltr-icon.png")"/></a></td>
                 <td>
-                   <!-- <i class="icon-lock"></i> -->
+                    @if( album.notes.isDefined ){
+                    <a type="button" href="#" rel="popover" id="album_@album.albumId" data-content="@album.notes" data-original-title="Album notes"
+                         class="album-notes"><i class="icon-info-sign"></i></a>
+                    }
                 </td>
             </tr>
         }

@@ -9,9 +9,19 @@
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/grid.css")">
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/ship.css")">
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/cargo.css")">
-    <script src="@routes.Assets.at("javascripts/jquery-1.7.1.min.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/jquery-1.7.2.min.js")" type="text/javascript"></script>
     <script src="@routes.Assets.at("javascripts/bootstrap.min.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/bootstrap-tooltip.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/bootstrap-popover.js")" type="text/javascript"></script>
     @analytics(analyticsDetails)
+    <script type="text/javascript">
+        $(document).ready( function(){
+            $(".album-notes").popover({
+                offset: 5,
+                placement: 'right'
+            });
+        });
+    </script>
 </head>
 <body>
 <div id="ocean" class="structure">
