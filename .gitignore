@@ -18,3 +18,4 @@ target
 tmp
 .history
 dist
+*.log
