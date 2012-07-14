@@ -1,4 +1,4 @@
-@(event: Event, albumForm: Form[(Option[String],String)])(implicit currentParticipant: Option[Participant], analyticsDetails: Option[String])
+@(event: Event, albumForm: Form[(Option[String],String,Option[String])])(implicit currentParticipant: Option[Participant], analyticsDetails: Option[String])
 
 @import helper._
 @import helper.twitterBootstrap._
@@ -30,12 +30,12 @@
 
     @form(action = routes.AlbumController.addAlbum(event.eventId), 'class -> "well form-horizontal"){
         <fieldset>
-            <legend>Publisher</legend>
+            <label>Publisher</label>
             <input type="text" name="publisher" class="span3" placeholder="name of album owner" value="@albumForm("publisher").value"/>
-        </fieldset>
-        <fieldset>
-            <legend>URL Link</legend>
+            <label>URL Link</label>
             <input type="text" name="url" class="span4" placeholder="http://www.example.com/album/123"v alue="@albumForm("url").value"/>
+            <label>Notes</label>
+            <textarea rows="4" cols="60" name="notes" class="span4" placeholder="Notes regarding how to access album">@albumForm("note").value</textarea>
         </fieldset>
         <div class="form-actions">
             <button type="submit" class="btn btn-success">Add album</button>

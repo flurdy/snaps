@@ -17,6 +17,7 @@ case class Album (
   require(url.trim.length > 9)
 
   def this(publisher: String, url: String) = this(0,publisher,url,None)
+  def this(publisher: String, url: String,notes: Option[String]) = this(0,publisher,url,notes)
 
   def this(albumId: Long, that: Album) = this(albumId,that.publisher,that.url,None)
 
@@ -88,13 +89,13 @@ object Album {
       SQL(
         """
           UPDATE snapalbum
-          SET  publisher = {publisher},
-            url = {url}
+          SET  publisher = {publisher}, url = {url}, notes = {notes}
           WHERE albumid = {albumid}
         """
       ).on(
         'albumid -> album.albumId,
         'publisher -> album.publisher,
+        'notes -> album.notes,
         'url -> album.url
       ).executeUpdate()
     }

@@ -93,21 +93,27 @@
     <table class="table table-striped">
         <thead>
         <tr>
+            <th colspan="2">Link</th>
             <th>Publisher</th>
-            <th>Link</th>
-            <th colspan="2">Actions</th>
         </tr>
         </thead>
         <tbody>
         @for(album <- albums){
             <tr>
                 @form(action = routes.AlbumController.updateAlbum(event.eventId,album.albumId), 'class -> "well form-horizontal"){
-                <td><input type="text" name="publisher" class="input-small" value="@album.publisher"/></td>
-                <td><input type="text" name="url" class="span3" value="@album.url"/></td>
-                <td><button type="submit" class="btn btn-primary btn-mini">Update album</button></td>
+                    <td colspan="2"><input type="text" name="url" class="span5" value="@album.url"/></td>
+                    <td><input type="text" name="publisher" class="input-small" value="@album.publisher"/></td>
+                </tr>
+                <tr>
+                    <th colspan="1">notes</th>
+                    <th colspan="2">&nbsp;</th>
+                </tr>
+                <tr>
+                    <td colspan="1"><textarea rows="3" cols="60" class="span4" placeholder="Notes regarding how to access album">@album.notes</textarea></td>
+                    <td rowspan="1" class="album-button"><button type="submit" class="btn btn-primary btn-mini">Update album</button></td>
                 }
                 @form(action = routes.AlbumController.removeAlbum(event.eventId,album.albumId), 'class -> "well form-horizontal"){
-                <td><button type="submit" class="btn btn-danger btn-mini">Remove album</button></td>
+                    <td rowspan="1" class="album-button"><button type="submit" class="btn btn-danger btn-mini">Remove album</button></td>
                 }
             </tr>
         }

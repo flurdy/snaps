@@ -15,13 +15,14 @@ object AlbumController extends Controller with EventWrappers with Secured with T
   val albumForm = Form(
     tuple(
       "publisher" -> optional(text(minLength = 3, maxLength = 100)),
-      "url" -> nonEmptyText(minLength = 8, maxLength = 150)
+      "url" -> nonEmptyText(minLength = 8, maxLength = 150),
+      "notes" -> optional(text(maxLength = 2000))
     )
   )
 
 
   def showAddAlbum(eventId: Long) = isEventParticipant(eventId) { (event,participant) => implicit request =>
-    Ok(views.html.albums.add(event,albumForm.fill(Option(participant.username),"")))
+    Ok(views.html.albums.add(event,albumForm.fill(Option(participant.username),"",None)))
   }
 
 
@@ -34,7 +35,7 @@ object AlbumController extends Controller with EventWrappers with Secured with T
         BadRequest(views.html.albums.add(event,errors)).flashing("errorMessage" -> "Invalid album data")
       },
       submittedAlbumForm => {
-        val album = new Album(participant.username,submittedAlbumForm._2)
+        val album = new Album(participant.username,submittedAlbumForm._2,submittedAlbumForm._3)
         EmailNotifier.addAlbumNotification(participant,event,album)
         event.addAlbum(album)
         Redirect(routes.EventController.viewEvent(eventId)).flashing("message" -> "Album added")
@@ -65,7 +66,8 @@ object AlbumController extends Controller with EventWrappers with Secured with T
           submittedAlbumForm => {
             val updatedAlbum = album.copy(
                 publisher = submittedAlbumForm._1.getOrElse(participant.username),
-                url = submittedAlbumForm._2)
+              url = submittedAlbumForm._2,
+              notes = submittedAlbumForm._3 )
             Album.updateAlbum(updatedAlbum)
             Redirect(routes.EventController.showEditEvent(eventId)).flashing("message" -> "Album updated")
           }

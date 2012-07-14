@@ -58,3 +58,6 @@ ul.horizontal .login-link { float: right; text-align: right; padding: 0 0 0 1.2e
     background-color: #f1f1f1;
     white-space: nowrap;
 }
+
+#cargo .album-notes { padding: 0 1em; margin: 0; }
+#cargo .album-button { vertical-align: middle; }
