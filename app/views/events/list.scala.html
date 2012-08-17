@@ -19,6 +19,7 @@
 
     <h3>Your events</h3>
 
+    <div id="your-events" >
     <table class="table table-striped">
         <thead>
         <tr>
@@ -38,6 +39,7 @@
         }
         </tbody>
     </table>
+    </div>
     }
 
 
@@ -45,6 +47,7 @@
 
     @if(!organiserEvents.isEmpty){<h3>Public events</h3>}
 
+    <div id="public-events" >
     <table class="table table-striped">
         <thead>
         <tr>
@@ -64,20 +67,23 @@
         }
         </tbody>
     </table>
+        </div>
     }
 
     @if(!participants.isEmpty){
-
         <br/>
 
         <h2>Participants</h2>
+        <div id="participant-cloud">
 
-        <div class="well cloud">
-            <ul>
-                @for(participant <- participants){
-                    <li><a href="@routes.ParticipantController.viewParticipant(participant.participantId)">@participant.username</a></li>
-                }
-            </ul>
+
+            <div class="well cloud">
+                <ul>
+                    @for(participant <- participants){
+                        <li><a href="@routes.ParticipantController.viewParticipant(participant.participantId)">@participant.username</a></li>
+                    }
+                </ul>
+            </div>
         </div>
     }
 
