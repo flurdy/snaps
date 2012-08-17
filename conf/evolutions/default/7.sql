@@ -6,7 +6,7 @@
 ALTER TABLE participant ADD COLUMN admin BOOLEAN DEFAULT false;
 ALTER TABLE participant ADD COLUMN superuser BOOLEAN DEFAULT false;
 
-UPDATE participant SET admin = true WHERE username = 'testuser';
+--UPDATE participant SET admin = true WHERE username = 'testuser';
 
 # --- !Downs
 
