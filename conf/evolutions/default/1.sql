@@ -36,6 +36,7 @@ CREATE TABLE snapalbum (
     publisher             VARCHAR(100) NOT NULL,
     url                   VARCHAR(255) NOT NULL,
     eventid               BIGINT NOT NULL,
+    notes                 VARCHAR(2000),
     foreign key(eventid) references snapevent(eventid) on delete cascade
 );
 
@@ -44,7 +45,9 @@ CREATE TABLE participant (
     username              VARCHAR(100) UNIQUE,
     fullname              VARCHAR(100),
     email                 VARCHAR(100),
-    password              VARCHAR(100) NOT NULL
+    password              VARCHAR(100) NOT NULL,
+    admin                 BOOLEAN DEFAULT FALSE,
+    superuser             BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE eventparticipant (
@@ -62,6 +65,17 @@ CREATE TABLE eventrequest (
     foreign key(participantid) references participant(participantid) on delete cascade
 );
 
+CREATE TABLE emailverification (
+    verificationid          BIGINT NOT NULL,
+    participantid          BIGINT NOT NULL,
+    email                  VARCHAR(100) NOT NULL,
+    verified               BOOLEAN DEFAULT FALSE,
+    verificationhash       VARCHAR(128),
+    foreign key(participantid) references participant(participantid) on delete cascade
+);
+
+
+CREATE SEQUENCE emailverification_seq START WITH 1000;
 
 CREATE SEQUENCE snapevent_seq START WITH 1000;
 
@@ -84,10 +98,12 @@ DROP TABLE IF EXISTS snapalbum;
 
 DROP TABLE IF EXISTS snapevent;
 
+DROP TABLE IF EXISTS emailverification;
+
 DROP SEQUENCE IF EXISTS snapevent_seq;
 
 DROP SEQUENCE IF EXISTS snapalbum_seq;
 
 DROP SEQUENCE IF EXISTS participant_seq;
 
-
+DROP SEQUENCE IF EXISTS emailverification_seq;
