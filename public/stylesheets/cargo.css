@@ -64,5 +64,5 @@ ul.horizontal .login-link { float: right; text-align: right; padding: 0 0 0 1.2e
 
 
 #cargo #your-events ,
-#cargo #public-events { max-height: 35em; overflow-y: scroll;  }
-#cargo #participant-cloud { max-height: 20em; overflow-y: scroll; }
+#cargo #public-events { max-height: 30em; overflow-y: auto;  }
+#cargo #participant-cloud { max-height: 20em; overflow-y: auto; }
