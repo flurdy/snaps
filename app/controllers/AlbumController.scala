@@ -65,7 +65,7 @@ object AlbumController extends Controller with EventWrappers with Secured with T
           },
           submittedAlbumForm => {
             val updatedAlbum = album.copy(
-                publisher = submittedAlbumForm._1.getOrElse(participant.username),
+              //  publisher = submittedAlbumForm._1.getOrElse(participant.username),
               url = submittedAlbumForm._2,
               notes = submittedAlbumForm._3 )
             Album.updateAlbum(updatedAlbum)
