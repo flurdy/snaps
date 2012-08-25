@@ -17,7 +17,12 @@ object EmailNotifier {
   private def hostname = Play.configuration.getString("net.hostname").getOrElse("localhost")
 
   private def footer = {
-    "\nSent by Snaps, event photo snaps.\nHost: " + hostname
+    """
+
+
+      Sent by Snaps: event photo snaps.
+      Host: %s
+    """.format(hostname)
   }
 
   private def sendOrMockAlert(notification: (String, String)) {
@@ -127,7 +132,14 @@ object EmailNotifier {
   }
 
   private def joinRequestText(event: Event, participant: Participant): (String, String) = {
-    ("Event join request", Participant + "" + participant.username + " has asked to joinRequestText _event " + event.eventName)
+    ("Event join request",
+      """
+        Participant %s has asked to join %s.
+
+       Please login to %s and approve the request.
+
+      """.format(participant.username, event.eventName, hostname))
+
   }
 
   def sendJoinRequestNotification(event: Event, participant: Participant) {
@@ -138,7 +150,16 @@ object EmailNotifier {
   }
 
   def emailVerificationText(username: String, verificationUrl: String): (String, String) = {
-    ("Please verify your email address","Please verify your email address by going to this website: " + verificationUrl)
+    ("Please verify your email address",
+      """
+        Hi, welcome to Snaps, event photo snaps.
+
+        Please verify your email address by going to this website:
+        %s
+
+
+        If you didn't register with Snaps, please let us know at %s
+      """.format(verificationUrl,hostname))
   }
 
 
