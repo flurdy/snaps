@@ -52,7 +52,7 @@ case class Participant(
 
 object Participant {
 
-  val ValidEmailAddress = """^[0-9a-zA-Z]([-\.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9}$""".r
+  val ValidEmailAddress = """^[0-9a-zA-Z]([+-_\.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9}$""".r
 
   val DateFormat = new SimpleDateFormat("yyyy-MM-dd")
 
