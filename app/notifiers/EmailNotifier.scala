@@ -14,8 +14,9 @@ object EmailNotifier {
   private val alertRecipient = Play.configuration.getString("mail.alerts").getOrElse("snaps@example.org")
   private val emailFrom = Play.configuration.getString("mail.alerts").getOrElse("snaps@example.com")
 
+  private def hostname = Play.configuration.getString("net.hostname").getOrElse("localhost")
+
   private def footer = {
-    val hostname = java.net.InetAddress.getLocalHost().getHostName()
     "\nSent by Snaps, event photo snaps.\nHost: " + hostname
   }
 
@@ -142,7 +143,7 @@ object EmailNotifier {
 
 
   def sendEmailVerification(participant:Participant, verificationHash: String) {
-    val verificationUrl = "/participant/" + participant.participantId + "/verify/" + verificationHash +"/"
+    val verificationUrl = hostname + "/participant/" + participant.participantId + "/verify/" + verificationHash +"/"
     sendOrMockNotification(participant.email,emailVerificationText(participant.username, verificationUrl))
   }
 }
