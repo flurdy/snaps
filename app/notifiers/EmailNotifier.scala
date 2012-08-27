@@ -70,7 +70,11 @@ object EmailNotifier {
   }
 
   def deleteParticipantAlert(participant: Participant) {
-    sendOrMockAlert(deleteParticipantText(participant))
+    sendOrMockAlert(deleteParticipantAlertText(participant))
+  }
+
+  def deleteParticipantNotification(participant: Participant) {
+    sendOrMockNotification(participant.email,deleteParticipantNotificationText(participant))
   }
 
   def createEventAlert(participant: Participant, eventName: String) {
@@ -105,9 +109,24 @@ object EmailNotifier {
     ("New registration", "Participant " + participant.username + " has registered with Snaps")
   }
 
-  private def deleteParticipantText(participant: Participant) = {
-    ("Participant deleted", "Participant " + participant.username + " has been deleted with Snaps")
+  private def deleteParticipantAlertText(participant: Participant) = {
+    ("Participant deleted",
+      """
 
+        Participant %s has been deleted from Snaps.
+
+
+      """.format(participant.username))
+      }
+
+  private def deleteParticipantNotificationText(participant: Participant) = {
+    ("Participant deleted",
+      """
+         Participant %s has been deleted from Snaps.
+
+         We are sorry to see you leave.
+
+      """.format(participant.username) )
   }
 
   private def createEventText(participant: Participant, eventName: String) = {

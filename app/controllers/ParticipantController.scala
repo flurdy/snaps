@@ -94,6 +94,7 @@ object ParticipantController extends Controller with Secured with Tracked {
     if(participant.participantId == participantId){
       Logger.info("Participant deleting:" + participantId + " | " + participant.username)
       EmailNotifier.deleteParticipantAlert(participant)
+      EmailNotifier.deleteParticipantNotification(participant)
       Participant.deleteAccount(participantId)
       Logger.warn("Participant deleted:" + participantId + " | " + participant.username)
       Redirect(routes.Application.index()).withNewSession;
