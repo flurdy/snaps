@@ -178,7 +178,7 @@ trait Secured {
 
 
 trait Tracked {
-  private val analyticsId : Option[String] = Play.application.configuration.getString("ANALYTICS_ID")
+  private val analyticsId : Option[String] = Play.application.configuration.getString("analytics.id")
   implicit def analyticsDetails : Option[String] = analyticsId
 }
 
